@@ -3196,6 +3196,8 @@ const _pxLogIds=new Set();
 const _pxCmdIds=new Map(); // id → {stEl,resEl}
 let _pxTabMode='all';
 let _pxInitDone=false;
+let _pxSeeded=false; // 첫 폴링에서 기존 데이터 무시용
+let _pxDeskScreenPos=[]; // 아이소메트릭 책상 위치 (비율)
 
 // ── 에이전트 인덱스 판별 ──
 function _pxAssignIdx(agentStr){
@@ -3204,71 +3206,130 @@ function _pxAssignIdx(agentStr){
   return 0;
 }
 
-// ── 픽셀아트 방 캔버스 그리기 ──
+// ── 아이소메트릭 오피스 방 ──
 function pxDrawRoom(canvas){
   const W=canvas.width,H=canvas.height;
   const ctx=canvas.getContext('2d');
-  // 벽
-  ctx.fillStyle='#2D2A6E';
-  ctx.fillRect(0,0,W,H);
-  // 바닥
-  ctx.fillStyle='#1E1B4B';
-  ctx.fillRect(0,Math.floor(H*.62),W,H);
-  // 바닥선
-  ctx.fillStyle='#312E81';
-  ctx.fillRect(0,Math.floor(H*.62),W,2);
-  // 창문 (픽셀 느낌)
-  const wx=Math.floor(W*.12),wy=Math.floor(H*.1),ww=Math.floor(W*.22),wh=Math.floor(H*.28);
-  ctx.fillStyle='#1E3A5F';
-  ctx.fillRect(wx,wy,ww,wh);
-  ctx.fillStyle='#3B82F6';
-  ctx.fillRect(wx+2,wy+2,Math.floor(ww/2)-2,Math.floor(wh/2)-2);
-  ctx.fillRect(wx+Math.floor(ww/2)+2,wy+2,Math.floor(ww/2)-4,Math.floor(wh/2)-2);
-  ctx.fillRect(wx+2,wy+Math.floor(wh/2)+2,Math.floor(ww/2)-2,Math.floor(wh/2)-4);
-  ctx.fillRect(wx+Math.floor(ww/2)+2,wy+Math.floor(wh/2)+2,Math.floor(ww/2)-4,Math.floor(wh/2)-4);
-  ctx.fillStyle='#93C5FD';
-  ctx.fillRect(wx+3,wy+3,6,6);
-  ctx.fillStyle='#4F46E5';
-  ctx.fillRect(wx-1,wy-1,ww+2,2);ctx.fillRect(wx-1,wy+wh-1,ww+2,2);
-  ctx.fillRect(wx-1,wy-1,2,wh+2);ctx.fillRect(wx+ww-1,wy-1,2,wh+2);
-  ctx.fillRect(wx+Math.floor(ww/2)-1,wy,2,wh);
-  ctx.fillRect(wx,wy+Math.floor(wh/2)-1,ww,2);
-  // 화이트보드
-  const bx=Math.floor(W*.42),by=Math.floor(H*.08),bw=Math.floor(W*.3),bh=Math.floor(H*.26);
-  ctx.fillStyle='#E0E7FF';
-  ctx.fillRect(bx,by,bw,bh);
-  ctx.fillStyle='#4338CA';
-  ctx.fillRect(bx-2,by-2,bw+4,2);ctx.fillRect(bx-2,by+bh,bw+4,2);
-  ctx.fillRect(bx-2,by-2,2,bh+4);ctx.fillRect(bx+bw,by-2,2,bh+4);
-  ctx.fillStyle='#6366F1';
-  ctx.font=`bold ${Math.floor(bh*.18)}px 'DM Mono',monospace`;
-  ctx.textAlign='center';
-  ctx.fillText('BULSA v1.0',bx+Math.floor(bw/2),by+Math.floor(bh*.38));
-  ctx.fillStyle='#818CF8';
-  ctx.font=`${Math.floor(bh*.13)}px 'DM Mono',monospace`;
-  ctx.fillText('안전 시뮬레이터',bx+Math.floor(bw/2),by+Math.floor(bh*.6));
-  ctx.fillStyle='#A5B4FC';
-  ctx.font=`${Math.floor(bh*.11)}px 'DM Mono',monospace`;
-  ctx.fillText('KOSHA 기준 준수',bx+Math.floor(bw/2),by+Math.floor(bh*.78));
-  // 화분
-  const px1=Math.floor(W*.84),py1=Math.floor(H*.38);
-  ctx.fillStyle='#166534';ctx.fillRect(px1-4,py1,8,14);
-  ctx.fillStyle='#16A34A';ctx.fillRect(px1-8,py1-10,16,12);
-  ctx.fillStyle='#22C55E';ctx.fillRect(px1-6,py1-16,12,8);
-  ctx.fillStyle='#92400E';ctx.fillRect(px1-7,py1+14,14,10);
-  ctx.fillStyle='#78350F';ctx.fillRect(px1-9,py1+20,18,5);
-  // 책상들 (5개)
-  const deskColor='#312E81',deskH=8;
-  _PX_POS.forEach((pos,i)=>{
-    const dx=Math.floor(pos.x*W)-20,dy=Math.floor(pos.y*H)+Math.floor(H*.07);
-    ctx.fillStyle=deskColor;ctx.fillRect(dx,dy,40,deskH);
-    ctx.fillStyle='#1E1B4B';ctx.fillRect(dx+2,dy+deskH,4,12);ctx.fillRect(dx+34,dy+deskH,4,12);
-    // 모니터
-    ctx.fillStyle='#111827';ctx.fillRect(dx+10,dy-18,20,14);
-    ctx.fillStyle='#1E40AF';ctx.fillRect(dx+11,dy-17,18,12);
-    ctx.fillStyle='#6366F1';ctx.fillRect(dx+15,dy-15,4,4);
-    ctx.fillStyle='#111827';ctx.fillRect(dx+18,dy-4,4,4);
+  ctx.clearRect(0,0,W,H);
+
+  // 아이소메트릭 파라미터
+  const ROOM_W=5,ROOM_D=4,WALL_H=3;
+  const T=Math.min(W/12,H/11);
+  const ox=W*0.52, oy=H*0.72;
+  const yS=0.45; // y축 squish
+
+  function iso(x,y,z){ return {x:ox+(x-z)*T, y:oy+(x+z)*T*yS-y*T}; }
+
+  function face4(a,b,c,d,fill,stroke,sw){
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.lineTo(d.x,d.y);ctx.closePath();
+    if(fill){ctx.fillStyle=fill;ctx.fill();}
+    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=sw||0.8;ctx.stroke();}
+  }
+
+  function isoBox(x,y,z,w,h,d,cT,cR,cF,brd){
+    const B=brd||'#7A6040';
+    face4(iso(x,y+h,z),iso(x+w,y+h,z),iso(x+w,y+h,z+d),iso(x,y+h,z+d),cT,B,0.7);
+    face4(iso(x+w,y,z),iso(x+w,y+h,z),iso(x+w,y+h,z+d),iso(x+w,y,z+d),cR,B,0.7);
+    face4(iso(x,y,z+d),iso(x+w,y,z+d),iso(x+w,y+h,z+d),iso(x,y+h,z+d),cF,B,0.7);
+  }
+
+  // 배경
+  ctx.fillStyle='#f5ede0';ctx.fillRect(0,0,W,H);
+
+  // ── 바닥 (따뜻한 원목) ──
+  for(let z=ROOM_D-1;z>=0;z--){
+    for(let x=0;x<ROOM_W;x++){
+      const alt=(x+z)%2===0;
+      face4(iso(x,0,z),iso(x+1,0,z),iso(x+1,0,z+1),iso(x,0,z+1),
+        alt?'#B8855A':'#A87448','#7A5030',0.5);
+    }
+  }
+
+  // ── 뒷벽 (z=ROOM_D, 따뜻한 베이지) ──
+  for(let x=0;x<ROOM_W;x++){
+    for(let y=0;y<WALL_H;y++){
+      const isWin=(x>=1&&x<=3&&y>=1);
+      if(!isWin) face4(iso(x,y,ROOM_D),iso(x+1,y,ROOM_D),iso(x+1,y+1,ROOM_D),iso(x,y+1,ROOM_D),'#D8CCBA','#A89878',0.5);
+    }
+  }
+  // 창문 프레임
+  face4(iso(1,1,ROOM_D),iso(4,1,ROOM_D),iso(4,WALL_H,ROOM_D),iso(1,WALL_H,ROOM_D),'#8B7355','#6B5535',1);
+  // 왼쪽 유리
+  face4(iso(1.12,1.12,ROOM_D),iso(2.42,1.12,ROOM_D),iso(2.42,WALL_H-0.1,ROOM_D),iso(1.12,WALL_H-0.1,ROOM_D),'#A8D8E8',null);
+  // 오른쪽 유리
+  face4(iso(2.58,1.12,ROOM_D),iso(3.88,1.12,ROOM_D),iso(3.88,WALL_H-0.1,ROOM_D),iso(2.58,WALL_H-0.1,ROOM_D),'#A8D8E8',null);
+  // 반사광
+  face4(iso(1.15,WALL_H-0.6,ROOM_D),iso(1.7,WALL_H-0.6,ROOM_D),iso(1.7,WALL_H-0.15,ROOM_D),iso(1.15,WALL_H-0.15,ROOM_D),'rgba(255,255,255,0.55)',null);
+  face4(iso(2.62,WALL_H-0.6,ROOM_D),iso(3.2,WALL_H-0.6,ROOM_D),iso(3.2,WALL_H-0.15,ROOM_D),iso(2.62,WALL_H-0.15,ROOM_D),'rgba(255,255,255,0.55)',null);
+  // 창문 중간 세로선
+  face4(iso(2.48,1.12,ROOM_D),iso(2.58,1.12,ROOM_D),iso(2.58,WALL_H-0.1,ROOM_D),iso(2.48,WALL_H-0.1,ROOM_D),'#8B7355',null);
+
+  // ── 왼쪽 벽 (x=0) ──
+  for(let z=0;z<ROOM_D;z++){
+    for(let y=0;y<WALL_H;y++){
+      face4(iso(0,y,z+1),iso(0,y,z),iso(0,y+1,z),iso(0,y+1,z+1),'#CCC0A8','#A89878',0.5);
+    }
+  }
+  // 화이트보드 (왼쪽 벽)
+  face4(iso(0,0.65,0.3),iso(0,0.65,2.5),iso(0,2.65,2.5),iso(0,2.65,0.3),'#8B7355','#5C3C1E',1);
+  face4(iso(0,0.8,0.45),iso(0,0.8,2.35),iso(0,2.5,2.35),iso(0,2.5,0.45),'#F2EBE0',null);
+  // 화이트보드 위에 줄
+  ctx.lineWidth=1.2;
+  for(let li=0;li<4;li++){
+    const yy=1.0+li*0.38;
+    const p1=iso(0,yy,0.55),p2=iso(0,yy,2.2);
+    ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);
+    ctx.strokeStyle=`rgba(140,100,60,${0.3-li*0.05})`;ctx.stroke();
+  }
+  // "BULSA" 텍스트 (화이트보드 중앙)
+  {
+    const mid=iso(0,1.65,1.4);
+    ctx.save();
+    ctx.translate(mid.x,mid.y);
+    ctx.rotate(Math.atan2(-T*yS,T)*0.5);
+    ctx.fillStyle='#8B4513';
+    ctx.font=`bold ${Math.max(7,Math.floor(T*0.5))}px 'Press Start 2P',monospace`;
+    ctx.textAlign='center';
+    ctx.fillText('BULSA',0,0);
+    ctx.restore();
+  }
+
+  // ── 천장 모서리 선 ──
+  ctx.strokeStyle='#A89878';ctx.lineWidth=1.2;
+  const [ctFL,ctFR,ctBL,ctBR]=[iso(0,WALL_H,0),iso(ROOM_W,WALL_H,0),iso(0,WALL_H,ROOM_D),iso(ROOM_W,WALL_H,ROOM_D)];
+  ctx.beginPath();ctx.moveTo(ctFL.x,ctFL.y);ctx.lineTo(ctFR.x,ctFR.y);ctx.lineTo(ctBR.x,ctBR.y);ctx.lineTo(ctBL.x,ctBL.y);ctx.lineTo(ctFL.x,ctFL.y);ctx.stroke();
+
+  // ── 화분 (뒷-오른쪽 구석) ──
+  const PX=ROOM_W-0.75,PZ=0.25;
+  isoBox(PX,0,PZ,0.45,0.3,0.45,'#C4773A','#9A5528','#AD672F','#7A4420');
+  const leafC=iso(PX+0.22,0.55,PZ+0.22);
+  ctx.fillStyle='#1A5C2E';ctx.beginPath();ctx.arc(leafC.x,leafC.y,T*0.42,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#2D7D46';ctx.beginPath();ctx.arc(leafC.x-T*0.26,leafC.y-T*0.08,T*0.33,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(leafC.x+T*0.22,leafC.y-T*0.12,T*0.31,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#3EA05C';ctx.beginPath();ctx.arc(leafC.x,leafC.y-T*0.38,T*0.36,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#56C270';ctx.beginPath();ctx.arc(leafC.x+T*0.08,leafC.y-T*0.55,T*0.22,0,Math.PI*2);ctx.fill();
+
+  // ── 책상 5개 ──
+  const DESKS=[[0.25,0.1],[1.65,0.1],[3.05,0.1],[0.85,1.85],[2.55,1.85]];
+  _pxDeskScreenPos=DESKS.map(([dx,dz])=>{
+    const p=iso(dx+0.5,0.85,dz+0.4);
+    return {x:p.x/W,y:p.y/H};
   });
+  DESKS.forEach(([dx,dz])=>{
+    // 책상 본체
+    isoBox(dx,0,dz,1.1,0.35,0.65,'#D4AA70','#A87A40','#BF9550','#7A5C30');
+    // 모니터 스탠드
+    isoBox(dx+0.42,0.35,dz+0.08,0.26,0.06,0.06,'#2A2A3A','#1A1A2A','#1A1A2A','#111');
+    // 모니터 화면
+    isoBox(dx+0.34,0.41,dz+0.05,0.42,0.52,0.04,'#1A2F5A','#111828','#111828','#0A1020');
+    // 모니터 스크린 글로우
+    face4(iso(dx+0.35,0.93,dz+0.05),iso(dx+0.76,0.93,dz+0.05),iso(dx+0.76,0.41,dz+0.05),iso(dx+0.35,0.41,dz+0.05),'#2A4A8A',null);
+    // 의자
+    isoBox(dx+0.1,0,dz+0.68,0.9,0.26,0.4,'#5A8ABF','#3A6A9F','#4A7AAF','#2A4A7F');
+    // 의자 등받이
+    isoBox(dx+0.1,0.26,dz+1.0,0.9,0.4,0.06,'#4A7AAF','#3A6A9F','#5A8ABF','#2A4A7F');
+  });
+
   ctx.textAlign='left';
 }
 
@@ -3318,7 +3379,8 @@ function pxPlaceChars(canvas){
   const cw=canvas.offsetWidth,ch=canvas.offsetHeight;
   const s=Math.max(2,Math.min(4,Math.floor(cw/110)));
   const sw=10*s,sh=12*s;
-  _PX_POS.forEach((pos,i)=>{
+  const positions=_pxDeskScreenPos.length===5?_pxDeskScreenPos:_PX_POS;
+  positions.forEach((pos,i)=>{
     const char=_PX_CHARS[i];
     const cx=Math.floor(pos.x*cw);
     const cy=Math.floor(pos.y*ch);
@@ -3444,6 +3506,14 @@ function _pxAddMsg(emoji,name,text,isMe,msgType,statusBadge){
 function _pxUpdateFromStatus(data){
   const logs=data.logs||[];
   const cmds=data.commands||[];
+
+  // 첫 폴링: 기존 ID만 기억, 렌더링 건너뜀
+  if(!_pxSeeded){
+    _pxSeeded=true;
+    logs.forEach(l=>_pxLogIds.add(l.id));
+    cmds.forEach(c=>_pxCmdIds.set(c.id,{status:c.status,stEl:null}));
+    return;
+  }
 
   // 새 로그 → 채팅 버블
   const newLogs=logs.filter(l=>!_pxLogIds.has(l.id));
