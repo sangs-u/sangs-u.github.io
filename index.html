@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SANGS-U · Space</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 :root{
@@ -1344,6 +1344,106 @@ body {
 .live-log-agent{flex-shrink:0;min-width:70px;color:#58A6FF;font-weight:600}
 .live-log-msg{color:#C9D1D9;flex:1;word-break:break-word}
 .live-log-lv.error{color:#F85149}.live-log-lv.warn{color:#D29922}.live-log-lv.info{color:#3FB950}
+
+/* ══════════════════════════════
+   픽셀아트 사무실 (s-of)
+══════════════════════════════ */
+#s-of.on{display:flex;flex-direction:column;margin:-44px -48px -80px;height:calc(100vh - 44px);overflow:hidden;background:#1E1B4B}
+@media(max-width:860px){
+  #s-of.on{margin:-24px -18px -90px;height:auto;min-height:100vh}
+  .px-body{flex-direction:column}
+  .px-room-wrap{width:100%;height:280px;border-right:none;border-bottom:2px solid #312E81}
+}
+
+/* 헤더 */
+.px-hdr{display:flex;align-items:center;gap:10px;padding:10px 20px;background:#13113A;flex-shrink:0;border-bottom:2px solid #312E81}
+.px-hdr-title{font-family:'Press Start 2P',monospace;font-size:10px;color:#A5B4FC;letter-spacing:.05em;image-rendering:pixelated}
+.px-conn-badge{display:flex;align-items:center;gap:5px;margin-left:auto;padding:4px 10px;border-radius:3px;background:#1E1B4B;border:2px solid #312E81;font-family:'DM Mono',monospace;font-size:10px;color:#818CF8;image-rendering:pixelated}
+.px-conn-badge.online{border-color:#22C55E;color:#4ADE80}
+.px-conn-badge.online .px-conn-dot{background:#22C55E;animation:pxPulse 1.5s infinite}
+.px-conn-dot{width:6px;height:6px;border-radius:0;background:#6B7280;flex-shrink:0}
+@keyframes pxPulse{0%,100%{opacity:1}50%{opacity:.2}}
+.px-hdr-clk{font-family:'DM Mono',monospace;font-size:11px;color:#4B5563;margin-left:12px}
+
+/* 바디 */
+.px-body{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* 왼쪽: 픽셀아트 방 */
+.px-room-wrap{width:44%;flex-shrink:0;position:relative;overflow:hidden;background:#1E1B4B;border-right:2px solid #312E81}
+#px-canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.px-chars{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.px-char-overlay{position:absolute;transform:translate(-50%,-100%);text-align:center;pointer-events:all;cursor:pointer}
+.px-char-overlay:hover .px-char-canvas{transform:scale(1.15);filter:drop-shadow(0 0 6px #A5B4FC)}
+.px-char-canvas{display:block;image-rendering:pixelated;transition:transform .2s,filter .2s}
+.px-char-label{font-family:'Press Start 2P',monospace;font-size:5px;color:#C4B5FD;margin-top:3px;white-space:nowrap;text-align:center;image-rendering:pixelated}
+.px-char-speech{position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);
+  background:#13113A;border:2px solid #6366F1;border-radius:3px;
+  padding:4px 8px;font-size:9px;color:#E0E7FF;white-space:nowrap;
+  max-width:150px;white-space:normal;text-align:center;line-height:1.4;
+  opacity:0;pointer-events:none;transition:opacity .25s;z-index:10;
+  font-family:'DM Mono',monospace}
+.px-char-overlay:hover .px-char-speech,.px-char-speech.show{opacity:1}
+
+/* 오른쪽: 통합 채팅 */
+.px-chat-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#0F0E2A;min-width:0}
+.px-tabs{display:flex;border-bottom:2px solid #1E1B4B;background:#13113A;flex-shrink:0}
+.px-tab{flex:1;padding:10px 8px;border:none;background:none;cursor:pointer;font-family:'Press Start 2P',monospace;font-size:7px;color:#6366F1;border-bottom:3px solid transparent;transition:all .15s;letter-spacing:.03em}
+.px-tab:hover{color:#A5B4FC}
+.px-tab.on{color:#A5B4FC;border-bottom-color:#6366F1;background:rgba(99,102,241,.08)}
+
+/* 메시지 영역 */
+.px-msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.px-msg-empty{margin:auto;text-align:center;padding:32px 20px}
+.px-empty-icon{font-size:32px;margin-bottom:12px}
+.px-empty-title{font-family:'Press Start 2P',monospace;font-size:8px;color:#4338CA;margin-bottom:8px}
+.px-empty-sub{font-size:10px;color:#3730A3}
+
+/* 메시지 버블 */
+.px-bwrap{display:flex;gap:8px;max-width:88%;animation:pxMsgIn .2s ease}
+.px-bwrap.me{flex-direction:row-reverse;align-self:flex-end}
+@keyframes pxMsgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.px-bav{font-size:18px;flex-shrink:0;padding-top:2px;line-height:1}
+.px-bbody{display:flex;flex-direction:column;gap:3px;min-width:0}
+.px-bwrap.me .px-bbody{align-items:flex-end}
+.px-bname{font-family:'Press Start 2P',monospace;font-size:6px;color:#6366F1;margin-bottom:2px}
+.px-bwrap.me .px-bname{color:#22C55E}
+.px-bb{background:#1E1B4B;border:2px solid #312E81;border-radius:0 8px 8px 8px;padding:8px 12px;font-size:12px;color:#C4B5FD;line-height:1.55;word-break:break-word}
+.px-bwrap.me .px-bb{background:#14532D;border-color:#15803D;color:#86EFAC;border-radius:8px 0 8px 8px}
+.px-bt{font-family:'DM Mono',monospace;font-size:9px;color:#3730A3;margin-top:2px}
+.px-bwrap.me .px-bt{text-align:right;color:#166534}
+
+/* 결과 카드 */
+.px-result-card{background:#1E1B4B;border:2px solid #4338CA;border-radius:4px;padding:10px 12px;margin-top:4px;font-size:11px;color:#A5B4FC;line-height:1.5;max-height:120px;overflow:hidden;position:relative}
+.px-result-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(transparent,#1E1B4B)}
+.px-result-card.expanded{max-height:none}
+.px-result-card.expanded::after{display:none}
+.px-result-expand{font-size:9px;color:#6366F1;cursor:pointer;background:none;border:none;font-family:'DM Mono',monospace;padding:2px 0;display:block}
+.px-status-badge{display:inline-flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:2px;margin-top:4px}
+.px-st-pending{background:rgba(99,102,241,.15);color:#818CF8}
+.px-st-running{background:rgba(234,179,8,.1);color:#EAB308;animation:pxPulse 1s infinite}
+.px-st-done{background:rgba(34,197,94,.1);color:#22C55E}
+.px-st-failed{background:rgba(239,68,68,.1);color:#EF4444}
+
+/* 프리셋 */
+.px-presets{display:flex;flex-wrap:wrap;gap:5px;padding:8px 14px;border-top:1px solid #1E1B4B;background:#0F0E2A;flex-shrink:0}
+.px-preset{padding:4px 10px;background:#1E1B4B;border:2px solid #312E81;border-radius:2px;
+  font-size:9px;color:#818CF8;cursor:pointer;font-family:'DM Mono',monospace;
+  transition:all .15s}
+.px-preset:hover{border-color:#6366F1;color:#A5B4FC;background:#2D2A6E}
+
+/* 입력 */
+.px-input-row{display:flex;gap:8px;align-items:flex-end;padding:10px 14px 14px;background:#0F0E2A;flex-shrink:0;border-top:2px solid #1E1B4B}
+.px-input{flex:1;background:#13113A;border:2px solid #312E81;border-radius:3px;
+  padding:9px 12px;font-family:'Noto Sans KR',sans-serif;font-size:13px;
+  color:#C4B5FD;resize:none;outline:none;min-height:44px;max-height:90px;
+  line-height:1.5;transition:border-color .15s}
+.px-input::placeholder{color:#3730A3}
+.px-input:focus{border-color:#6366F1;box-shadow:0 0 0 2px rgba(99,102,241,.15)}
+.px-send{flex-shrink:0;padding:10px 16px;background:#4338CA;color:#fff;border:2px solid #6366F1;
+  border-radius:3px;font-family:'Press Start 2P',monospace;font-size:7px;
+  cursor:pointer;transition:all .15s;white-space:nowrap}
+.px-send:hover{background:#6366F1;transform:translateY(-1px)}
+.px-send:active{transform:scale(.97)}
 </style>
 </head>
 <body>
@@ -1356,7 +1456,7 @@ body {
   </div>
   <nav class="sb-nav">
         <div class="nl">사무실</div>
-    <button class="nb" onclick="go('of')">
+    <button class="nb on" onclick="go('of')">
       <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="13" height="10" rx="1.5"/><path d="M1 6h13"/><path d="M5 10h5"/></svg>
       에이전트 현황
     </button>
@@ -1369,7 +1469,7 @@ body {
       개발 히스토리
     </button>
     <div class="nl">공간</div>
-    <button class="nb on" onclick="go('p')">
+    <button class="nb" onclick="go('p')">
       <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="5.5" height="5.5" rx="1.2"/><rect x="8.5" y="1" width="5.5" height="5.5" rx="1.2"/><rect x="1" y="8.5" width="5.5" height="5.5" rx="1.2"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1.2"/></svg>
       프로젝트 기록
     </button>
@@ -1403,7 +1503,7 @@ body {
 <main class="main">
 
 <!-- 프로젝트 기록 -->
-<div class="sec on" id="s-p">
+<div class="sec" id="s-p">
   <div class="ph"><div class="pe" id="eyebrow"></div><div class="pt">프로젝트 <em>기록</em></div><div class="pst">어떤 결정을 왜 했는지, 어떤 과정으로 여기까지 왔는지 기록합니다.</div></div>
   <div class="sl">진행중인 프로젝트</div>
   <div class="g2">
@@ -2212,574 +2312,51 @@ neutral standing pose, T-pose, game ready, high quality PBR textures</div></div>
 
 
 <!-- ══ 사무실 탭 ══ -->
-<div class="sec" id="s-of">
-<div class="cy-hdr">
-  <span class="cy-hdr-icon">🏢</span>
-  <span class="cy-hdr-title">BULSA 개발팀 사무실</span>
-  <div class="cy-conn" id="cy-conn"><span class="cy-conn-dot">●</span><span id="cy-conn-txt">연결 중...</span></div>
-  <span class="cy-hdr-t" id="cy-hdr-t"></span>
+<div class="sec on" id="s-of">
+<div class="px-hdr">
+  <span class="px-hdr-title">BULSA OFFICE</span>
+  <div class="px-conn-badge" id="px-conn-badge">
+    <span class="px-conn-dot" id="px-conn-dot"></span>
+    <span id="px-conn-txt">CONNECTING</span>
+  </div>
+  <span class="px-hdr-clk" id="px-hdr-clk"></span>
 </div>
-<div class="cy-body">
+<div class="px-body">
 
-  <!-- ── 좌측: 2D 싸이월드 방 ── -->
-  <div class="cy-left">
-    <div class="cy-room">
-      <!-- 벽: 창문 + 화이트보드 + 시계 -->
-      <div class="cy-room-wall">
-        <div class="cy-win"><div class="cy-sky-inner">
-          <span class="cy-cloud-svg c1">☁️</span>
-          <span class="cy-cloud-svg c2">🌤</span>
-          <span class="cy-sun-svg">☀️</span>
-        </div></div>
-        <div class="cy-wb"><div class="cy-wb-h">BULSA v1.0</div><div class="cy-wb-s">안전 시뮬레이터</div></div>
-        <div class="cy-clk-wrap" style="margin-left:auto"><div class="cy-clk" id="cy-clk">00:00</div></div>
+  <!-- ── 좌측: 픽셀아트 방 ── -->
+  <div class="px-room-wrap" id="px-room-wrap">
+    <canvas id="px-canvas"></canvas>
+    <div class="px-chars" id="px-chars"></div>
+  </div>
+
+  <!-- ── 우측: 통합 채팅 ── -->
+  <div class="px-chat-wrap">
+    <div class="px-tabs">
+      <button class="px-tab on" onclick="pxTab('all',this)">💬 대화</button>
+      <button class="px-tab" onclick="pxTab('result',this)">📊 요약</button>
+    </div>
+    <div class="px-msgs" id="px-msgs">
+      <div class="px-msg-empty" id="px-msg-empty">
+        <div class="px-empty-icon">💬</div>
+        <div class="px-empty-title">OFFICE CHAT</div>
+        <div class="px-empty-sub">명령을 입력하면 에이전트가 작업합니다</div>
       </div>
-      <!-- 바닥: 캐릭터들 + 화분 -->
-      <div class="cy-room-floor">
-        <!-- 1열: PD · QA · AD -->
-        <div class="cy-team-row">
-          <div class="cy-char" id="cy-char-0" onclick="cyFocus(0)">
-            <div class="cy-sp" id="cy-sp-0">CLAUDE.md 읽는 중...</div>
-            <div class="cy-av av-pink">🐰</div>
-            <div class="cy-name">토끼 PD</div>
-            <div class="cy-role">Sonnet</div>
-          </div>
-          <div class="cy-char" id="cy-char-1" onclick="cyFocus(1)">
-            <div class="cy-sp" id="cy-sp-1">Playwright 대기중...</div>
-            <div class="cy-av av-cream">🐶</div>
-            <div class="cy-name">강아지 QA</div>
-            <div class="cy-role">Opus</div>
-          </div>
-          <div class="cy-char" id="cy-char-2" onclick="cyFocus(2)">
-            <div class="cy-sp" id="cy-sp-2">대기 중 😴</div>
-            <div class="cy-av av-orange">🐱</div>
-            <div class="cy-name">고양이 AD</div>
-            <div class="cy-role">Opus</div>
-          </div>
-        </div>
-        <!-- 2열: 기획 · 분석 -->
-        <div class="cy-team-row">
-          <div class="cy-char" id="cy-char-3" onclick="cyFocus(3)">
-            <div class="cy-sp" id="cy-sp-3">대기 중...</div>
-            <div class="cy-av av-rust">🦊</div>
-            <div class="cy-name">여우 기획</div>
-            <div class="cy-role">Opus</div>
-          </div>
-          <div class="cy-char" id="cy-char-4" onclick="cyFocus(4)">
-            <div class="cy-sp" id="cy-sp-4">데이터 없음</div>
-            <div class="cy-av av-brown">🐻</div>
-            <div class="cy-name">곰 분석</div>
-            <div class="cy-role">Haiku</div>
-          </div>
-        </div>
-        <!-- 바닥 데코 -->
-        <div style="display:flex;gap:12px;align-items:flex-end;margin-top:4px">
-          <span style="font-size:22px">🪴</span>
-          <span style="font-size:16px;color:#BBAACC;font-size:10px;font-weight:600;text-align:center">
-            에어컨 ❄️<br><span style="font-size:9px;color:#CCC">ON</span>
-          </span>
-          <span style="font-size:22px">🌵</span>
-        </div>
-      </div>
+    </div>
+    <div class="px-presets">
+      <button class="px-preset" onclick="pxFill('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 가동</button>
+      <button class="px-preset" onclick="pxFill('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태</button>
+      <button class="px-preset" onclick="pxFill('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA</button>
+      <button class="px-preset" onclick="pxFill('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 Push</button>
+      <button class="px-preset" onclick="pxFill('게임 플레이 스크린샷 찍어서 시각적 품질 분석해줘.')">🎨 품질</button>
+    </div>
+    <div class="px-input-row">
+      <textarea class="px-input" id="px-input" placeholder="지시 또는 질문을 입력하세요 (Enter로 전송)..." rows="2"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();pxSend()}"></textarea>
+      <button class="px-send" onclick="pxSend()">전송</button>
     </div>
   </div>
 
-  <!-- ── 우측: 채팅방 + 업무지시 ── -->
-  <div class="cy-right">
-    <!-- 탭 -->
-    <div class="cy-rtabs">
-      <button class="cy-rtab on" onclick="cyRTab('chat',this)">💬 채팅방</button>
-      <button class="cy-rtab" onclick="cyRTab('cmd',this)">📋 업무지시</button>
-    </div>
-
-    <!-- 채팅방 패널 -->
-    <div class="cy-rpanel on" id="cy-rpanel-chat">
-      <div class="cy-chat-msgs" id="cy-chat-msgs">
-        <div style="text-align:center;padding:16px 0;font-size:11px;color:#DDAACC">
-          🏠 채팅방에 오신 걸 환영해요!<br>
-          <span style="font-size:10px;color:#CCC">여기서의 대화는 서버로 전달되지 않아요</span>
-        </div>
-        <!-- 에이전트 초기 메시지 -->
-        <div class="cy-bwrap">
-          <div class="cy-bav">🐰</div>
-          <div class="cy-bbody">
-            <div class="cy-bname">토끼 PD</div>
-            <div class="cy-bb">안녕하세요! 오늘도 열심히 개발 중이에요 🐾 궁금한 거 있으면 물어봐요!</div>
-            <div class="cy-bt">지금</div>
-          </div>
-        </div>
-      </div>
-      <div class="cy-chat-in">
-        <textarea class="cy-chat-ta" id="cy-chat-input" placeholder="팀에게 말 걸어보세요..." rows="1"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cyChatSend()}"></textarea>
-        <button class="cy-chat-send" onclick="cyChatSend()">💬</button>
-      </div>
-    </div>
-
-    <!-- 업무지시 패널 -->
-    <div class="cy-rpanel" id="cy-rpanel-cmd">
-      <div class="cy-cmd-list" id="cy-cmd-list">
-        <div class="cy-cmd-empty" id="cy-cmd-empty">
-          지시한 업무가 여기에 표시됩니다<br>
-          <span style="font-size:10px;color:#CCC">에이전트가 작업을 수행하고 결과를 알려줍니다</span>
-        </div>
-      </div>
-      <div class="cy-cmd-zone">
-        <div class="cy-presets" style="margin-bottom:7px">
-          <button class="cy-preset" onclick="cySetCmd('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 가동</button>
-          <button class="cy-preset" onclick="cySetCmd('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA</button>
-          <button class="cy-preset" onclick="cySetCmd('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태</button>
-          <button class="cy-preset" onclick="cySetCmd('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 Push</button>
-          <button class="cy-preset" onclick="cySetCmd('게임 플레이 스크린샷 찍어서 시각적 품질 분석해줘.')">🎨 품질</button>
-        </div>
-        <div class="cy-input-row">
-          <textarea class="cy-ta" id="cy-input" placeholder="팀에게 업무를 지시하세요..." rows="2"
-            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cySend()}"></textarea>
-          <button class="cy-btn" onclick="cySend()">지시<br>💌</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- cy-body end -->
-<div class="of-inner-tabs" style="display:none">
-  <button class="of-inner-tab on" onclick="ofTab('office',this)">🏢 사무실</button>
-  <button class="of-inner-tab" onclick="ofTab('chat',this)">💬 채팅방</button>
-  <button class="of-inner-tab" onclick="ofTab('cmd2',this)">📋 업무 지시</button>
-  <button class="of-inner-tab" onclick="ofTab('dev',this)">📊 개발 현황</button>
-</div>
-<div class="of-wrap" id="s-of-inner" style="display:none">
-
-<!-- ── 탭1: 2D 사무실 ── -->
-<div class="of-panel on" id="of-panel-office">
-  <div class="office-room" id="office-room">
-    <!-- SVG 방 레이아웃 -->
-    <svg class="office-room-svg" viewBox="0 0 860 480" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-      <!-- 바닥 -->
-      <rect width="860" height="480" fill="#1C2333"/>
-      <!-- 상단 벽 -->
-      <rect width="860" height="22" fill="#252B3D"/>
-      <!-- 하단 벽 -->
-      <rect y="462" width="860" height="18" fill="#252B3D"/>
-      <!-- 좌측 벽 -->
-      <rect width="18" height="480" fill="#252B3D"/>
-      <!-- 우측 벽 -->
-      <rect x="842" width="18" height="480" fill="#252B3D"/>
-      <!-- 탕비실 칸막이 -->
-      <rect x="626" y="22" width="4" height="300" fill="#2D3446"/>
-      <!-- 탕비실 문 -->
-      <rect x="626" y="220" width="4" height="50" fill="#1C2333"/>
-      <!-- 탕비실 배경 -->
-      <rect x="630" y="22" width="212" height="280" fill="#182030"/>
-
-      <!-- 창문 3개 (상단) -->
-      <g>
-        <rect x="50" y="0" width="110" height="22" fill="#87CEEB" opacity="0.25" rx="2"/>
-        <line x1="50" y1="0" x2="50" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <line x1="105" y1="0" x2="105" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <line x1="160" y1="0" x2="160" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <text x="77" y="15" text-anchor="middle" font-size="10">☁️</text>
-        <text x="132" y="15" text-anchor="middle" font-size="10">🌤</text>
-      </g>
-      <g>
-        <rect x="200" y="0" width="110" height="22" fill="#87CEEB" opacity="0.25" rx="2"/>
-        <line x1="200" y1="0" x2="200" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <line x1="255" y1="0" x2="255" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <line x1="310" y1="0" x2="310" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <text x="227" y="15" text-anchor="middle" font-size="10">🌤</text>
-        <text x="282" y="15" text-anchor="middle" font-size="10">☁️</text>
-      </g>
-      <g>
-        <rect x="350" y="0" width="110" height="22" fill="#87CEEB" opacity="0.25" rx="2"/>
-        <line x1="350" y1="0" x2="350" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <line x1="405" y1="0" x2="405" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <line x1="460" y1="0" x2="460" y2="22" stroke="#2D3446" stroke-width="1"/>
-        <text x="377" y="15" text-anchor="middle" font-size="10">☁️</text>
-        <text x="432" y="15" text-anchor="middle" font-size="10">🌤</text>
-      </g>
-
-      <!-- 시계 -->
-      <circle cx="530" cy="60" r="30" fill="#252B3D" stroke="#30384D" stroke-width="2"/>
-      <text id="of-clock" x="530" y="65" text-anchor="middle" font-size="11" fill="#8B949E" font-family="monospace">00:00</text>
-
-      <!-- 화이트보드 -->
-      <rect x="490" y="28" width="140" height="80" rx="4" fill="#F5F0EB" stroke="#CCC" stroke-width="1"/>
-      <text x="560" y="52" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">BULSA</text>
-      <text x="560" y="67" text-anchor="middle" font-size="9" fill="#666">v1.0 개발중</text>
-      <text x="560" y="80" text-anchor="middle" font-size="8" fill="#999">안전 문명 시뮬레이터</text>
-      <line x1="500" y1="95" x2="620" y2="95" stroke="#DDD" stroke-width="0.5"/>
-      <line x1="500" y1="100" x2="580" y2="100" stroke="#DDD" stroke-width="0.5"/>
-
-      <!-- 책상 5개 -->
-      <!-- 책상1 (🐰) -->
-      <rect x="28" y="60" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
-      <rect x="44" y="70" width="80" height="55" rx="3" fill="#161B22"/>
-      <rect x="46" y="72" width="76" height="51" rx="2" fill="#0D1117"/>
-      <rect x="80" y="120" width="10" height="20" fill="#30384D"/>
-      <rect x="68" y="140" width="34" height="4" rx="2" fill="#30384D"/>
-      <!-- 책상2 (🐶) -->
-      <rect x="178" y="60" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
-      <rect x="194" y="70" width="80" height="55" rx="3" fill="#161B22"/>
-      <rect x="196" y="72" width="76" height="51" rx="2" fill="#0D1117"/>
-      <rect x="230" y="120" width="10" height="20" fill="#30384D"/>
-      <rect x="218" y="140" width="34" height="4" rx="2" fill="#30384D"/>
-      <!-- 책상3 (🐱) -->
-      <rect x="328" y="60" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
-      <rect x="344" y="70" width="80" height="55" rx="3" fill="#161B22"/>
-      <rect x="346" y="72" width="76" height="51" rx="2" fill="#0D1117"/>
-      <rect x="380" y="120" width="10" height="20" fill="#30384D"/>
-      <rect x="368" y="140" width="34" height="4" rx="2" fill="#30384D"/>
-      <!-- 책상4 (🦊) -->
-      <rect x="28" y="230" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
-      <rect x="44" y="240" width="80" height="55" rx="3" fill="#161B22"/>
-      <rect x="46" y="242" width="76" height="51" rx="2" fill="#0D1117"/>
-      <rect x="80" y="290" width="10" height="20" fill="#30384D"/>
-      <rect x="68" y="310" width="34" height="4" rx="2" fill="#30384D"/>
-      <!-- 책상5 (🐻) -->
-      <rect x="178" y="230" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
-      <rect x="194" y="240" width="80" height="55" rx="3" fill="#161B22"/>
-      <rect x="196" y="242" width="76" height="51" rx="2" fill="#0D1117"/>
-      <rect x="230" y="290" width="10" height="20" fill="#30384D"/>
-      <rect x="218" y="310" width="34" height="4" rx="2" fill="#30384D"/>
-
-      <!-- 화분 2개 -->
-      <text x="582" y="295" font-size="28" text-anchor="middle">🪴</text>
-      <text x="582" y="420" font-size="28" text-anchor="middle">🪴</text>
-      <!-- 쓰레기통 -->
-      <text x="610" y="455" font-size="20" text-anchor="middle">🗑️</text>
-
-      <!-- 탕비실 -->
-      <text x="716" y="18" text-anchor="middle" font-size="9" fill="#484F58">탕비실</text>
-      <text x="672" y="100" font-size="22" text-anchor="middle">☕</text>
-      <text x="716" y="100" font-size="22" text-anchor="middle">🧊</text>
-      <text x="760" y="100" font-size="22" text-anchor="middle">📟</text>
-      <!-- 탕비실 테이블 -->
-      <rect x="650" y="160" width="140" height="60" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
-      <text x="720" y="197" text-anchor="middle" font-size="10" fill="#484F58">탕비실 테이블</text>
-      <!-- 에어컨 -->
-      <rect x="640" y="350" width="80" height="24" rx="4" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
-      <text x="680" y="366" text-anchor="middle" font-size="10" fill="#58A6FF">❄ AC</text>
-      <!-- 냉풍 라인 -->
-      <line x1="650" y1="374" x2="660" y2="390" stroke="#58A6FF" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>
-      <line x1="665" y1="374" x2="672" y2="392" stroke="#58A6FF" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/>
-      <line x1="680" y1="374" x2="680" y2="394" stroke="#58A6FF" stroke-width="1" opacity="0.2" stroke-dasharray="3 3"/>
-
-      <!-- 탕비실 화분 -->
-      <text x="790" y="280" font-size="22" text-anchor="middle">🪴</text>
-
-      <!-- 바닥 러그 -->
-      <ellipse cx="320" cy="380" rx="120" ry="50" fill="#21262D" opacity="0.6"/>
-    </svg>
-
-    <!-- HTML 오버레이: 캐릭터들 -->
-    <div class="office-chars">
-      <!-- 🐰 PD (책상1) -->
-      <div class="desk-char st-working" id="char-0" style="left:5.5%;top:18%" onclick="ofTab('chat',null)">
-        <span class="emoji">🐰</span>
-        <div class="char-name">PD · Sonnet</div>
-        <div class="speech" id="speech-0">CLAUDE.md 읽는 중...</div>
-      </div>
-      <!-- 🐶 QA (책상2) -->
-      <div class="desk-char st-working" id="char-1" style="left:26%;top:18%" onclick="ofTab('chat',null)">
-        <span class="emoji">🐶</span>
-        <div class="char-name">QA · Opus</div>
-        <div class="speech" id="speech-1">Playwright 실행 중...</div>
-      </div>
-      <!-- 🐱 AD (책상3) -->
-      <div class="desk-char st-idle" id="char-2" style="left:46.5%;top:18%" onclick="ofTab('chat',null)">
-        <span class="emoji">🐱</span>
-        <div class="char-name">AD · Opus</div>
-        <div class="speech" id="speech-2">대기 중 😴</div>
-      </div>
-      <!-- 🦊 기획 (책상4) -->
-      <div class="desk-char st-idle" id="char-3" style="left:5.5%;top:56%" onclick="ofTab('chat',null)">
-        <span class="emoji">🦊</span>
-        <div class="char-name">기획 · Opus</div>
-        <div class="speech" id="speech-3">대기 중...</div>
-      </div>
-      <!-- 🐻 분석 (책상5) -->
-      <div class="desk-char st-idle" id="char-4" style="left:26%;top:56%" onclick="ofTab('chat',null)">
-        <span class="emoji">🐻</span>
-        <div class="char-name">분석 · Opus</div>
-        <div class="speech" id="speech-4">데이터 없음</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── 탭2: 카카오톡 채팅방 ── -->
-<div class="of-panel" id="of-panel-chat">
-  <div class="kkt-wrap">
-    <div class="kkt-hdr">
-      <span style="font-size:20px">💬</span>
-      <span class="kkt-hdr-title">BULSA 개발팀</span>
-      <span class="kkt-hdr-count" id="kkt-count">5명</span>
-    </div>
-    <div class="kkt-msgs" id="kkt-msgs">
-      <div style="text-align:center;padding:20px;font-size:11px;color:rgba(28,28,30,.5)">오늘 대화 시작</div>
-    </div>
-    <div class="kkt-input-row">
-      <textarea class="kkt-input" id="kkt-input" placeholder="메시지 입력..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();kktSend()}"></textarea>
-      <button class="kkt-send" onclick="kktSend()">➤</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── 탭3: 업무 지시 (사무실 내) ── -->
-<div class="of-panel" id="of-panel-cmd2">
-  <div class="of-wrap cmd-chat-wrap" style="min-height:0;flex:1">
-    <div class="chat-history" id="chat-history2">
-      <div class="chat-empty" id="chat-empty2">
-        <div style="font-size:32px;margin-bottom:14px">📋</div>
-        <div style="font-size:13px;color:#8B949E;margin-bottom:6px">팀에게 업무를 지시하세요</div>
-        <div style="font-size:11px;color:#484F58">전송하면 에이전트가 자동 배정됩니다</div>
-      </div>
-    </div>
-    <div class="chat-presets">
-      <button class="preset-chip" onclick="setCmdOf('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 가동</button>
-      <button class="preset-chip" onclick="setCmdOf('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA 테스트</button>
-      <button class="preset-chip" onclick="setCmdOf('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태 보고</button>
-      <button class="preset-chip" onclick="setCmdOf('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 즉시 Push</button>
-      <button class="preset-chip" onclick="setCmdOf('게임 플레이 스크린샷 찍어서 시각적 품질 분석해줘.')">🎨 품질 검토</button>
-      <button class="preset-chip" onclick="setCmdOf('Product Hunt 영문 소개글 작성해줘.')">📣 PH 소개글</button>
-    </div>
-    <div class="chat-input-wrap">
-      <textarea class="chat-textarea" id="cmd-input2" placeholder="팀에게 지시할 내용 입력..." rows="2"></textarea>
-      <button class="chat-send-btn" onclick="sendCmdOf()">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 6.5L1.5 2l2 4.5L1.5 11l10-4.5z"/></svg>
-        전송
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ── 탭4: 개발 현황 ── -->
-<div class="of-panel" id="of-panel-dev">
-  <div class="status-wrap">
-    <!-- 라이브 로그 -->
-    <div class="status-card">
-      <div class="status-card-ttl">라이브 로그 <span id="of-log-badge" style="font-size:9px;background:#21262D;border-radius:8px;padding:2px 6px;color:#8B949E">0개</span></div>
-      <div class="live-log-wrap" id="of-log-list">
-        <div style="text-align:center;padding:20px;font-size:11px;color:#484F58">로그 없음 · 에이전트가 작업을 시작하면 여기에 표시됩니다</div>
-      </div>
-    </div>
-    <!-- 진행률 -->
-    <div class="status-card">
-      <div class="status-card-ttl">v1.0 진행률</div>
-      <div class="prog-bar" style="margin-bottom:6px"><div class="prog-fill" style="width:34%"></div></div>
-      <div class="prog-markers"><span>v0.1 시작</span><span style="color:var(--gr);font-weight:700">34%</span><span>v1.0 출시</span></div>
-      <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#8B949E">✓ 설계서 완성</span><span style="color:var(--gr);font-family:'DM Mono',monospace;font-size:10px">완료</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#8B949E">✓ 에이전트 팀 구축</span><span style="color:var(--gr);font-family:'DM Mono',monospace;font-size:10px">완료</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#58A6FF">▶ 도면 시스템</span><span style="color:#58A6FF;font-family:'DM Mono',monospace;font-size:10px">진행중</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#484F58">○ QA 자동화</span><span style="color:#484F58;font-family:'DM Mono',monospace;font-size:10px">대기</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#484F58">○ 캐릭터 에셋</span><span style="color:#484F58;font-family:'DM Mono',monospace;font-size:10px">대기</span></div>
-      </div>
-    </div>
-    <!-- 팀 현황 -->
-    <div class="status-card">
-      <div class="status-card-ttl">팀 현황</div>
-      <div id="of-agents-status" style="display:flex;flex-direction:column;gap:8px">
-        <div style="font-size:11px;color:#484F58">서버 연결 후 실시간 표시됩니다</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div><!-- of-wrap end -->
-
-<!-- 기존 레거시 office-grid는 제거됨 -->
-<div class="page" style="display:none">
-  <div class="office-grid">
-
-    <!-- 에이전트 현황 -->
-    <div class="agent-section">
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-ttl">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.5" cy="4" r="1.8"/><circle cx="8.5" cy="4" r="1.8"/><path d="M1 11c0-1.9 1.6-3.5 3.5-3.5h4C10.4 7.5 12 9.1 12 11"/></svg>
-            에이전트 현황
-          </div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)" id="upd-time">방금 업데이트</div>
-        </div>
-        <div class="card-bd">
-          <div class="agents-wrap">
-
-            <div class="ag gr" onclick="openChat('pm')" title="Sonnet PM과 채팅">
-              <div class="ag-top">
-                <div class="ag-name">Sonnet PM</div>
-                <div class="ag-role">실행 · 수정 · Push</div>
-                <div class="ag-badge b-gr"><div class="ag-bd-dot"></div>작업중</div>
-              </div>
-              <div class="ag-task">core/npc.js — 상태머신 리팩토링 중</div>
-              <div class="ag-prog"><div class="ag-prog-fill" style="width:67%;background:var(--gr)"></div></div>
-              <div class="ag-meta">14:18 시작 · 12분 경과</div>
-              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
-            </div>
-
-            <div class="ag bl" onclick="openChat('qa')" title="Opus QA와 채팅">
-              <div class="ag-top">
-                <div class="ag-name">Opus QA/분석</div>
-                <div class="ag-role">오류 수집 · 원인 파악</div>
-                <div class="ag-badge b-bl"><div class="ag-bd-dot"></div>분석중</div>
-              </div>
-              <div class="ag-task">Playwright 완료 — 오류 2개 분석 중</div>
-              <div class="ag-prog"><div class="ag-prog-fill" style="width:45%;background:var(--bl)"></div></div>
-              <div class="ag-meta">14:22 시작 · 오류 2개 발견</div>
-              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
-            </div>
-
-            <div class="ag pu" onclick="openChat('quality')" title="Opus 품질과 채팅">
-              <div class="ag-top">
-                <div class="ag-name">Opus 품질</div>
-                <div class="ag-role">디자인 · 게임플레이</div>
-                <div class="ag-badge b-gy"><div class="ag-bd-dot"></div>대기중</div>
-              </div>
-              <div class="ag-task">QA 결과 대기 중</div>
-              <div class="ag-prog"><div class="ag-prog-fill" style="width:0%;background:var(--pu)"></div></div>
-              <div class="ag-meta">마지막: 13:55 완료</div>
-              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
-            </div>
-
-            <div class="ag or offline" onclick="openChat('content')" title="Opus 콘텐츠와 채팅">
-              <div class="ag-top">
-                <div class="ag-name">Opus 콘텐츠</div>
-                <div class="ag-role">SNS · 다국어 카피</div>
-                <div class="ag-badge b-gy"><div class="ag-bd-dot"></div>오프라인</div>
-              </div>
-              <div class="ag-task">대기 중 — 지시 없음</div>
-              <div class="ag-prog"><div class="ag-prog-fill" style="width:0%"></div></div>
-              <div class="ag-meta">마지막: 09:30</div>
-              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
-            </div>
-
-            <div class="ag ye offline" onclick="openChat('data')" title="Opus 데이터와 채팅">
-              <div class="ag-top">
-                <div class="ag-name">Opus 데이터</div>
-                <div class="ag-role">피드백 · 개선 우선순위</div>
-                <div class="ag-badge b-gy"><div class="ag-bd-dot"></div>배포 후 활성화</div>
-              </div>
-              <div class="ag-task">사용자 데이터 없음</div>
-              <div class="ag-prog"><div class="ag-prog-fill" style="width:0%"></div></div>
-              <div class="ag-meta">v1.0 배포 후 시작</div>
-              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 라이브 로그 -->
-    <div class="log-section">
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-ttl">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="11" height="9" rx="1.5"/><path d="M3 5h7M3 7.5h4"/></svg>
-            라이브 로그
-          </div>
-          <button class="card-act" onclick="clearLog()">지우기</button>
-        </div>
-        <div class="card-bd" style="padding:8px 16px">
-          <div class="log-wrap" id="log-list">
-            <div class="log-row"><div class="log-t">14:30</div><div class="log-ic">🔧</div><div class="log-msg"><span class="tag bl">Sonnet PM</span> — <span class="ok">core/npc.js 상태머신 리팩토링 시작</span></div></div>
-            <div class="log-row"><div class="log-t">14:28</div><div class="log-ic">🔍</div><div class="log-msg"><span class="tag bl">Opus QA</span> — Playwright 완료. <span class="warn">오류 2개 발견</span></div></div>
-            <div class="log-row"><div class="log-t">14:25</div><div class="log-ic">✅</div><div class="log-msg"><span class="tag bl">Sonnet PM</span> — <span class="ok">git push</span> · feat: 창고 도면 페이드인 애니메이션</div></div>
-            <div class="log-row"><div class="log-t">14:22</div><div class="log-ic">▶️</div><div class="log-msg"><span class="tag bl">Opus QA</span> — Playwright 게임 자동 플레이 시작</div></div>
-            <div class="log-row"><div class="log-t">14:18</div><div class="log-ic">📋</div><div class="log-msg">에이전트 팀 가동 — CLAUDE.md 읽기 완료</div></div>
-            <div class="log-row"><div class="log-t">14:10</div><div class="log-ic">✅</div><div class="log-msg"><span class="tag bl">Sonnet PM</span> — <span class="ok">git push</span> · fix: 줄걸이 각도 계산 오류</div></div>
-            <div class="log-row"><div class="log-t">13:55</div><div class="log-ic">🎨</div><div class="log-msg"><span class="tag bl">Opus 품질</span> — 스크린샷 분석 완료. 시각적 문제 없음</div></div>
-            <div class="log-row"><div class="log-t">13:40</div><div class="log-ic">✅</div><div class="log-msg"><span class="tag bl">Sonnet PM</span> — <span class="ok">git push</span> · fix: NPC 경로탐색 버그</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 사이드 패널 -->
-    <div class="side-panel">
-
-      <!-- 통계 -->
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-ttl">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,10 4,6.5 7,8 10,4.5 12,2"/></svg>
-            오늘의 현황
-          </div>
-          <div id="today-d" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)"></div>
-        </div>
-        <div class="card-bd">
-          <div class="stat-grid">
-            <div class="stat"><div class="stat-v" style="color:var(--gr)">4</div><div class="stat-l">완료</div><div class="stat-c" style="color:var(--gr)">↑ 오늘</div></div>
-            <div class="stat"><div class="stat-v" style="color:var(--bl)">2</div><div class="stat-l">진행중</div><div class="stat-c" style="color:var(--bl)">실행중</div></div>
-            <div class="stat"><div class="stat-v" style="color:var(--ye)">2</div><div class="stat-l">오류</div><div class="stat-c" style="color:var(--ye)">분석중</div></div>
-            <div class="stat"><div class="stat-v" style="color:var(--pu)">7</div><div class="stat-l">커밋</div><div class="stat-c" style="color:var(--pu)">오늘</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 진행률 -->
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-ttl">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6.5" r="5"/><circle cx="6.5" cy="6.5" r="2"/></svg>
-            v1.0 진행률
-          </div>
-          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gr);font-weight:700">34%</span>
-        </div>
-        <div class="card-bd">
-          <div class="prog-bar" style="margin-bottom:6px"><div class="prog-fill" style="width:34%"></div></div>
-          <div class="prog-markers"><span>v0.1 시작</span><span>v1.0 출시</span></div>
-          <div style="margin-top:12px;display:flex;flex-direction:column;gap:5px">
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
-              <span style="color:var(--ink3);display:flex;align-items:center;gap:5px"><span style="color:var(--gr)">✓</span> 설계서 완성</span>
-              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gr)">완료</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
-              <span style="color:var(--ink3);display:flex;align-items:center;gap:5px"><span style="color:var(--gr)">✓</span> 에이전트 팀 구축</span>
-              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gr)">완료</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
-              <span style="color:var(--bl);display:flex;align-items:center;gap:5px"><span>▶</span> 도면 시스템</span>
-              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--bl)">진행중</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
-              <span style="color:var(--ink4);display:flex;align-items:center;gap:5px"><span>○</span> QA 자동화</span>
-              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)">대기</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
-              <span style="color:var(--ink4);display:flex;align-items:center;gap:5px"><span>○</span> 캐릭터 에셋</span>
-              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)">대기</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
-              <span style="color:var(--ink4);display:flex;align-items:center;gap:5px"><span>○</span> 배포</span>
-              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)">대기</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 빠른 지시 -->
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-ttl">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h9M7 3l4.5 3.5L7 10"/></svg>
-            빠른 지시
-          </div>
-        </div>
-        <div class="card-bd" style="padding:10px 16px">
-          <div class="quick-list">
-            <button class="quick-btn" onclick="quickSend('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 전체 가동</button>
-            <button class="quick-btn" onclick="quickSend('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA 테스트</button>
-            <button class="quick-btn" onclick="quickSend('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태 보고</button>
-            <button class="quick-btn" onclick="quickSend('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 즉시 Push</button>
-            <button class="quick-btn" onclick="go('command')">✏️ 직접 입력 →</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
+</div><!-- px-body end -->
 </div>
 
 
@@ -3018,7 +2595,7 @@ function go(id){
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='gd') setTimeout(()=>bvResize(),100);
   if(id==='cmd') startCmdPoll(); else stopCmdPoll();
-  if(id==='of') startOfPoll();
+  if(id==='of'){startOfPoll();setTimeout(initPixelOffice,60);}
 }
 
 function tt(el){el.classList.toggle('on')}
@@ -3460,16 +3037,8 @@ function updateOfficeClock(){
   const t=now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   const el=document.getElementById('hdr-time');
   if(el)el.textContent=t;
-  const hdrT=document.getElementById('cy-hdr-t');
-  if(hdrT)hdrT.textContent=t;
   const td=document.getElementById('today-d');
   if(td)td.textContent=now.toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
-  // 싸이월드 시계
-  const clk=document.getElementById('cy-clk');
-  if(clk)clk.textContent=now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-  // SVG 시계 (레거시)
-  const svgClk=document.getElementById('of-clock');
-  if(svgClk)svgClk.textContent=now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
 }
 setInterval(updateOfficeClock,1000);
 updateOfficeClock();
@@ -3521,12 +3090,12 @@ function _setOfBadge(ok){
       if(t)t.textContent='오프라인';
     }
   }
-  // 싸이월드 뱃지
-  const cb=document.getElementById('cy-conn');
-  const ct=document.getElementById('cy-conn-txt');
-  if(cb){
-    cb.style.background=ok?'rgba(63,185,80,.3)':'rgba(255,80,80,.3)';
-    if(ct)ct.textContent=ok?'연결됨':'오프라인';
+  // 픽셀아트 뱃지
+  const pb=document.getElementById('px-conn-badge');
+  const pt=document.getElementById('px-conn-txt');
+  if(pb){
+    if(ok){pb.classList.add('online');if(pt)pt.textContent='ONLINE';}
+    else{pb.classList.remove('online');if(pt)pt.textContent='OFFLINE';}
   }
 }
 
@@ -3538,7 +3107,7 @@ async function _fetchOfStatus(){
     _renderOfLogs(data.logs||[]);
     _renderOfCmds(data.commands||[]);
     _updateCharStates(data);
-    _cyUpdateFromStatus(data);
+    _pxUpdateFromStatus(data);
   }catch(e){_setOfBadge(false);}
 }
 
@@ -3600,64 +3169,11 @@ function _renderOfLogs(logs){
   });
   wrap.scrollTop=wrap.scrollHeight;
   if(badge)badge.textContent=_ofLogIds.size+'개';
-  // 카카오톡 채팅에도 반영
-  _renderKktLogs(newLogs);
 }
 
 function _renderOfCmds(cmds){
   const newCmds=cmds.filter(c=>!_ofCmdIds.has(c.id));
-  newCmds.forEach(c=>{
-    _ofCmdIds.add(c.id);
-    _kktAddMsg({
-      emoji:'👤',sender:'나',text:c.cmd,me:true,
-      time:_fmtTime(c.receivedAt),read:'1'
-    });
-  });
-  // cmd2 패널 히스토리에도 추가
-  newCmds.forEach(c=>{
-    if(_chatIds.has('c'+c.id))return;
-    _chatIds.add('c'+c.id);
-    const el=document.createElement('div');
-    el.className='chat-msg user';
-    el.innerHTML='<div class="chat-bubble user-bubble">'
-      +'<div class="chat-text">'+_esc(c.cmd)+'</div>'
-      +'<div class="chat-time">'+_fmtTime(c.receivedAt)+(c.done?' ✅':' ⏳')+'</div>'
-      +'</div>';
-    const h=document.getElementById('chat-history2');
-    if(h){document.getElementById('chat-empty2')?.remove();h.appendChild(el);h.scrollTop=h.scrollHeight;}
-  });
-}
-
-function _renderKktLogs(logs){
-  logs.forEach(l=>{
-    if(_kktIds.has('kl'+l.id))return;
-    _kktIds.add('kl'+l.id);
-    const emoji=_agentEmoji(l.agent);
-    const lvl=l.level==='error'?'❌ ':l.level==='warn'?'⚠️ ':'';
-    _kktAddMsg({emoji,sender:l.agent||'에이전트',text:lvl+l.message.slice(0,120),me:false,time:_fmtTime(l.timestamp)});
-  });
-}
-
-function _kktAddMsg({emoji,sender,text,me,time,read}){
-  const wrap=document.getElementById('kkt-msgs');
-  if(!wrap)return;
-  const el=document.createElement('div');
-  el.className='kkt-msg'+(me?' me':'');
-  if(me){
-    el.innerHTML='<div class="kkt-meta">'+
-      (read?'<span class="kkt-read">'+read+'</span>':'')+
-      '<span>'+time+'</span></div>'+
-      '<div class="kkt-body"><div class="kkt-bubble me">'+_esc(text)+'</div></div>';
-  }else{
-    el.innerHTML='<div class="kkt-avatar">'+emoji+'</div>'+
-      '<div class="kkt-body">'+
-      '<div class="kkt-sender">'+_esc(sender)+'</div>'+
-      '<div class="kkt-bubble them">'+_esc(text)+'</div>'+
-      '</div>'+
-      '<div class="kkt-meta"><span>'+time+'</span></div>';
-  }
-  wrap.appendChild(el);
-  wrap.scrollTop=wrap.scrollHeight;
+  newCmds.forEach(c=>{_ofCmdIds.add(c.id);});
 }
 
 function startOfPoll(){
@@ -3665,263 +3181,329 @@ function startOfPoll(){
   if(!_ofPollTimer)_ofPollTimer=setInterval(_fetchOfStatus,5000);
 }
 
-// ══ 싸이월드 사무실 UI ══
-const _cyLogIds=new Set();
-const _cyCmdFromServer=new Set();
-const _cyLocalCmds=new Map(); // id → {stEl, agEl, resEl, item}
-const _CY_CHARS=[
-  {idx:0,emoji:'🐰',key:'pm',agents:['🐰','pm','sonnet','토끼']},
-  {idx:1,emoji:'🐶',key:'qa',agents:['🐶','qa','강아지','playwright']},
-  {idx:2,emoji:'🐱',key:'quality',agents:['🐱','품질','고양이','ad']},
-  {idx:3,emoji:'🦊',key:'content',agents:['🦊','콘텐츠','여우','기획']},
-  {idx:4,emoji:'🐻',key:'data',agents:['🐻','데이터','분석','곰','haiku']},
+// ══════════════════════════════
+// 픽셀아트 사무실 시스템
+// ══════════════════════════════
+const _PX_CHARS=[
+  {idx:0,emoji:'🐰',name:'🐰 토끼 PD',agents:['🐰','pm','sonnet','토끼']},
+  {idx:1,emoji:'🐶',name:'🐶 강아지 QA',agents:['🐶','qa','강아지','playwright']},
+  {idx:2,emoji:'🐱',name:'🐱 고양이 AD',agents:['🐱','품질','고양이','ad']},
+  {idx:3,emoji:'🦊',name:'🦊 여우 기획',agents:['🦊','콘텐츠','여우','기획']},
+  {idx:4,emoji:'🐻',name:'🐻 곰 분석',agents:['🐻','데이터','분석','곰','haiku']},
 ];
+// 방에서의 위치 (canvas 너비/높이 퍼센트)
+const _PX_POS=[
+  {x:.15,y:.52},{x:.37,y:.52},{x:.62,y:.52},
+  {x:.27,y:.80},{x:.54,y:.80}
+];
+const _pxLogIds=new Set();
+const _pxCmdIds=new Map(); // id → {stEl,resEl}
+let _pxTabMode='all';
+let _pxInitDone=false;
 
-function _cyAssignIdx(agentStr){
+// ── 에이전트 인덱스 판별 ──
+function _pxAssignIdx(agentStr){
   const s=(agentStr||'').toLowerCase();
-  for(const c of _CY_CHARS){if(c.agents.some(a=>s.includes(a.toLowerCase())))return c.idx;}
+  for(const c of _PX_CHARS){if(c.agents.some(a=>s.includes(a.toLowerCase())))return c.idx;}
   return 0;
 }
 
-function _cySpeech(idx,text){
-  const sp=document.getElementById('cy-sp-'+idx);
-  if(!sp)return;
-  sp.textContent=text.slice(0,55)+(text.length>55?'…':'');
-  sp.classList.add('pop');
-  setTimeout(()=>sp.classList.remove('pop'),400);
+// ── 픽셀아트 방 캔버스 그리기 ──
+function pxDrawRoom(canvas){
+  const W=canvas.width,H=canvas.height;
+  const ctx=canvas.getContext('2d');
+  // 벽
+  ctx.fillStyle='#2D2A6E';
+  ctx.fillRect(0,0,W,H);
+  // 바닥
+  ctx.fillStyle='#1E1B4B';
+  ctx.fillRect(0,Math.floor(H*.62),W,H);
+  // 바닥선
+  ctx.fillStyle='#312E81';
+  ctx.fillRect(0,Math.floor(H*.62),W,2);
+  // 창문 (픽셀 느낌)
+  const wx=Math.floor(W*.12),wy=Math.floor(H*.1),ww=Math.floor(W*.22),wh=Math.floor(H*.28);
+  ctx.fillStyle='#1E3A5F';
+  ctx.fillRect(wx,wy,ww,wh);
+  ctx.fillStyle='#3B82F6';
+  ctx.fillRect(wx+2,wy+2,Math.floor(ww/2)-2,Math.floor(wh/2)-2);
+  ctx.fillRect(wx+Math.floor(ww/2)+2,wy+2,Math.floor(ww/2)-4,Math.floor(wh/2)-2);
+  ctx.fillRect(wx+2,wy+Math.floor(wh/2)+2,Math.floor(ww/2)-2,Math.floor(wh/2)-4);
+  ctx.fillRect(wx+Math.floor(ww/2)+2,wy+Math.floor(wh/2)+2,Math.floor(ww/2)-4,Math.floor(wh/2)-4);
+  ctx.fillStyle='#93C5FD';
+  ctx.fillRect(wx+3,wy+3,6,6);
+  ctx.fillStyle='#4F46E5';
+  ctx.fillRect(wx-1,wy-1,ww+2,2);ctx.fillRect(wx-1,wy+wh-1,ww+2,2);
+  ctx.fillRect(wx-1,wy-1,2,wh+2);ctx.fillRect(wx+ww-1,wy-1,2,wh+2);
+  ctx.fillRect(wx+Math.floor(ww/2)-1,wy,2,wh);
+  ctx.fillRect(wx,wy+Math.floor(wh/2)-1,ww,2);
+  // 화이트보드
+  const bx=Math.floor(W*.42),by=Math.floor(H*.08),bw=Math.floor(W*.3),bh=Math.floor(H*.26);
+  ctx.fillStyle='#E0E7FF';
+  ctx.fillRect(bx,by,bw,bh);
+  ctx.fillStyle='#4338CA';
+  ctx.fillRect(bx-2,by-2,bw+4,2);ctx.fillRect(bx-2,by+bh,bw+4,2);
+  ctx.fillRect(bx-2,by-2,2,bh+4);ctx.fillRect(bx+bw,by-2,2,bh+4);
+  ctx.fillStyle='#6366F1';
+  ctx.font=`bold ${Math.floor(bh*.18)}px 'DM Mono',monospace`;
+  ctx.textAlign='center';
+  ctx.fillText('BULSA v1.0',bx+Math.floor(bw/2),by+Math.floor(bh*.38));
+  ctx.fillStyle='#818CF8';
+  ctx.font=`${Math.floor(bh*.13)}px 'DM Mono',monospace`;
+  ctx.fillText('안전 시뮬레이터',bx+Math.floor(bw/2),by+Math.floor(bh*.6));
+  ctx.fillStyle='#A5B4FC';
+  ctx.font=`${Math.floor(bh*.11)}px 'DM Mono',monospace`;
+  ctx.fillText('KOSHA 기준 준수',bx+Math.floor(bw/2),by+Math.floor(bh*.78));
+  // 화분
+  const px1=Math.floor(W*.84),py1=Math.floor(H*.38);
+  ctx.fillStyle='#166534';ctx.fillRect(px1-4,py1,8,14);
+  ctx.fillStyle='#16A34A';ctx.fillRect(px1-8,py1-10,16,12);
+  ctx.fillStyle='#22C55E';ctx.fillRect(px1-6,py1-16,12,8);
+  ctx.fillStyle='#92400E';ctx.fillRect(px1-7,py1+14,14,10);
+  ctx.fillStyle='#78350F';ctx.fillRect(px1-9,py1+20,18,5);
+  // 책상들 (5개)
+  const deskColor='#312E81',deskH=8;
+  _PX_POS.forEach((pos,i)=>{
+    const dx=Math.floor(pos.x*W)-20,dy=Math.floor(pos.y*H)+Math.floor(H*.07);
+    ctx.fillStyle=deskColor;ctx.fillRect(dx,dy,40,deskH);
+    ctx.fillStyle='#1E1B4B';ctx.fillRect(dx+2,dy+deskH,4,12);ctx.fillRect(dx+34,dy+deskH,4,12);
+    // 모니터
+    ctx.fillStyle='#111827';ctx.fillRect(dx+10,dy-18,20,14);
+    ctx.fillStyle='#1E40AF';ctx.fillRect(dx+11,dy-17,18,12);
+    ctx.fillStyle='#6366F1';ctx.fillRect(dx+15,dy-15,4,4);
+    ctx.fillStyle='#111827';ctx.fillRect(dx+18,dy-4,4,4);
+  });
+  ctx.textAlign='left';
 }
 
-function _cySetWorking(idx,working){
-  const el=document.getElementById('cy-char-'+idx);
-  if(!el)return;
-  if(working)el.classList.add('working');
-  else el.classList.remove('working');
+// ── 픽셀 스프라이트 그리기 (10×12, PX_SCALE배) ──
+const _PX_SPRITES={
+  0:{// 🐰 토끼 PD
+    p:{L:'#F4A0B4',W:'#F8F8F8',E:'#DD2255',N:'#FF88AA',B:'#4466FF',D:'#2244BB'},
+    g:['.LL....LL.','.LL....LL.','WWWWWWWWWW','WWEWWWEWWW','WWWWNWWWWW','.WWWWWWWW.','.BBBBBBBB.','BBBBBBBBBB','BBBBBBBBBB','.DD....DD.','.DD....DD.','..........',]
+  },
+  1:{// 🐶 강아지 QA
+    p:{B:'#C89060',L:'#9B6030',W:'#FFF5E0',E:'#222222',N:'#333333',R:'#EE3333'},
+    g:['BL......LB','BLWWWWWWLB','LWWWWWWWWL','LWWEWWEWWL','LWWWWNWWWL','.LWWWWWWL.','..RRRRRR..','.WWWWWWWW.','WWWWWWWWWW','.WW....WW.','.WW....WW.','..........',]
+  },
+  2:{// 🐱 고양이 AD
+    p:{O:'#FF8C42',L:'#CC5500',W:'#FFF5F0',E:'#22CC77',N:'#FF6688',P:'#FF4499'},
+    g:['OO......OO','OOOOOOOOOO','OWWWWWWWWO','OWEWWWEWWO','OWWWNWWWWO','.OWWWWWWO.','.PPPPPPPP.','PPPPPPPPPP','PPPPPPPPPP','.PP....PP.','.PP....PP.','..........',]
+  },
+  3:{// 🦊 여우 기획
+    p:{O:'#FF6B35',K:'#111111',W:'#FFFFFF',E:'#882200',N:'#111111',P:'#8844DD'},
+    g:['.KO....OK.','KOOOOOOOOK','OWWWWWWWWO','OWEWWWEWWO','OWWWNWWWWO','.OWWWWWWO.','.PPPPPPPP.','PPPPPPPPPP','PPPPPPPPPP','.PP....PP.','.PP....PP.','..........',]
+  },
+  4:{// 🐻 곰 분석
+    p:{B:'#8B6348',L:'#5C3A1E',G:'#DEB887',E:'#111111',N:'#222222',C:'#2ECC71'},
+    g:['.LL....LL.','LLBBBBBBLL','LBGGGGGGBL','LBEGGGEGBL','LBGGNGGBBL','.LBBBBBBL.','.CCCCCCCC.','CCCCCCCCCC','CCCCCCCCCC','.CC....CC.','.CC....CC.','..........',]
+  }
+};
+
+function pxDrawSprite(ctx,idx,x,y,scale){
+  const sp=_PX_SPRITES[idx];if(!sp)return;
+  const {p,g}=sp;
+  const s=scale||4;
+  g.forEach((row,gy)=>{
+    for(let gx=0;gx<row.length;gx++){
+      const ch=row[gx];
+      if(ch==='.')continue;
+      ctx.fillStyle=p[ch]||'#888';
+      ctx.fillRect(x+gx*s,y+gy*s,s,s);
+    }
+  });
 }
 
-function _cyDoneAnim(idx){
-  const el=document.getElementById('cy-char-'+idx);
-  if(!el)return;
-  el.classList.remove('working');
-  el.classList.add('done');
-  setTimeout(()=>el.classList.remove('done'),2000);
-}
-
-// 채팅방: 에이전트 메시지 추가
-function _cyChatAddMsg(emoji,name,text,isMe,time){
-  const wrap=document.getElementById('cy-chat-msgs');
+// ── 오버레이 캐릭터 배치 ──
+function pxPlaceChars(canvas){
+  const wrap=document.getElementById('px-chars');
   if(!wrap)return;
-  const t=time||new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  wrap.innerHTML='';
+  const cw=canvas.offsetWidth,ch=canvas.offsetHeight;
+  const s=Math.max(2,Math.min(4,Math.floor(cw/110)));
+  const sw=10*s,sh=12*s;
+  _PX_POS.forEach((pos,i)=>{
+    const char=_PX_CHARS[i];
+    const cx=Math.floor(pos.x*cw);
+    const cy=Math.floor(pos.y*ch);
+    const ov=document.createElement('div');
+    ov.className='px-char-overlay';
+    ov.id='px-char-ov-'+i;
+    ov.style.left=cx+'px';
+    ov.style.top=cy+'px';
+    ov.onclick=()=>_pxCharClick(i);
+    // 스프라이트 캔버스
+    const sc=document.createElement('canvas');
+    sc.className='px-char-canvas';
+    sc.id='px-char-c-'+i;
+    sc.width=sw;sc.height=sh;
+    sc.style.width=sw+'px';sc.style.height=sh+'px';
+    const sctx=sc.getContext('2d');
+    pxDrawSprite(sctx,i,0,0,s);
+    // 말풍선
+    const sp=document.createElement('div');
+    sp.className='px-char-speech';
+    sp.id='px-speech-'+i;
+    sp.textContent='대기중...';
+    // 이름
+    const nm=document.createElement('div');
+    nm.className='px-char-label';
+    nm.textContent=char.name;
+    ov.appendChild(sp);
+    ov.appendChild(sc);
+    ov.appendChild(nm);
+    wrap.appendChild(ov);
+  });
+}
+
+function _pxCharClick(idx){
+  const sp=document.getElementById('px-speech-'+idx);
+  if(sp){sp.classList.add('show');setTimeout(()=>sp.classList.remove('show'),2000);}
+}
+
+function _pxSpeech(idx,text){
+  const sp=document.getElementById('px-speech-'+idx);
+  if(!sp)return;
+  sp.textContent=text.slice(0,60)+(text.length>60?'…':'');
+  sp.classList.add('show');
+  clearTimeout(_pxSpeechTimers[idx]);
+  _pxSpeechTimers[idx]=setTimeout(()=>sp?.classList.remove('show'),3500);
+}
+
+// ── 초기화 ──
+function initPixelOffice(){
+  if(_pxInitDone)return;
+  _pxInitDone=true;
+  const canvas=document.getElementById('px-canvas');
+  if(!canvas)return;
+  const wrap=document.getElementById('px-room-wrap');
+  function resize(){
+    canvas.width=wrap.offsetWidth;
+    canvas.height=wrap.offsetHeight||Math.floor(wrap.offsetWidth*0.72);
+    pxDrawRoom(canvas);
+    pxPlaceChars(canvas);
+  }
+  resize();
+  new ResizeObserver(resize).observe(wrap);
+  // 시계 업데이트
+  function updateClk(){
+    const el=document.getElementById('px-hdr-clk');
+    if(el)el.textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  updateClk();setInterval(updateClk,1000);
+}
+
+// ── 탭 전환 ──
+function pxTab(mode,btn){
+  _pxTabMode=mode;
+  document.querySelectorAll('.px-tab').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  // 결과 탭: result 메시지만 표시
+  document.querySelectorAll('.px-bwrap').forEach(el=>{
+    if(mode==='result'){
+      el.style.display=el.dataset.type==='result'?'':'none';
+    }else{
+      el.style.display='';
+    }
+  });
+}
+
+function pxFill(text){
+  const inp=document.getElementById('px-input');
+  if(inp){inp.value=text;inp.focus();}
+}
+
+// ── 메시지 추가 ──
+function _pxAddMsg(emoji,name,text,isMe,msgType,statusBadge){
+  const wrap=document.getElementById('px-msgs');
+  if(!wrap)return null;
+  document.getElementById('px-msg-empty')?.remove();
+  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
   const el=document.createElement('div');
-  el.className='cy-bwrap'+(isMe?' me':'');
+  el.className='px-bwrap'+(isMe?' me':'');
+  el.dataset.type=msgType||'log';
+  if(_pxTabMode==='result'&&msgType!=='result')el.style.display='none';
   if(isMe){
-    el.innerHTML='<div class="cy-bbody"><div class="cy-bname">나</div>'
-      +'<div class="cy-bb">'+_esc(text)+'</div>'
-      +'<div class="cy-bt">'+t+'</div></div>';
+    el.innerHTML='<div class="px-bbody">'
+      +'<div class="px-bname">나</div>'
+      +'<div class="px-bb">'+_esc(text)+'</div>'
+      +'<div class="px-bt">'+t+'</div>'
+      +'</div>';
   }else{
-    el.innerHTML='<div class="cy-bav">'+emoji+'</div>'
-      +'<div class="cy-bbody"><div class="cy-bname">'+_esc(name)+'</div>'
-      +'<div class="cy-bb">'+_esc(text.slice(0,150))+(text.length>150?'…':'')+'</div>'
-      +'<div class="cy-bt">'+t+'</div></div>';
+    const badge=statusBadge?'<div class="'+statusBadge.cls+'">'+statusBadge.text+'</div>':'';
+    el.innerHTML='<div class="px-bav">'+emoji+'</div>'
+      +'<div class="px-bbody">'
+      +'<div class="px-bname">'+_esc(name)+'</div>'
+      +'<div class="px-bb">'+_esc(text.slice(0,200))+(text.length>200?'…':'')+'</div>'
+      +badge
+      +'<div class="px-bt">'+t+'</div>'
+      +'</div>';
   }
   wrap.appendChild(el);
   wrap.scrollTop=wrap.scrollHeight;
+  return el;
 }
 
-// 업무지시: 명령 아이템 추가 — 로컬 optimistic
-function _cyAddCmdItem(text){
-  const list=document.getElementById('cy-cmd-list');
-  if(!list)return null;
-  document.getElementById('cy-cmd-empty')?.remove();
-  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-  const item=document.createElement('div');
-  item.className='cy-cmd-item';
-  item.innerHTML=
-    '<div class="cy-cmd-txt">'+_esc(text)+'</div>'
-    +'<div class="cy-cmd-meta">'
-    +'<span class="cy-cmd-agent" id="cy-ca-tmp">🐰 배정 중...</span>'
-    +'<span class="cy-cmd-st pending" id="cy-cs-tmp">🔄 전송중</span>'
-    +'</div>'
-    +'<div class="cy-cmd-result" id="cy-cr-tmp" style="display:none"></div>';
-  list.appendChild(item);
-  list.scrollTop=list.scrollHeight;
-  return {
-    item,
-    stEl:item.querySelector('#cy-cs-tmp'),
-    agEl:item.querySelector('#cy-ca-tmp'),
-    resEl:item.querySelector('#cy-cr-tmp'),
-  };
-}
-
-// 업무지시: 서버에서 온 명령 상태 업데이트
-function _cyUpdateCmdStatus(id,cmd){
-  const c=_cyLocalCmds.get(id);
-  if(!c)return;
-  const {stEl,agEl,resEl}=c;
-  if(agEl&&cmd.agent){agEl.id='';agEl.textContent=cmd.agent;}
-  if(stEl){
-    stEl.id='';
-    if(cmd.status==='running'){
-      stEl.className='cy-cmd-st running';stEl.textContent='🔄 작업중...';
-      const eta=cmd.startedAt?'~'+Math.ceil((Date.now()-new Date(cmd.startedAt))/60000+3)+'분':'';
-      if(eta)stEl.textContent='🔄 작업중 '+eta;
-    }else if(cmd.status==='done'){
-      stEl.className='cy-cmd-st done';stEl.textContent='✅ 완료';
-      if(cmd.result&&resEl){resEl.style.display='';resEl.textContent=cmd.result.slice(0,120);}
-      const idx=_cyAssignIdx(cmd.agent);
-      _cyDoneAnim(idx);
-      _cySpeech(idx,'완료됐어요! ✅');
-    }else if(cmd.status==='failed'){
-      stEl.className='cy-cmd-st failed';stEl.textContent='❌ 실패';
-      if(cmd.result&&resEl){resEl.style.display='';resEl.textContent=cmd.result.slice(0,120);}
-    }
-  }
-}
-
-function _cyUpdateFromStatus(data){
+// ── 서버 상태 → UI ──
+function _pxUpdateFromStatus(data){
   const logs=data.logs||[];
   const cmds=data.commands||[];
 
-  // 로그를 채팅방에 반영
-  const newLogs=logs.filter(l=>!_cyLogIds.has('l'+l.id));
+  // 새 로그 → 채팅 버블
+  const newLogs=logs.filter(l=>!_pxLogIds.has(l.id));
   newLogs.forEach(l=>{
-    _cyLogIds.add('l'+l.id);
-    const idx=_cyAssignIdx(l.agent);
-    const ch=_CY_CHARS[idx];
-    const lvl=l.level==='error'?'❌ ':l.level==='warn'?'⚠️ ':'';
-    _cyChatAddMsg(ch.emoji,l.agent||ch.key,lvl+l.message,false,_fmtTime(l.timestamp));
-    _cySpeech(idx,l.message);
+    _pxLogIds.add(l.id);
+    const idx=_pxAssignIdx(l.agent);
+    const ch=_PX_CHARS[idx];
+    const prefix=l.level==='error'?'[ERR] ':l.level==='warn'?'[WARN] ':'';
+    _pxAddMsg(ch.emoji,l.agent||ch.name,prefix+l.message,false,'log');
+    _pxSpeech(idx,l.message);
   });
 
-  // 에이전트 작업 상태 반영
-  _CY_CHARS.forEach(ch=>_cySetWorking(ch.idx,false));
-  cmds.filter(c=>c.status==='running'&&c.agent).forEach(c=>{
-    const idx=_cyAssignIdx(c.agent);
-    _cySetWorking(idx,true);
-    _cySpeech(idx,'작업중 🔄');
-  });
-
-  // 로컬 명령 상태 업데이트
+  // 새 명령 결과 → 결과 카드
   cmds.forEach(c=>{
-    if(_cyLocalCmds.has(c.id))_cyUpdateCmdStatus(c.id,c);
+    if(!_pxCmdIds.has(c.id)){
+      _pxCmdIds.set(c.id,{status:null,stEl:null});
+    }
+    const entry=_pxCmdIds.get(c.id);
+    if(entry.status===c.status)return;
+    entry.status=c.status;
+    if((c.status==='done'||c.status==='failed')&&c.result&&!entry.stEl){
+      const idx=_pxAssignIdx(c.agent);
+      const ch=_PX_CHARS[idx];
+      const badge={
+        cls:'px-status-badge '+(c.status==='done'?'px-st-done':'px-st-failed'),
+        text:c.status==='done'?'✓ 완료':'✗ 실패'
+      };
+      const el=_pxAddMsg(ch.emoji,c.agent||ch.name,c.result,false,'result',badge);
+      entry.stEl=el;
+      _pxSpeech(idx,c.status==='done'?'완료! ✓':'실패 ✗');
+    }
+  });
+
+  // 작업중인 에이전트 말풍선
+  cmds.filter(c=>c.status==='running'&&c.agent).forEach(c=>{
+    _pxSpeech(_pxAssignIdx(c.agent),'작업중...');
   });
 }
 
-// 우측 탭 전환
-function cyRTab(name,btn){
-  document.querySelectorAll('.cy-rtab').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('.cy-rpanel').forEach(p=>p.classList.remove('on'));
-  document.getElementById('cy-rpanel-'+name)?.classList.add('on');
-  if(btn)btn.classList.add('on');
-}
-
-function cySetCmd(text){
-  const inp=document.getElementById('cy-input');
-  if(inp){inp.value=text;inp.focus();}
-  // 업무지시 탭으로 이동
-  document.querySelectorAll('.cy-rtab').forEach(b=>{
-    if(b.getAttribute('onclick')?.includes("'cmd'"))b.click();
-  });
-}
-
-function cyFocus(idx){
-  const sp=document.getElementById('cy-sp-'+idx);
-  if(sp){sp.classList.add('pop');setTimeout(()=>sp.classList.remove('pop'),600);}
-}
-
-// 채팅방 전송 (서버 전달 안 함)
-const _CY_REPLIES=[
-  '저는 코드 수정 중이에요 🛠️',
-  '잠깐요, 집중해야 해요 😅',
-  '그렇군요! 계속 열심히 할게요 💪',
-  '지금 바쁘지만 알겠어요 🐾',
-  '파이팅! 같이 열심히 해요 ✨',
-  '응, 좋아요! 👍',
-  '혼자서도 열심히 하고 있어요~',
-];
-async function cyChatSend(){
-  const inp=document.getElementById('cy-chat-input');
+// ── 전송 ──
+async function pxSend(){
+  const inp=document.getElementById('px-input');
   if(!inp||!inp.value.trim())return;
   const text=inp.value.trim();
   inp.value='';
-  _cyChatAddMsg('','나',text,true);
-  // 랜덤 에이전트가 답장
-  setTimeout(()=>{
-    const idx=Math.floor(Math.random()*5);
-    const ch=_CY_CHARS[idx];
-    const reply=_CY_REPLIES[Math.floor(Math.random()*_CY_REPLIES.length)];
-    _cyChatAddMsg(ch.emoji,['토끼 PD','강아지 QA','고양이 AD','여우 기획','곰 분석'][idx],reply,false);
-    _cySpeech(idx,reply);
-  },600+Math.random()*800);
-}
-
-// 업무지시 전송 (서버 전달)
-async function cySend(){
-  const inp=document.getElementById('cy-input');
-  if(!inp||!inp.value.trim())return;
-  const text=inp.value.trim();
-  inp.value='';
-  const local=_cyAddCmdItem(text);
-  _cySpeech(0,'알겠습니다! 바로 처리할게요 🐾');
-  _cySetWorking(0,true);
+  _pxAddMsg('','나',text,true,'cmd');
+  _pxSpeech(0,'알겠습니다! 처리할게요 🐾');
   try{
     const r=await fetch(API_URL+'/command',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({cmd:text})
     });
     const d=await r.json();
-    if(d.ok&&local){
-      if(local.stEl){local.stEl.id='cy-cs-'+d.id;local.stEl.className='cy-cmd-st pending';local.stEl.textContent='⏳ 대기중';}
-      if(local.agEl){local.agEl.id='';}
-      _cyLocalCmds.set(d.id,local);
-    }else if(local&&local.stEl){
-      local.stEl.className='cy-cmd-st failed';local.stEl.textContent='❌ 전송 실패';
-      _cySetWorking(0,false);
-    }
+    if(d.ok)_pxCmdIds.set(d.id,{status:'pending',stEl:null});
   }catch(e){
-    if(local&&local.stEl){local.stEl.className='cy-cmd-st failed';local.stEl.textContent='❌ 서버 오프라인';}
-    _cySpeech(0,'서버가 응답하지 않아요 😢');
-    _cySetWorking(0,false);
-  }
-}
-
-// 카카오톡 채팅 입력 전송
-async function kktSend(){
-  const inp=document.getElementById('kkt-input');
-  if(!inp||!inp.value.trim())return;
-  const text=inp.value.trim();
-  inp.value='';
-  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-  _kktAddMsg({emoji:'👤',sender:'나',text,me:true,time:t,read:'1'});
-  try{
-    await fetch(API_URL+'/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd:text})});
-  }catch(e){console.error('kktSend:',e)}
-}
-
-// cmd2 탭 (업무지시 내부)
-function setCmdOf(text){const inp=document.getElementById('cmd-input2');if(inp)inp.value=text;}
-async function sendCmdOf(){
-  const inp=document.getElementById('cmd-input2');
-  if(!inp||!inp.value.trim())return;
-  const text=inp.value.trim();
-  inp.value='';
-  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-  const el=document.createElement('div');
-  el.className='chat-msg user';
-  el.innerHTML='<div class="chat-bubble user-bubble"><div class="chat-text">'+_esc(text)+'</div><div class="chat-time" id="of-cmd-time-tmp">'+t+' 전송중...</div></div>';
-  const h=document.getElementById('chat-history2');
-  if(h){document.getElementById('chat-empty2')?.remove();h.appendChild(el);h.scrollTop=h.scrollHeight;}
-  try{
-    const r=await fetch(API_URL+'/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd:text})});
-    const data=await r.json();
-    const tim=document.getElementById('of-cmd-time-tmp');
-    if(tim){tim.id='';tim.textContent=t+(data.ok?' ⏳':' ❌');}
-    if(data.ok){
-      _chatIds.add('c'+data.id);
-      _kktAddMsg({emoji:'👤',sender:'나',text,me:true,time:t,read:'1'});
-    }
-  }catch(e){
-    const tim=document.getElementById('of-cmd-time-tmp');
-    if(tim){tim.id='';tim.textContent=t+' ❌ 서버 오프라인';}
+    _pxAddMsg('⚠️','시스템','서버 오프라인 — 나중에 다시 시도해주세요',false,'log');
   }
 }
 
@@ -3936,8 +3518,9 @@ setInterval(()=>{
   el.className='desk-char '+next;
 },8000);
 
-// 초기 폴링 시작 (사무실 탭이 기본)
+// 초기 폴링 + 픽셀아트 초기화 (사무실 탭이 기본)
 startOfPoll();
+setTimeout(initPixelOffice,100);
 
 let _pmP=67,_qaP=45;
 setInterval(()=>{
