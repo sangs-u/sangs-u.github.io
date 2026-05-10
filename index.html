@@ -1052,13 +1052,145 @@ body {
 .of-tab.on{color:#58A6FF;border-bottom-color:#58A6FF}
 .of-wrap{background:#0D1117;min-height:600px}
 
-/* ══ 사무실 탭 내부 ══ */
+/* ══ 사무실 탭 내부 (legacy, 미사용) ══ */
 .of-inner-tabs{display:flex;gap:0;border-bottom:1px solid #21262D;background:#161B22;flex-shrink:0}
 .of-inner-tab{padding:10px 18px;font-size:12px;font-weight:500;color:#8B949E;cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;font-family:inherit;transition:all .15s;white-space:nowrap}
 .of-inner-tab:hover{color:#E6EDF3}
 .of-inner-tab.on{color:#58A6FF;border-bottom-color:#58A6FF;background:rgba(88,166,255,.05)}
 .of-panel{display:none;animation:fi .2s ease}
 .of-panel.on{display:flex;flex-direction:column}
+
+/* ══════════════════════════════════════
+   🌸 CYWORLD 사무실 스타일 🌸
+══════════════════════════════════════ */
+#s-of.on{display:flex;flex-direction:column;margin:-44px -48px -80px;min-height:calc(100vh - 44px)}
+@media(max-width:720px){#s-of.on{margin:-24px -18px -90px}}
+.cy-hdr{display:flex;align-items:center;gap:10px;padding:10px 20px;background:linear-gradient(135deg,#FFB6C1,#C9A0DC);flex-shrink:0}
+.cy-hdr-icon{font-size:18px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))}
+.cy-hdr-title{font-size:14px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.2);letter-spacing:-.3px}
+.cy-conn{display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(255,255,255,.25);border-radius:20px;font-size:10px;color:#fff;font-weight:700;flex-shrink:0}
+.cy-conn-dot{font-size:8px;animation:cyPulse 1.5s infinite}
+@keyframes cyPulse{0%,100%{opacity:1}50%{opacity:.3}}
+.cy-hdr-t{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.8)}
+
+/* 방 */
+.cy-room{
+  background:
+    radial-gradient(circle at 15% 40%,rgba(255,192,203,.25),transparent 45%),
+    radial-gradient(circle at 85% 60%,rgba(173,216,230,.2),transparent 45%),
+    linear-gradient(180deg,#FFF0F8 0%,#FDEAF6 35%,#FFF5E6 65%,#F5E8D3 100%);
+  position:relative;overflow:hidden;padding:14px 18px 10px;flex:1;overflow-y:auto
+}
+.cy-room::before{content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,20,147,.05) 2px,transparent 2px);
+  background-size:28px 28px;pointer-events:none}
+
+/* 상단 배경 데코 */
+.cy-deco{display:flex;align-items:flex-end;gap:10px;margin-bottom:10px;position:relative;z-index:1}
+.cy-win{width:82px;height:64px;border-radius:10px 10px 0 0;border:3px solid #E8B0CC;border-bottom:none;
+  background:linear-gradient(180deg,#87CEEB,#C5E8FF);overflow:hidden;position:relative;flex-shrink:0}
+.cy-sky-inner{position:relative;width:100%;height:100%}
+.cy-cloud-svg{position:absolute;font-size:16px}
+.cy-cloud-svg.c1{top:4px;left:4px;animation:clfloat 4s ease-in-out infinite}
+.cy-cloud-svg.c2{top:26px;right:4px;font-size:12px;animation:clfloat 4s ease-in-out infinite 2s}
+.cy-sun-svg{position:absolute;top:4px;right:8px;font-size:16px;animation:sunrot 12s linear infinite}
+@keyframes clfloat{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+@keyframes sunrot{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.cy-wb{background:#fff;border:2px solid #DDB0CC;border-radius:8px;padding:7px 14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);flex-shrink:0;min-width:100px}
+.cy-wb-h{font-size:13px;font-weight:900;color:#CC44AA}
+.cy-wb-s{font-size:9px;color:#AAA;margin-top:1px}
+.cy-clk-wrap{width:52px;height:52px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(102,126,234,.45)}
+.cy-clk{font-family:'DM Mono',monospace;font-size:10px;color:#fff;font-weight:700;letter-spacing:.05em}
+.cy-plant{font-size:26px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.1))}
+
+/* 캐릭터 팀 */
+.cy-team{display:flex;justify-content:center;align-items:flex-end;gap:14px;
+  position:relative;z-index:2;flex-wrap:wrap;padding:4px 0 0}
+.cy-char{display:flex;flex-direction:column;align-items:center;cursor:pointer;
+  position:relative;transition:transform .2s}
+.cy-char:hover{transform:scale(1.1) translateY(-5px)}
+
+/* 말풍선 (항상 표시) */
+.cy-sp{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);
+  background:#fff;border:2px solid #FFB6C1;border-radius:12px;
+  padding:4px 9px;font-size:9px;font-weight:600;color:#666;
+  box-shadow:0 3px 10px rgba(0,0,0,.1);white-space:nowrap;
+  max-width:130px;white-space:normal;text-align:center;line-height:1.4;
+  opacity:.85;pointer-events:none;transition:opacity .3s,transform .3s}
+.cy-sp::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:#FFB6C1}
+.cy-char:hover .cy-sp,.cy-sp.pop{opacity:1;transform:translateX(-50%) translateY(-3px)}
+@keyframes spPop{0%{transform:translateX(-50%) scale(.9)}100%{transform:translateX(-50%) scale(1)}}
+.cy-sp.pop{animation:spPop .3s ease}
+
+/* 아바타 */
+.cy-av{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:34px;border:3px solid rgba(255,255,255,.9);position:relative;
+  box-shadow:0 6px 20px rgba(0,0,0,.15),inset 0 -3px 8px rgba(0,0,0,.1);
+  animation:avBob 3s ease-in-out infinite}
+@keyframes avBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+/* 볼 홍조 */
+.cy-av::before,.cy-av::after{content:'';position:absolute;width:14px;height:8px;
+  border-radius:50%;background:rgba(255,80,130,.22);bottom:14px}
+.cy-av::before{left:5px}.cy-av::after{right:5px}
+/* 색상 */
+.av-pink{background:linear-gradient(135deg,#FFB6C1,#FF69B4)}
+.av-cream{background:linear-gradient(135deg,#FFDAB9,#DEB887)}
+.av-orange{background:linear-gradient(135deg,#FFD080,#FFA040)}
+.av-rust{background:linear-gradient(135deg,#FF9060,#E84020)}
+.av-brown{background:linear-gradient(135deg,#CD853F,#7B3F00)}
+
+/* 작업중 애니메이션 */
+.cy-char.working .cy-av{animation:avWork .7s ease-in-out infinite;
+  box-shadow:0 6px 20px rgba(255,105,180,.45),0 0 0 3px rgba(255,105,180,.25)}
+@keyframes avWork{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(4deg) translateY(-4px)}}
+.cy-char.done .cy-av{animation:avDone .5s ease-in-out 3}
+@keyframes avDone{0%,100%{transform:scale(1)}50%{transform:scale(1.25) translateY(-10px)}}
+
+.cy-name{font-size:11px;font-weight:800;color:#444;margin-top:5px;
+  text-shadow:0 1px 2px rgba(255,255,255,.8)}
+.cy-role{font-size:9px;color:#AAA;font-weight:500}
+
+/* 활동 피드 */
+.cy-feed{margin-top:10px;background:rgba(255,255,255,.7);border-radius:14px;
+  border:2px solid rgba(255,182,193,.45);padding:6px 12px;max-height:88px;
+  overflow-y:auto;backdrop-filter:blur(4px);position:relative;z-index:1}
+.cy-feed-empty{text-align:center;font-size:11px;color:#CCAACC;padding:6px 0}
+.cy-feed-row{display:flex;align-items:baseline;gap:5px;padding:3px 0;
+  font-size:11px;color:#555;border-bottom:1px solid rgba(255,182,193,.18);
+  animation:feedIn .25s ease}
+.cy-feed-row:last-child{border-bottom:none}
+@keyframes feedIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.cy-feed-emo{flex-shrink:0;font-size:12px}
+.cy-feed-me{color:#CC44AA;font-weight:700}
+.cy-feed-t{font-family:'DM Mono',monospace;font-size:9px;color:#CCC;margin-left:auto;flex-shrink:0}
+
+/* 입력 영역 */
+.cy-input-zone{background:linear-gradient(180deg,#FFF5FB,#FFE8F4);
+  border-top:2px solid rgba(255,182,193,.5);padding:10px 16px 14px;flex-shrink:0}
+.cy-presets{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.cy-preset{padding:4px 11px;background:#fff;border:1.5px solid #FFB6C1;border-radius:20px;
+  font-size:10.5px;color:#CC44AA;cursor:pointer;font-family:inherit;
+  transition:all .15s;font-weight:600}
+.cy-preset:hover{background:#FFB6C1;color:#fff;transform:translateY(-1px);
+  box-shadow:0 3px 8px rgba(255,105,180,.3)}
+.cy-input-row{display:flex;gap:8px;align-items:flex-end}
+.cy-ta{flex:1;background:#fff;border:2px solid #FFB6C1;border-radius:16px;
+  padding:9px 14px;font-family:'Noto Sans KR',sans-serif;font-size:13px;
+  color:#444;resize:none;outline:none;min-height:42px;max-height:90px;
+  line-height:1.5;transition:border-color .2s,box-shadow .2s}
+.cy-ta:focus{border-color:#FF69B4;box-shadow:0 0 0 3px rgba(255,105,180,.15)}
+.cy-ta::placeholder{color:#DDD}
+.cy-btn{flex-shrink:0;width:52px;height:52px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,#FF69B4,#FF1493);color:#fff;
+  font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;line-height:1.3;
+  box-shadow:0 4px 15px rgba(255,20,147,.4);transition:all .2s}
+.cy-btn:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(255,20,147,.5)}
+.cy-btn:active{transform:scale(.95)}
 
 /* ══ 탭1: 2D 사무실 ══ */
 .office-room{position:relative;background:#1C2333;overflow:hidden;flex:1;min-height:500px;user-select:none}
@@ -1983,19 +2115,77 @@ neutral standing pose, T-pose, game ready, high quality PBR textures</div></div>
 
 <!-- ══ 사무실 탭 ══ -->
 <div class="sec" id="s-of">
-<div class="of-hdr">
-  <div class="of-hdr-mark">B</div>
-  <div class="of-hdr-title">BULSA · 개발팀 사무실</div>
-  <div class="of-hdr-badge" id="of-api-badge" style="margin-left:0"><div class="of-hdr-dot" id="of-api-dot"></div><span id="of-api-txt">연결 중...</span></div>
-  <div style="font-family:'DM Mono',monospace;font-size:11px;color:#484F58;margin-left:auto" id="hdr-time"></div>
+<div class="cy-hdr">
+  <span class="cy-hdr-icon">🏢</span>
+  <span class="cy-hdr-title">BULSA 개발팀 사무실</span>
+  <div class="cy-conn" id="cy-conn"><span class="cy-conn-dot">●</span><span id="cy-conn-txt">연결 중...</span></div>
+  <span class="cy-hdr-t" id="cy-hdr-t"></span>
 </div>
-<div class="of-inner-tabs">
+<div class="cy-room">
+  <div class="cy-deco">
+    <div class="cy-win"><div class="cy-sky-inner"><span class="cy-cloud-svg c1">☁️</span><span class="cy-cloud-svg c2">🌤</span><span class="cy-sun-svg">☀️</span></div></div>
+    <div class="cy-wb"><div class="cy-wb-h">BULSA v1.0</div><div class="cy-wb-s">안전 문명 시뮬레이터 개발중</div></div>
+    <div class="cy-clk-wrap"><div class="cy-clk" id="cy-clk">00:00</div></div>
+    <div class="cy-plant">🪴</div>
+    <div class="cy-plant">🌵</div>
+  </div>
+  <div class="cy-team">
+    <div class="cy-char" id="cy-char-0" onclick="cyFocus(0)">
+      <div class="cy-sp" id="cy-sp-0">CLAUDE.md 읽는 중...</div>
+      <div class="cy-av av-pink">🐰</div>
+      <div class="cy-name">토끼 PD</div>
+      <div class="cy-role">Sonnet</div>
+    </div>
+    <div class="cy-char" id="cy-char-1" onclick="cyFocus(1)">
+      <div class="cy-sp" id="cy-sp-1">Playwright 대기중...</div>
+      <div class="cy-av av-cream">🐶</div>
+      <div class="cy-name">강아지 QA</div>
+      <div class="cy-role">Opus</div>
+    </div>
+    <div class="cy-char" id="cy-char-2" onclick="cyFocus(2)">
+      <div class="cy-sp" id="cy-sp-2">대기 중 😴</div>
+      <div class="cy-av av-orange">🐱</div>
+      <div class="cy-name">고양이 AD</div>
+      <div class="cy-role">Opus</div>
+    </div>
+    <div class="cy-char" id="cy-char-3" onclick="cyFocus(3)">
+      <div class="cy-sp" id="cy-sp-3">대기 중...</div>
+      <div class="cy-av av-rust">🦊</div>
+      <div class="cy-name">여우 기획</div>
+      <div class="cy-role">Opus</div>
+    </div>
+    <div class="cy-char" id="cy-char-4" onclick="cyFocus(4)">
+      <div class="cy-sp" id="cy-sp-4">데이터 없음</div>
+      <div class="cy-av av-brown">🐻</div>
+      <div class="cy-name">곰 분석</div>
+      <div class="cy-role">Haiku</div>
+    </div>
+  </div>
+  <div class="cy-feed" id="cy-feed">
+    <div class="cy-feed-empty" id="cy-feed-empty">활동 내역이 여기에 표시됩니다 · 5초 자동 갱신</div>
+  </div>
+</div>
+<div class="cy-input-zone">
+  <div class="cy-presets">
+    <button class="cy-preset" onclick="cySetCmd('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 가동</button>
+    <button class="cy-preset" onclick="cySetCmd('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA 테스트</button>
+    <button class="cy-preset" onclick="cySetCmd('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태 보고</button>
+    <button class="cy-preset" onclick="cySetCmd('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 즉시 Push</button>
+    <button class="cy-preset" onclick="cySetCmd('게임 플레이 스크린샷 찍어서 시각적 품질 분석해줘.')">🎨 품질 검토</button>
+    <button class="cy-preset" onclick="cySetCmd('Product Hunt 영문 소개글 작성해줘.')">📣 PH 소개글</button>
+  </div>
+  <div class="cy-input-row">
+    <textarea class="cy-ta" id="cy-input" placeholder="팀에게 지시할 내용을 입력하세요..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();cySend()}"></textarea>
+    <button class="cy-btn" onclick="cySend()">전송<br>💌</button>
+  </div>
+</div>
+<div class="of-inner-tabs" style="display:none">
   <button class="of-inner-tab on" onclick="ofTab('office',this)">🏢 사무실</button>
   <button class="of-inner-tab" onclick="ofTab('chat',this)">💬 채팅방</button>
   <button class="of-inner-tab" onclick="ofTab('cmd2',this)">📋 업무 지시</button>
   <button class="of-inner-tab" onclick="ofTab('dev',this)">📊 개발 현황</button>
 </div>
-<div class="of-wrap" id="s-of-inner" style="min-height:0;display:flex;flex-direction:column">
+<div class="of-wrap" id="s-of-inner" style="display:none">
 
 <!-- ── 탭1: 2D 사무실 ── -->
 <div class="of-panel on" id="of-panel-office">
@@ -2665,6 +2855,7 @@ function go(id){
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='gd') setTimeout(()=>bvResize(),100);
   if(id==='cmd') startCmdPoll(); else stopCmdPoll();
+  if(id==='of') startOfPoll();
 }
 
 function tt(el){el.classList.toggle('on')}
@@ -3106,11 +3297,16 @@ function updateOfficeClock(){
   const t=now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   const el=document.getElementById('hdr-time');
   if(el)el.textContent=t;
+  const hdrT=document.getElementById('cy-hdr-t');
+  if(hdrT)hdrT.textContent=t;
   const td=document.getElementById('today-d');
   if(td)td.textContent=now.toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
-  // 사무실 SVG 시계
-  const clk=document.getElementById('of-clock');
+  // 싸이월드 시계
+  const clk=document.getElementById('cy-clk');
   if(clk)clk.textContent=now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  // SVG 시계 (레거시)
+  const svgClk=document.getElementById('of-clock');
+  if(svgClk)svgClk.textContent=now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
 }
 setInterval(updateOfficeClock,1000);
 updateOfficeClock();
@@ -3147,18 +3343,27 @@ function _agentEmoji(name){
 }
 
 function _setOfBadge(ok){
+  // 레거시 뱃지
   const b=document.getElementById('of-api-badge');
   const d=document.getElementById('of-api-dot');
   const t=document.getElementById('of-api-txt');
-  if(!b)return;
-  if(ok){
-    b.style.cssText='background:rgba(63,185,80,.12);border-color:rgba(63,185,80,.25);color:#3FB950;margin-left:0';
-    if(d){d.style.background='#3FB950';d.style.animation='';}
-    if(t)t.textContent='연결됨';
-  }else{
-    b.style.cssText='background:rgba(248,81,73,.12);border-color:rgba(248,81,73,.25);color:#F85149;margin-left:0';
-    if(d){d.style.background='#F85149';d.style.animation='none';}
-    if(t)t.textContent='오프라인';
+  if(b){
+    if(ok){
+      b.style.cssText='background:rgba(63,185,80,.12);border-color:rgba(63,185,80,.25);color:#3FB950;margin-left:0';
+      if(d){d.style.background='#3FB950';d.style.animation='';}
+      if(t)t.textContent='연결됨';
+    }else{
+      b.style.cssText='background:rgba(248,81,73,.12);border-color:rgba(248,81,73,.25);color:#F85149;margin-left:0';
+      if(d){d.style.background='#F85149';d.style.animation='none';}
+      if(t)t.textContent='오프라인';
+    }
+  }
+  // 싸이월드 뱃지
+  const cb=document.getElementById('cy-conn');
+  const ct=document.getElementById('cy-conn-txt');
+  if(cb){
+    cb.style.background=ok?'rgba(63,185,80,.3)':'rgba(255,80,80,.3)';
+    if(ct)ct.textContent=ok?'연결됨':'오프라인';
   }
 }
 
@@ -3170,6 +3375,7 @@ async function _fetchOfStatus(){
     _renderOfLogs(data.logs||[]);
     _renderOfCmds(data.commands||[]);
     _updateCharStates(data);
+    _cyUpdateFromStatus(data);
   }catch(e){_setOfBadge(false);}
 }
 
@@ -3294,6 +3500,132 @@ function _kktAddMsg({emoji,sender,text,me,time,read}){
 function startOfPoll(){
   _fetchOfStatus();
   if(!_ofPollTimer)_ofPollTimer=setInterval(_fetchOfStatus,5000);
+}
+
+// ══ 싸이월드 사무실 UI ══
+const _cyFeedIds=new Set();
+const _cyCmdFeedIds=new Set();
+const _CY_CHARS=[
+  {idx:0,emoji:'🐰',key:'pm',agents:['🐰','pm','sonnet']},
+  {idx:1,emoji:'🐶',key:'qa',agents:['🐶','qa','강아지']},
+  {idx:2,emoji:'🐱',key:'quality',agents:['🐱','품질','고양이']},
+  {idx:3,emoji:'🦊',key:'content',agents:['🦊','콘텐츠','여우']},
+  {idx:4,emoji:'🐻',key:'data',agents:['🐻','데이터','분석','곰']},
+];
+
+function _cyAssignIdx(agentStr){
+  const s=(agentStr||'').toLowerCase();
+  for(const c of _CY_CHARS){if(c.agents.some(a=>s.includes(a.toLowerCase())))return c.idx;}
+  return 0;
+}
+
+function _cyAddFeed(emoji,text,isMine,time){
+  const feed=document.getElementById('cy-feed');
+  if(!feed)return;
+  document.getElementById('cy-feed-empty')?.remove();
+  const row=document.createElement('div');
+  row.className='cy-feed-row';
+  const t=time||new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  row.innerHTML='<span class="cy-feed-emo">'+emoji+'</span>'
+    +'<span class="'+(isMine?'cy-feed-me':'')+'">'+_esc(text.slice(0,80))+(text.length>80?'…':'')+'</span>'
+    +'<span class="cy-feed-t">'+t+'</span>';
+  feed.appendChild(row);
+  feed.scrollTop=feed.scrollHeight;
+}
+
+function _cySpeech(idx,text){
+  const sp=document.getElementById('cy-sp-'+idx);
+  if(!sp)return;
+  sp.textContent=text.slice(0,60)+(text.length>60?'…':'');
+  sp.classList.add('pop');
+  setTimeout(()=>sp.classList.remove('pop'),400);
+}
+
+function _cySetWorking(idx,working){
+  const el=document.getElementById('cy-char-'+idx);
+  if(!el)return;
+  if(working)el.classList.add('working');
+  else el.classList.remove('working');
+}
+
+function _cyDoneAnim(idx){
+  const el=document.getElementById('cy-char-'+idx);
+  if(!el)return;
+  el.classList.remove('working');
+  el.classList.add('done');
+  setTimeout(()=>el.classList.remove('done'),2000);
+}
+
+function _cyUpdateFromStatus(data){
+  const logs=data.logs||[];
+  const cmds=data.commands||[];
+  // 새 로그를 피드에 추가
+  const newLogs=logs.filter(l=>!_cyFeedIds.has('l'+l.id));
+  newLogs.forEach(l=>{
+    _cyFeedIds.add('l'+l.id);
+    const idx=_cyAssignIdx(l.agent);
+    const emoji=_CY_CHARS[idx]?.emoji||'📡';
+    const lvl=l.level==='error'?'❌ ':l.level==='warn'?'⚠️ ':'';
+    _cyAddFeed(emoji,lvl+l.message,false,_fmtTime(l.timestamp));
+    _cySpeech(idx,l.message);
+  });
+  // 새 명령을 피드에 추가
+  const newCmds=cmds.filter(c=>!_cyCmdFeedIds.has('c'+c.id));
+  newCmds.forEach(c=>{
+    _cyCmdFeedIds.add('c'+c.id);
+    _cyAddFeed('👤',c.cmd,true,_fmtTime(c.receivedAt));
+  });
+  // 에이전트 작업 상태 반영
+  _CY_CHARS.forEach(ch=>_cySetWorking(ch.idx,false));
+  cmds.filter(c=>c.status==='running'&&c.agent).forEach(c=>{
+    const idx=_cyAssignIdx(c.agent);
+    _cySetWorking(idx,true);
+    _cySpeech(idx,'작업중: '+c.cmd.slice(0,40));
+  });
+  cmds.filter(c=>c.status==='done'&&c.agent).forEach(c=>{
+    const idx=_cyAssignIdx(c.agent);
+    // done 애니메이션은 새로 완료된 것만 (피드에 아직 없던 것)
+    if(newCmds.find(nc=>nc.id===c.id)){_cyDoneAnim(idx);}
+  });
+}
+
+function cySetCmd(text){
+  const inp=document.getElementById('cy-input');
+  if(inp){inp.value=text;inp.focus();}
+}
+
+function cyFocus(idx){
+  const sp=document.getElementById('cy-sp-'+idx);
+  if(sp){sp.classList.add('pop');setTimeout(()=>sp.classList.remove('pop'),600);}
+}
+
+async function cySend(){
+  const inp=document.getElementById('cy-input');
+  if(!inp||!inp.value.trim())return;
+  const text=inp.value.trim();
+  inp.value='';
+  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  _cyAddFeed('👤',text,true,t);
+  // 🐰 토끼 PD가 받는 모션
+  _cySpeech(0,'알겠습니다! 바로 처리할게요 🐾');
+  _cySetWorking(0,true);
+  try{
+    const r=await fetch(API_URL+'/command',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({cmd:text})
+    });
+    const data=await r.json();
+    if(data.ok){
+      _cyCmdFeedIds.add('c'+data.id);
+    }else{
+      _cyAddFeed('❌','전송 실패: '+JSON.stringify(data.error),false,t);
+      _cySetWorking(0,false);
+    }
+  }catch(e){
+    _cyAddFeed('❌','서버 오프라인 — 연결을 확인해주세요',false,t);
+    _cySpeech(0,'서버가 응답하지 않아요 😢');
+    _cySetWorking(0,false);
+  }
 }
 
 // 카카오톡 채팅 입력 전송
