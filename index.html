@@ -3316,21 +3316,25 @@ async function sendCmdOf(){
   if(!inp||!inp.value.trim())return;
   const text=inp.value.trim();
   inp.value='';
+  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  const el=document.createElement('div');
+  el.className='chat-msg user';
+  el.innerHTML='<div class="chat-bubble user-bubble"><div class="chat-text">'+_esc(text)+'</div><div class="chat-time" id="of-cmd-time-tmp">'+t+' 전송중...</div></div>';
+  const h=document.getElementById('chat-history2');
+  if(h){document.getElementById('chat-empty2')?.remove();h.appendChild(el);h.scrollTop=h.scrollHeight;}
   try{
     const r=await fetch(API_URL+'/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd:text})});
     const data=await r.json();
+    const tim=document.getElementById('of-cmd-time-tmp');
+    if(tim){tim.id='';tim.textContent=t+(data.ok?' ⏳':' ❌');}
     if(data.ok){
-      const el=document.createElement('div');
-      el.className='chat-msg user';
-      el.innerHTML='<div class="chat-bubble user-bubble"><div class="chat-text">'+_esc(text)+'</div><div class="chat-time">'+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' ⏳</div></div>';
       _chatIds.add('c'+data.id);
-      const h=document.getElementById('chat-history2');
-      if(h){document.getElementById('chat-empty2')?.remove();h.appendChild(el);h.scrollTop=h.scrollHeight;}
-      // 카카오톡에도 반영
-      _kktIds.add('kl-cmd'+data.id);
-      _kktAddMsg({emoji:'👤',sender:'나',text,me:true,time:_fmtTime(data.receivedAt),read:'1'});
+      _kktAddMsg({emoji:'👤',sender:'나',text,me:true,time:t,read:'1'});
     }
-  }catch(e){console.error('sendCmdOf:',e)}
+  }catch(e){
+    const tim=document.getElementById('of-cmd-time-tmp');
+    if(tim){tim.id='';tim.textContent=t+' ❌ 서버 오프라인';}
+  }
 }
 
 // 랜덤 캐릭터 유휴 애니메이션
@@ -3442,6 +3446,15 @@ async function sendCmd(){
   if(!inp||!inp.value.trim())return;
   const text=inp.value.trim();
   inp.value='';
+  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  // \uC989\uC2DC \uB099\uAD00\uC801 \uD45C\uC2DC
+  const el=document.createElement('div');
+  el.className='chat-msg user';
+  el.innerHTML='<div class="chat-bubble user-bubble">'
+    +'<div class="chat-text">'+_esc(text)+'</div>'
+    +'<div class="chat-time" id="cmd-time-tmp">'+t+' \uC804\uC1A1\uC911...</div>'
+    +'</div>';
+  _appendChat(el);
   try{
     const r=await fetch(API_URL+'/command',{
       method:'POST',
@@ -3449,17 +3462,13 @@ async function sendCmd(){
       body:JSON.stringify({cmd:text})
     });
     const data=await r.json();
-    if(data.ok){
-      const el=document.createElement('div');
-      el.className='chat-msg user';
-      el.innerHTML='<div class="chat-bubble user-bubble">'
-        +'<div class="chat-text">'+_esc(text)+'</div>'
-        +'<div class="chat-time">'+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' \u23F3</div>'
-        +'</div>';
-      _chatIds.add('c'+data.id);
-      _appendChat(el);
-    }
-  }catch(e){console.error('sendCmd:',e)}
+    const tim=document.getElementById('cmd-time-tmp');
+    if(tim){tim.id='';tim.textContent=t+(data.ok?' \u23F3':' \u274C');}
+    if(data.ok)_chatIds.add('c'+data.id);
+  }catch(e){
+    const tim=document.getElementById('cmd-time-tmp');
+    if(tim){tim.id='';tim.textContent=t+' \u274C \uC11C\uBC84 \uC624\uD504\uB77C\uC778';}
+  }
 }
 function setCmd(text){
   const inp=document.getElementById('cmd-input');
