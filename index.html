@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SANGS-U · Space</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%231E1B4B'/><text y='24' font-size='22' x='4'>🏗️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2661,7 +2662,7 @@ bvSun.shadow.camera.far=200;bvSun.shadow.bias=-0.001;
 bvScene.add(bvSun);
 const bvFill=new THREE.DirectionalLight(0x8BBACC,0.5);
 bvFill.position.set(-30,20,-20);bvScene.add(bvFill);
-bvScene.add(new THREE.DirectionalLight(0x4466AA,0.3).position.set(0,10,-50));
+const bvFill2=new THREE.DirectionalLight(0x4466AA,0.3);bvFill2.position.set(0,10,-50);bvScene.add(bvFill2);
 
 // 바닥 + 그리드
 const bvGround=new THREE.Mesh(new THREE.PlaneGeometry(300,300),new THREE.MeshStandardMaterial({color:'#1C2B3A',roughness:0.95}));
