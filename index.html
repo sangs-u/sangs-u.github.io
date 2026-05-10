@@ -3493,7 +3493,7 @@ function _pxAddMsg(emoji,name,text,isMe,msgType,statusBadge){
     el.innerHTML='<div class="px-bav">'+emoji+'</div>'
       +'<div class="px-bbody">'
       +'<div class="px-bname">'+_esc(name)+'</div>'
-      +'<div class="px-bb">'+_esc(text.slice(0,200))+(text.length>200?'…':'')+'</div>'
+      +'<div class="px-bb" style="white-space:pre-wrap;word-break:break-word;">'+_esc(msgType==='result'?text:text.slice(0,200))+(msgType!=='result'&&text.length>200?'…':'')+'</div>'
       +badge
       +'<div class="px-bt">'+t+'</div>'
       +'</div>';
