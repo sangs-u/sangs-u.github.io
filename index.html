@@ -3198,6 +3198,7 @@ let _pxTabMode='all';
 let _pxInitDone=false;
 let _pxSeeded=false; // 첫 폴링에서 기존 데이터 무시용
 let _pxDeskScreenPos=[]; // 아이소메트릭 책상 위치 (비율)
+const _pxSpeechTimers={}; // 말풍선 타이머
 
 // ── 에이전트 인덱스 판별 ──
 function _pxAssignIdx(agentStr){
