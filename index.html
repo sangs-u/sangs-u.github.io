@@ -1051,6 +1051,69 @@ body {
 .of-tab:hover{color:#E6EDF3}
 .of-tab.on{color:#58A6FF;border-bottom-color:#58A6FF}
 .of-wrap{background:#0D1117;min-height:600px}
+
+/* ══ 사무실 탭 내부 ══ */
+.of-inner-tabs{display:flex;gap:0;border-bottom:1px solid #21262D;background:#161B22;flex-shrink:0}
+.of-inner-tab{padding:10px 18px;font-size:12px;font-weight:500;color:#8B949E;cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;font-family:inherit;transition:all .15s;white-space:nowrap}
+.of-inner-tab:hover{color:#E6EDF3}
+.of-inner-tab.on{color:#58A6FF;border-bottom-color:#58A6FF;background:rgba(88,166,255,.05)}
+.of-panel{display:none;animation:fi .2s ease}
+.of-panel.on{display:flex;flex-direction:column}
+
+/* ══ 탭1: 2D 사무실 ══ */
+.office-room{position:relative;background:#1C2333;overflow:hidden;flex:1;min-height:500px;user-select:none}
+.office-room-svg{width:100%;height:100%;min-height:500px}
+.office-chars{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.desk-char{position:absolute;text-align:center;cursor:pointer;pointer-events:all}
+.desk-char .emoji{font-size:28px;display:block;transition:transform .3s;line-height:1}
+.desk-char .char-name{font-size:9px;color:#8B949E;white-space:nowrap;margin-top:2px;font-family:'DM Mono',monospace}
+.desk-char .speech{position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:#21262D;border:1px solid #30363D;border-radius:8px;border-bottom-left-radius:2px;padding:5px 9px;font-size:10px;color:#C9D1D9;white-space:nowrap;max-width:160px;white-space:normal;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;z-index:10}
+.desk-char:hover .speech{opacity:1}
+.desk-char:hover .emoji{transform:scale(1.2)}
+@keyframes charIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes charWork{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-2px) rotate(1deg)}}
+@keyframes charDone{0%,100%{transform:scale(1)}25%{transform:scale(1.4) translateY(-12px)}75%{transform:scale(1.2) translateY(-6px)}}
+@keyframes charSnack{0%,100%{transform:rotate(0deg)}30%{transform:rotate(-10deg)}70%{transform:rotate(5deg)}}
+.st-idle .emoji{animation:charIdle 3s ease-in-out infinite}
+.st-working .emoji{animation:charWork 0.8s ease-in-out infinite}
+.st-done .emoji{animation:charDone 0.6s ease-in-out 3}
+.st-snack .emoji{animation:charSnack 0.5s ease-in-out infinite}
+.st-break .emoji{animation:charIdle 2s ease-in-out infinite;filter:hue-rotate(30deg)}
+
+/* ══ 탭2: 카카오톡 채팅 ══ */
+.kkt-wrap{display:flex;flex-direction:column;flex:1;min-height:480px;background:#ABC1D1}
+.kkt-hdr{background:#9EB3C5;padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.kkt-hdr-title{font-size:14px;font-weight:700;color:#1C1C1E}
+.kkt-hdr-count{font-size:12px;color:#4A6580;font-family:'DM Mono',monospace}
+.kkt-msgs{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.kkt-msg{display:flex;gap:8px;align-items:flex-end}
+.kkt-msg.me{flex-direction:row-reverse}
+.kkt-avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.kkt-body{display:flex;flex-direction:column;gap:3px;max-width:66%}
+.kkt-msg.me .kkt-body{align-items:flex-end}
+.kkt-sender{font-size:11px;font-weight:700;color:#1C1C1E;padding-left:4px}
+.kkt-bubble{padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.55;word-break:break-word}
+.kkt-bubble.them{background:#fff;border-top-left-radius:3px;color:#1C1C1E}
+.kkt-bubble.me{background:#FEE500;border-top-right-radius:3px;color:#1C1C1E}
+.kkt-meta{font-size:10px;color:rgba(28,28,30,.5);padding:0 4px;display:flex;align-items:flex-end;gap:4px;flex-shrink:0}
+.kkt-msg.me .kkt-meta{flex-direction:row-reverse}
+.kkt-read{font-size:10px;color:#F85149;font-weight:700}
+.kkt-input-row{display:flex;gap:8px;padding:10px 12px;background:#9EB3C5;border-top:1px solid rgba(0,0,0,.1);flex-shrink:0}
+.kkt-input{flex:1;background:#fff;border:none;border-radius:20px;padding:9px 14px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#1C1C1E;outline:none;resize:none;max-height:80px}
+.kkt-send{background:#FEE500;border:none;border-radius:50%;width:36px;height:36px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s}
+.kkt-send:hover{background:#FFD700;transform:scale(1.05)}
+
+/* ══ 탭4: 개발 현황 ══ */
+.status-wrap{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.status-card{background:#161B22;border:1px solid #21262D;border-radius:10px;padding:14px 16px}
+.status-card-ttl{font-size:11px;font-weight:700;color:#8B949E;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.live-log-wrap{display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto}
+.live-log-row{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #21262D;font-size:11px;animation:slideIn .2s ease}
+.live-log-row:last-child{border-bottom:none}
+.live-log-t{font-family:'DM Mono',monospace;color:#484F58;flex-shrink:0;min-width:42px}
+.live-log-agent{flex-shrink:0;min-width:70px;color:#58A6FF;font-weight:600}
+.live-log-msg{color:#C9D1D9;flex:1;word-break:break-word}
+.live-log-lv.error{color:#F85149}.live-log-lv.warn{color:#D29922}.live-log-lv.info{color:#3FB950}
 </style>
 </head>
 <body>
@@ -1922,12 +1985,258 @@ neutral standing pose, T-pose, game ready, high quality PBR textures</div></div>
 <div class="sec" id="s-of">
 <div class="of-hdr">
   <div class="of-hdr-mark">B</div>
-  <div class="of-hdr-title">BULSA · 에이전트 현황</div>
-  <div class="of-hdr-badge"><div class="of-hdr-dot"></div>UI 미리보기</div>
-  <div style="font-family:'DM Mono',monospace;font-size:11px;color:#484F58;margin-left:12px" id="hdr-time"></div>
+  <div class="of-hdr-title">BULSA · 개발팀 사무실</div>
+  <div class="of-hdr-badge" id="of-api-badge" style="margin-left:0"><div class="of-hdr-dot" id="of-api-dot"></div><span id="of-api-txt">연결 중...</span></div>
+  <div style="font-family:'DM Mono',monospace;font-size:11px;color:#484F58;margin-left:auto" id="hdr-time"></div>
 </div>
-<div class="of-wrap" id="s-of-inner">
-<div class="page">
+<div class="of-inner-tabs">
+  <button class="of-inner-tab on" onclick="ofTab('office',this)">🏢 사무실</button>
+  <button class="of-inner-tab" onclick="ofTab('chat',this)">💬 채팅방</button>
+  <button class="of-inner-tab" onclick="ofTab('cmd2',this)">📋 업무 지시</button>
+  <button class="of-inner-tab" onclick="ofTab('dev',this)">📊 개발 현황</button>
+</div>
+<div class="of-wrap" id="s-of-inner" style="min-height:0;display:flex;flex-direction:column">
+
+<!-- ── 탭1: 2D 사무실 ── -->
+<div class="of-panel on" id="of-panel-office">
+  <div class="office-room" id="office-room">
+    <!-- SVG 방 레이아웃 -->
+    <svg class="office-room-svg" viewBox="0 0 860 480" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <!-- 바닥 -->
+      <rect width="860" height="480" fill="#1C2333"/>
+      <!-- 상단 벽 -->
+      <rect width="860" height="22" fill="#252B3D"/>
+      <!-- 하단 벽 -->
+      <rect y="462" width="860" height="18" fill="#252B3D"/>
+      <!-- 좌측 벽 -->
+      <rect width="18" height="480" fill="#252B3D"/>
+      <!-- 우측 벽 -->
+      <rect x="842" width="18" height="480" fill="#252B3D"/>
+      <!-- 탕비실 칸막이 -->
+      <rect x="626" y="22" width="4" height="300" fill="#2D3446"/>
+      <!-- 탕비실 문 -->
+      <rect x="626" y="220" width="4" height="50" fill="#1C2333"/>
+      <!-- 탕비실 배경 -->
+      <rect x="630" y="22" width="212" height="280" fill="#182030"/>
+
+      <!-- 창문 3개 (상단) -->
+      <g>
+        <rect x="50" y="0" width="110" height="22" fill="#87CEEB" opacity="0.25" rx="2"/>
+        <line x1="50" y1="0" x2="50" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <line x1="105" y1="0" x2="105" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <line x1="160" y1="0" x2="160" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <text x="77" y="15" text-anchor="middle" font-size="10">☁️</text>
+        <text x="132" y="15" text-anchor="middle" font-size="10">🌤</text>
+      </g>
+      <g>
+        <rect x="200" y="0" width="110" height="22" fill="#87CEEB" opacity="0.25" rx="2"/>
+        <line x1="200" y1="0" x2="200" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <line x1="255" y1="0" x2="255" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <line x1="310" y1="0" x2="310" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <text x="227" y="15" text-anchor="middle" font-size="10">🌤</text>
+        <text x="282" y="15" text-anchor="middle" font-size="10">☁️</text>
+      </g>
+      <g>
+        <rect x="350" y="0" width="110" height="22" fill="#87CEEB" opacity="0.25" rx="2"/>
+        <line x1="350" y1="0" x2="350" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <line x1="405" y1="0" x2="405" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <line x1="460" y1="0" x2="460" y2="22" stroke="#2D3446" stroke-width="1"/>
+        <text x="377" y="15" text-anchor="middle" font-size="10">☁️</text>
+        <text x="432" y="15" text-anchor="middle" font-size="10">🌤</text>
+      </g>
+
+      <!-- 시계 -->
+      <circle cx="530" cy="60" r="30" fill="#252B3D" stroke="#30384D" stroke-width="2"/>
+      <text id="of-clock" x="530" y="65" text-anchor="middle" font-size="11" fill="#8B949E" font-family="monospace">00:00</text>
+
+      <!-- 화이트보드 -->
+      <rect x="490" y="28" width="140" height="80" rx="4" fill="#F5F0EB" stroke="#CCC" stroke-width="1"/>
+      <text x="560" y="52" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">BULSA</text>
+      <text x="560" y="67" text-anchor="middle" font-size="9" fill="#666">v1.0 개발중</text>
+      <text x="560" y="80" text-anchor="middle" font-size="8" fill="#999">안전 문명 시뮬레이터</text>
+      <line x1="500" y1="95" x2="620" y2="95" stroke="#DDD" stroke-width="0.5"/>
+      <line x1="500" y1="100" x2="580" y2="100" stroke="#DDD" stroke-width="0.5"/>
+
+      <!-- 책상 5개 -->
+      <!-- 책상1 (🐰) -->
+      <rect x="28" y="60" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
+      <rect x="44" y="70" width="80" height="55" rx="3" fill="#161B22"/>
+      <rect x="46" y="72" width="76" height="51" rx="2" fill="#0D1117"/>
+      <rect x="80" y="120" width="10" height="20" fill="#30384D"/>
+      <rect x="68" y="140" width="34" height="4" rx="2" fill="#30384D"/>
+      <!-- 책상2 (🐶) -->
+      <rect x="178" y="60" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
+      <rect x="194" y="70" width="80" height="55" rx="3" fill="#161B22"/>
+      <rect x="196" y="72" width="76" height="51" rx="2" fill="#0D1117"/>
+      <rect x="230" y="120" width="10" height="20" fill="#30384D"/>
+      <rect x="218" y="140" width="34" height="4" rx="2" fill="#30384D"/>
+      <!-- 책상3 (🐱) -->
+      <rect x="328" y="60" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
+      <rect x="344" y="70" width="80" height="55" rx="3" fill="#161B22"/>
+      <rect x="346" y="72" width="76" height="51" rx="2" fill="#0D1117"/>
+      <rect x="380" y="120" width="10" height="20" fill="#30384D"/>
+      <rect x="368" y="140" width="34" height="4" rx="2" fill="#30384D"/>
+      <!-- 책상4 (🦊) -->
+      <rect x="28" y="230" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
+      <rect x="44" y="240" width="80" height="55" rx="3" fill="#161B22"/>
+      <rect x="46" y="242" width="76" height="51" rx="2" fill="#0D1117"/>
+      <rect x="80" y="290" width="10" height="20" fill="#30384D"/>
+      <rect x="68" y="310" width="34" height="4" rx="2" fill="#30384D"/>
+      <!-- 책상5 (🐻) -->
+      <rect x="178" y="230" width="130" height="90" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
+      <rect x="194" y="240" width="80" height="55" rx="3" fill="#161B22"/>
+      <rect x="196" y="242" width="76" height="51" rx="2" fill="#0D1117"/>
+      <rect x="230" y="290" width="10" height="20" fill="#30384D"/>
+      <rect x="218" y="310" width="34" height="4" rx="2" fill="#30384D"/>
+
+      <!-- 화분 2개 -->
+      <text x="582" y="295" font-size="28" text-anchor="middle">🪴</text>
+      <text x="582" y="420" font-size="28" text-anchor="middle">🪴</text>
+      <!-- 쓰레기통 -->
+      <text x="610" y="455" font-size="20" text-anchor="middle">🗑️</text>
+
+      <!-- 탕비실 -->
+      <text x="716" y="18" text-anchor="middle" font-size="9" fill="#484F58">탕비실</text>
+      <text x="672" y="100" font-size="22" text-anchor="middle">☕</text>
+      <text x="716" y="100" font-size="22" text-anchor="middle">🧊</text>
+      <text x="760" y="100" font-size="22" text-anchor="middle">📟</text>
+      <!-- 탕비실 테이블 -->
+      <rect x="650" y="160" width="140" height="60" rx="6" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
+      <text x="720" y="197" text-anchor="middle" font-size="10" fill="#484F58">탕비실 테이블</text>
+      <!-- 에어컨 -->
+      <rect x="640" y="350" width="80" height="24" rx="4" fill="#252B3D" stroke="#30384D" stroke-width="1"/>
+      <text x="680" y="366" text-anchor="middle" font-size="10" fill="#58A6FF">❄ AC</text>
+      <!-- 냉풍 라인 -->
+      <line x1="650" y1="374" x2="660" y2="390" stroke="#58A6FF" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>
+      <line x1="665" y1="374" x2="672" y2="392" stroke="#58A6FF" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/>
+      <line x1="680" y1="374" x2="680" y2="394" stroke="#58A6FF" stroke-width="1" opacity="0.2" stroke-dasharray="3 3"/>
+
+      <!-- 탕비실 화분 -->
+      <text x="790" y="280" font-size="22" text-anchor="middle">🪴</text>
+
+      <!-- 바닥 러그 -->
+      <ellipse cx="320" cy="380" rx="120" ry="50" fill="#21262D" opacity="0.6"/>
+    </svg>
+
+    <!-- HTML 오버레이: 캐릭터들 -->
+    <div class="office-chars">
+      <!-- 🐰 PD (책상1) -->
+      <div class="desk-char st-working" id="char-0" style="left:5.5%;top:18%" onclick="ofTab('chat',null)">
+        <span class="emoji">🐰</span>
+        <div class="char-name">PD · Sonnet</div>
+        <div class="speech" id="speech-0">CLAUDE.md 읽는 중...</div>
+      </div>
+      <!-- 🐶 QA (책상2) -->
+      <div class="desk-char st-working" id="char-1" style="left:26%;top:18%" onclick="ofTab('chat',null)">
+        <span class="emoji">🐶</span>
+        <div class="char-name">QA · Opus</div>
+        <div class="speech" id="speech-1">Playwright 실행 중...</div>
+      </div>
+      <!-- 🐱 AD (책상3) -->
+      <div class="desk-char st-idle" id="char-2" style="left:46.5%;top:18%" onclick="ofTab('chat',null)">
+        <span class="emoji">🐱</span>
+        <div class="char-name">AD · Opus</div>
+        <div class="speech" id="speech-2">대기 중 😴</div>
+      </div>
+      <!-- 🦊 기획 (책상4) -->
+      <div class="desk-char st-idle" id="char-3" style="left:5.5%;top:56%" onclick="ofTab('chat',null)">
+        <span class="emoji">🦊</span>
+        <div class="char-name">기획 · Opus</div>
+        <div class="speech" id="speech-3">대기 중...</div>
+      </div>
+      <!-- 🐻 분석 (책상5) -->
+      <div class="desk-char st-idle" id="char-4" style="left:26%;top:56%" onclick="ofTab('chat',null)">
+        <span class="emoji">🐻</span>
+        <div class="char-name">분석 · Opus</div>
+        <div class="speech" id="speech-4">데이터 없음</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 탭2: 카카오톡 채팅방 ── -->
+<div class="of-panel" id="of-panel-chat">
+  <div class="kkt-wrap">
+    <div class="kkt-hdr">
+      <span style="font-size:20px">💬</span>
+      <span class="kkt-hdr-title">BULSA 개발팀</span>
+      <span class="kkt-hdr-count" id="kkt-count">5명</span>
+    </div>
+    <div class="kkt-msgs" id="kkt-msgs">
+      <div style="text-align:center;padding:20px;font-size:11px;color:rgba(28,28,30,.5)">오늘 대화 시작</div>
+    </div>
+    <div class="kkt-input-row">
+      <textarea class="kkt-input" id="kkt-input" placeholder="메시지 입력..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();kktSend()}"></textarea>
+      <button class="kkt-send" onclick="kktSend()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 탭3: 업무 지시 (사무실 내) ── -->
+<div class="of-panel" id="of-panel-cmd2">
+  <div class="of-wrap cmd-chat-wrap" style="min-height:0;flex:1">
+    <div class="chat-history" id="chat-history2">
+      <div class="chat-empty" id="chat-empty2">
+        <div style="font-size:32px;margin-bottom:14px">📋</div>
+        <div style="font-size:13px;color:#8B949E;margin-bottom:6px">팀에게 업무를 지시하세요</div>
+        <div style="font-size:11px;color:#484F58">전송하면 에이전트가 자동 배정됩니다</div>
+      </div>
+    </div>
+    <div class="chat-presets">
+      <button class="preset-chip" onclick="setCmdOf('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 가동</button>
+      <button class="preset-chip" onclick="setCmdOf('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA 테스트</button>
+      <button class="preset-chip" onclick="setCmdOf('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태 보고</button>
+      <button class="preset-chip" onclick="setCmdOf('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 즉시 Push</button>
+      <button class="preset-chip" onclick="setCmdOf('게임 플레이 스크린샷 찍어서 시각적 품질 분석해줘.')">🎨 품질 검토</button>
+      <button class="preset-chip" onclick="setCmdOf('Product Hunt 영문 소개글 작성해줘.')">📣 PH 소개글</button>
+    </div>
+    <div class="chat-input-wrap">
+      <textarea class="chat-textarea" id="cmd-input2" placeholder="팀에게 지시할 내용 입력..." rows="2"></textarea>
+      <button class="chat-send-btn" onclick="sendCmdOf()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 6.5L1.5 2l2 4.5L1.5 11l10-4.5z"/></svg>
+        전송
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 탭4: 개발 현황 ── -->
+<div class="of-panel" id="of-panel-dev">
+  <div class="status-wrap">
+    <!-- 라이브 로그 -->
+    <div class="status-card">
+      <div class="status-card-ttl">라이브 로그 <span id="of-log-badge" style="font-size:9px;background:#21262D;border-radius:8px;padding:2px 6px;color:#8B949E">0개</span></div>
+      <div class="live-log-wrap" id="of-log-list">
+        <div style="text-align:center;padding:20px;font-size:11px;color:#484F58">로그 없음 · 에이전트가 작업을 시작하면 여기에 표시됩니다</div>
+      </div>
+    </div>
+    <!-- 진행률 -->
+    <div class="status-card">
+      <div class="status-card-ttl">v1.0 진행률</div>
+      <div class="prog-bar" style="margin-bottom:6px"><div class="prog-fill" style="width:34%"></div></div>
+      <div class="prog-markers"><span>v0.1 시작</span><span style="color:var(--gr);font-weight:700">34%</span><span>v1.0 출시</span></div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#8B949E">✓ 설계서 완성</span><span style="color:var(--gr);font-family:'DM Mono',monospace;font-size:10px">완료</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#8B949E">✓ 에이전트 팀 구축</span><span style="color:var(--gr);font-family:'DM Mono',monospace;font-size:10px">완료</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#58A6FF">▶ 도면 시스템</span><span style="color:#58A6FF;font-family:'DM Mono',monospace;font-size:10px">진행중</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#484F58">○ QA 자동화</span><span style="color:#484F58;font-family:'DM Mono',monospace;font-size:10px">대기</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:#484F58">○ 캐릭터 에셋</span><span style="color:#484F58;font-family:'DM Mono',monospace;font-size:10px">대기</span></div>
+      </div>
+    </div>
+    <!-- 팀 현황 -->
+    <div class="status-card">
+      <div class="status-card-ttl">팀 현황</div>
+      <div id="of-agents-status" style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:11px;color:#484F58">서버 연결 후 실시간 표시됩니다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- of-wrap end -->
+
+<!-- 기존 레거시 office-grid는 제거됨 -->
+<div class="page" style="display:none">
   <div class="office-grid">
 
     <!-- 에이전트 현황 -->
@@ -2120,8 +2429,6 @@ neutral standing pose, T-pose, game ready, high quality PBR textures</div></div>
 </div>
 </div>
 
-
-</div>
 
 <div class="sec" id="s-cmd">
 <div class="of-hdr">
@@ -2801,9 +3108,244 @@ function updateOfficeClock(){
   if(el)el.textContent=t;
   const td=document.getElementById('today-d');
   if(td)td.textContent=now.toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+  // 사무실 SVG 시계
+  const clk=document.getElementById('of-clock');
+  if(clk)clk.textContent=now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
 }
 setInterval(updateOfficeClock,1000);
 updateOfficeClock();
+
+// ══ 사무실 탭 전환 ══
+function ofTab(name,btn){
+  document.querySelectorAll('.of-inner-tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.of-panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('of-panel-'+name)?.classList.add('on');
+  if(btn)btn.classList.add('on');
+  else document.querySelectorAll('.of-inner-tab').forEach(b=>{if(b.getAttribute('onclick')?.includes("'"+name+"'"))b.classList.add('on');});
+  if(name==='chat'||name==='cmd2'||name==='dev') startOfPoll();
+  else if(_ofPollTimer&&name==='office') {/* keep alive for clock */}
+}
+
+// ══ 사무실 서버 폴링 ══
+let _ofPollTimer=null;
+const _ofLogIds=new Set();
+const _ofCmdIds=new Set();
+const _kktIds=new Set();
+
+const CHAR_NAMES=['🐰 토끼 PD','🐶 강아지 QA','🐱 고양이 AD','🦊 여우 기획','🐻 곰 분석'];
+const CHAR_EMOJIS=['🐰','🐶','🐱','🦊','🐻'];
+const CHAR_AGENTS={pm:'🐰',qa:'🐶',quality:'🐱',content:'🦊',data:'🐻'};
+
+function _agentEmoji(name){
+  const n=(name||'').toLowerCase();
+  if(n.includes('pm')||n.includes('sonnet')||n.includes('🐰'))return'🐰';
+  if(n.includes('qa')||n.includes('🐶'))return'🐶';
+  if(n.includes('품질')||n.includes('🐱'))return'🐱';
+  if(n.includes('콘텐츠')||n.includes('🦊'))return'🦊';
+  if(n.includes('데이터')||n.includes('🐻'))return'🐻';
+  return'📡';
+}
+
+function _setOfBadge(ok){
+  const b=document.getElementById('of-api-badge');
+  const d=document.getElementById('of-api-dot');
+  const t=document.getElementById('of-api-txt');
+  if(!b)return;
+  if(ok){
+    b.style.cssText='background:rgba(63,185,80,.12);border-color:rgba(63,185,80,.25);color:#3FB950;margin-left:0';
+    if(d){d.style.background='#3FB950';d.style.animation='';}
+    if(t)t.textContent='연결됨';
+  }else{
+    b.style.cssText='background:rgba(248,81,73,.12);border-color:rgba(248,81,73,.25);color:#F85149;margin-left:0';
+    if(d){d.style.background='#F85149';d.style.animation='none';}
+    if(t)t.textContent='오프라인';
+  }
+}
+
+async function _fetchOfStatus(){
+  try{
+    const r=await fetch(API_URL+'/status');
+    const data=await r.json();
+    _setOfBadge(true);
+    _renderOfLogs(data.logs||[]);
+    _renderOfCmds(data.commands||[]);
+    _updateCharStates(data);
+  }catch(e){_setOfBadge(false);}
+}
+
+function _updateCharStates(data){
+  const cmds=data.commands||[];
+  const logs=data.logs||[];
+  // 마지막 각 에이전트 로그 찾기
+  const lastLog={};
+  logs.forEach(l=>{if(l.agent)lastLog[l.agent]=l;});
+  // 각 캐릭터 말풍선 업데이트
+  const chars=[
+    {el:document.getElementById('char-0'),sp:document.getElementById('speech-0'),key:'pm'},
+    {el:document.getElementById('char-1'),sp:document.getElementById('speech-1'),key:'qa'},
+    {el:document.getElementById('char-2'),sp:document.getElementById('speech-2'),key:'quality'},
+    {el:document.getElementById('char-3'),sp:document.getElementById('speech-3'),key:'content'},
+    {el:document.getElementById('char-4'),sp:document.getElementById('speech-4'),key:'data'},
+  ];
+  chars.forEach(({el,sp,key})=>{
+    if(!el||!sp)return;
+    const emoji=CHAR_AGENTS[key];
+    const log=Object.values(lastLog).find(l=>_agentEmoji(l.agent)===emoji);
+    if(log){
+      sp.textContent=log.message.slice(0,50)+(log.message.length>50?'…':'');
+      el.className='desk-char st-working';
+    }
+  });
+  // 진행 중인 명령이 있으면 해당 에이전트 working 상태
+  const running=cmds.filter(c=>!c.done&&c.status==='running');
+  running.forEach(c=>{
+    if(!c.agent)return;
+    const emo=_agentEmoji(c.agent);
+    chars.forEach(({el,key})=>{
+      if(CHAR_AGENTS[key]===emo&&el){
+        el.className='desk-char st-working';
+      }
+    });
+  });
+}
+
+// ── 개발현황 탭 로그 ──
+function _renderOfLogs(logs){
+  const wrap=document.getElementById('of-log-list');
+  const badge=document.getElementById('of-log-badge');
+  if(!wrap)return;
+  const newLogs=logs.filter(l=>!_ofLogIds.has(l.id));
+  if(newLogs.length===0)return;
+  const wasEmpty=wrap.querySelector('[style*="없음"]');
+  if(wasEmpty)wrap.innerHTML='';
+  newLogs.forEach(l=>{
+    _ofLogIds.add(l.id);
+    const el=document.createElement('div');
+    el.className='live-log-row';
+    const t=_fmtTime(l.timestamp);
+    el.innerHTML='<span class="live-log-t">'+t+'</span>'
+      +'<span class="live-log-agent">'+_esc(l.agent||'')+'</span>'
+      +'<span class="live-log-lv '+_esc(l.level||'info')+'">'+_esc(l.level||'info')+'</span>'
+      +'<span class="live-log-msg">'+_esc(l.message)+'</span>';
+    wrap.appendChild(el);
+  });
+  wrap.scrollTop=wrap.scrollHeight;
+  if(badge)badge.textContent=_ofLogIds.size+'개';
+  // 카카오톡 채팅에도 반영
+  _renderKktLogs(newLogs);
+}
+
+function _renderOfCmds(cmds){
+  const newCmds=cmds.filter(c=>!_ofCmdIds.has(c.id));
+  newCmds.forEach(c=>{
+    _ofCmdIds.add(c.id);
+    _kktAddMsg({
+      emoji:'👤',sender:'나',text:c.cmd,me:true,
+      time:_fmtTime(c.receivedAt),read:'1'
+    });
+  });
+  // cmd2 패널 히스토리에도 추가
+  newCmds.forEach(c=>{
+    if(_chatIds.has('c'+c.id))return;
+    _chatIds.add('c'+c.id);
+    const el=document.createElement('div');
+    el.className='chat-msg user';
+    el.innerHTML='<div class="chat-bubble user-bubble">'
+      +'<div class="chat-text">'+_esc(c.cmd)+'</div>'
+      +'<div class="chat-time">'+_fmtTime(c.receivedAt)+(c.done?' ✅':' ⏳')+'</div>'
+      +'</div>';
+    const h=document.getElementById('chat-history2');
+    if(h){document.getElementById('chat-empty2')?.remove();h.appendChild(el);h.scrollTop=h.scrollHeight;}
+  });
+}
+
+function _renderKktLogs(logs){
+  logs.forEach(l=>{
+    if(_kktIds.has('kl'+l.id))return;
+    _kktIds.add('kl'+l.id);
+    const emoji=_agentEmoji(l.agent);
+    const lvl=l.level==='error'?'❌ ':l.level==='warn'?'⚠️ ':'';
+    _kktAddMsg({emoji,sender:l.agent||'에이전트',text:lvl+l.message.slice(0,120),me:false,time:_fmtTime(l.timestamp)});
+  });
+}
+
+function _kktAddMsg({emoji,sender,text,me,time,read}){
+  const wrap=document.getElementById('kkt-msgs');
+  if(!wrap)return;
+  const el=document.createElement('div');
+  el.className='kkt-msg'+(me?' me':'');
+  if(me){
+    el.innerHTML='<div class="kkt-meta">'+
+      (read?'<span class="kkt-read">'+read+'</span>':'')+
+      '<span>'+time+'</span></div>'+
+      '<div class="kkt-body"><div class="kkt-bubble me">'+_esc(text)+'</div></div>';
+  }else{
+    el.innerHTML='<div class="kkt-avatar">'+emoji+'</div>'+
+      '<div class="kkt-body">'+
+      '<div class="kkt-sender">'+_esc(sender)+'</div>'+
+      '<div class="kkt-bubble them">'+_esc(text)+'</div>'+
+      '</div>'+
+      '<div class="kkt-meta"><span>'+time+'</span></div>';
+  }
+  wrap.appendChild(el);
+  wrap.scrollTop=wrap.scrollHeight;
+}
+
+function startOfPoll(){
+  _fetchOfStatus();
+  if(!_ofPollTimer)_ofPollTimer=setInterval(_fetchOfStatus,5000);
+}
+
+// 카카오톡 채팅 입력 전송
+async function kktSend(){
+  const inp=document.getElementById('kkt-input');
+  if(!inp||!inp.value.trim())return;
+  const text=inp.value.trim();
+  inp.value='';
+  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  _kktAddMsg({emoji:'👤',sender:'나',text,me:true,time:t,read:'1'});
+  try{
+    await fetch(API_URL+'/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd:text})});
+  }catch(e){console.error('kktSend:',e)}
+}
+
+// cmd2 탭 (업무지시 내부)
+function setCmdOf(text){const inp=document.getElementById('cmd-input2');if(inp)inp.value=text;}
+async function sendCmdOf(){
+  const inp=document.getElementById('cmd-input2');
+  if(!inp||!inp.value.trim())return;
+  const text=inp.value.trim();
+  inp.value='';
+  try{
+    const r=await fetch(API_URL+'/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd:text})});
+    const data=await r.json();
+    if(data.ok){
+      const el=document.createElement('div');
+      el.className='chat-msg user';
+      el.innerHTML='<div class="chat-bubble user-bubble"><div class="chat-text">'+_esc(text)+'</div><div class="chat-time">'+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' ⏳</div></div>';
+      _chatIds.add('c'+data.id);
+      const h=document.getElementById('chat-history2');
+      if(h){document.getElementById('chat-empty2')?.remove();h.appendChild(el);h.scrollTop=h.scrollHeight;}
+      // 카카오톡에도 반영
+      _kktIds.add('kl-cmd'+data.id);
+      _kktAddMsg({emoji:'👤',sender:'나',text,me:true,time:_fmtTime(data.receivedAt),read:'1'});
+    }
+  }catch(e){console.error('sendCmdOf:',e)}
+}
+
+// 랜덤 캐릭터 유휴 애니메이션
+const _charStates=['st-working','st-working','st-idle','st-snack','st-idle'];
+setInterval(()=>{
+  const idx=Math.floor(Math.random()*5);
+  const el=document.getElementById('char-'+idx);
+  if(!el||el.dataset.locked)return;
+  const states=['st-idle','st-working','st-snack'];
+  const next=states[Math.floor(Math.random()*states.length)];
+  el.className='desk-char '+next;
+},8000);
+
+// 초기 폴링 시작 (사무실 탭이 기본)
+startOfPoll();
 
 let _pmP=67,_qaP=45;
 setInterval(()=>{
