@@ -648,6 +648,81 @@ body {
 @keyframes sweep { 0%{width:0%;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0%;margin-left:100%} }
 
 /* ══════════════════════════════
+   채팅 업무지시 UI
+══════════════════════════════ */
+.cmd-chat-wrap {
+  display: flex; flex-direction: column;
+  height: calc(100vh - 116px);
+  min-height: 480px;
+}
+.chat-history {
+  flex: 1; overflow-y: auto;
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  scroll-behavior: smooth;
+}
+.chat-empty {
+  margin: auto; text-align: center; padding: 40px 20px;
+}
+.chat-msg { display: flex; flex-direction: column; max-width: 72%; }
+.chat-msg.user { align-self: flex-end; align-items: flex-end; }
+.chat-msg.log  { align-self: flex-start; align-items: flex-start; }
+.chat-agent {
+  font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: #58A6FF; margin-bottom: 4px; padding: 0 4px;
+}
+.chat-bubble {
+  border-radius: 12px; padding: 10px 14px;
+  font-size: 12px; line-height: 1.6;
+  animation: slideIn .2s ease;
+}
+.user-bubble {
+  background: #1C4532; border: 1px solid #2D6A4F;
+  color: #7EE8A2; border-bottom-right-radius: 3px;
+}
+.log-bubble {
+  background: #161B22; border: 1px solid #30363D;
+  color: #C9D1D9; border-bottom-left-radius: 3px;
+}
+.chat-meta { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.chat-text { word-break: break-word; white-space: pre-wrap; }
+.chat-time { font-family: 'DM Mono', monospace; font-size: 9px; color: #484F58; margin-top: 5px; text-align: right; }
+.chat-presets {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 10px 16px; border-top: 1px solid #21262D;
+  background: #0D1117;
+}
+.chat-presets .preset-chip {
+  background: #161B22; border-color: #30363D; color: #8B949E;
+}
+.chat-presets .preset-chip:hover { border-color: #58A6FF; color: #58A6FF; background: rgba(88,166,255,.08); }
+.chat-input-wrap {
+  display: flex; align-items: flex-end; gap: 10px;
+  padding: 12px 16px; border-top: 1px solid #21262D;
+  background: #0D1117;
+}
+.chat-textarea {
+  flex: 1; background: #161B22; border: 1px solid #30363D;
+  border-radius: 10px; padding: 10px 14px;
+  font-family: 'Noto Sans KR', sans-serif; font-size: 13px;
+  color: #E6EDF3; resize: none; outline: none;
+  min-height: 44px; max-height: 120px; line-height: 1.6;
+  transition: border-color .15s;
+}
+.chat-textarea::placeholder { color: #484F58; }
+.chat-textarea:focus { border-color: #58A6FF; }
+.chat-send-btn {
+  flex-shrink: 0; padding: 10px 18px;
+  background: #238636; color: #fff;
+  border: none; border-radius: 10px;
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: all .15s; white-space: nowrap;
+}
+.chat-send-btn:hover { background: #2EA043; }
+.chat-send-btn:active { transform: scale(.97); }
+
+/* ══════════════════════════════
    히스토리 탭
 ══════════════════════════════ */
 .hist-layout {
@@ -2052,122 +2127,30 @@ neutral standing pose, T-pose, game ready, high quality PBR textures</div></div>
 <div class="of-hdr">
   <div class="of-hdr-mark">B</div>
   <div class="of-hdr-title">BULSA · 업무 지시</div>
-  <div class="of-hdr-badge" style="background:rgba(63,185,80,.12);border-color:rgba(63,185,80,.25);color:#3FB950"><div class="of-hdr-dot"></div>클립보드 복사 모드</div>
+  <div class="of-hdr-badge" id="cmd-conn-badge" style="background:rgba(248,81,73,.12);border-color:rgba(248,81,73,.25);color:#F85149"><div class="of-hdr-dot" style="background:#F85149;animation:none" id="cmd-conn-dot"></div><span id="cmd-conn-txt">연결 중...</span></div>
 </div>
-<div class="of-wrap">
-
-<div class="sec" id="s-command">
-<div class="page">
-  <div class="cmd-layout">
-    <div>
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-ttl">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h9M7 3l4.5 3.5L7 10"/></svg>
-            업무 지시
-          </div>
-          <div style="font-size:10px;color:var(--ink4)">Railway 연결 후 실시간 전송</div>
-        </div>
-        <div class="card-bd">
-          <div class="preset-grid">
-            <button class="preset-chip" onclick="setCmd('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 가동</button>
-            <button class="preset-chip" onclick="setCmd('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA 테스트</button>
-            <button class="preset-chip" onclick="setCmd('blueprints/ 폴더 생성. 도면 5종 JSON + structure-builder.js 구현. 완료 후 git push.')">🏗 도면 구현</button>
-            <button class="preset-chip" onclick="setCmd('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태 보고</button>
-            <button class="preset-chip" onclick="setCmd('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 즉시 Push</button>
-            <button class="preset-chip" onclick="setCmd('게임 플레이 스크린샷 찍어서 시각적 품질 분석해줘.')">🎨 품질 검토</button>
-            <button class="preset-chip" onclick="setCmd('Product Hunt 영문 소개글 작성해줘. Tagline + Description + First comment.')">📣 PH 소개글</button>
-            <button class="preset-chip" onclick="setCmd('LinkedIn B2B 영업 메시지 한/영/아랍어로 작성해줘.')">💼 B2B 메시지</button>
-          </div>
-
-          <div class="cmd-box">
-            <textarea class="cmd-textarea" id="cmd-input" placeholder="에이전트에게 지시할 내용을 입력하세요...
-
-예) CLAUDE.md 읽고 현재 상태 파악 후
-    NPC 상태머신 버그 수정해줘.
-    완료 후 git push."></textarea>
-            <div class="cmd-foot">
-              <div class="target-row">
-                <button class="t-btn on" onclick="setTarget(this)">전체 팀</button>
-                <button class="t-btn" onclick="setTarget(this)">PM만</button>
-                <button class="t-btn" onclick="setTarget(this)">QA만</button>
-                <button class="t-btn" onclick="setTarget(this)">콘텐츠</button>
-              </div>
-              <button class="send-btn" onclick="sendCmd()">
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 6.5L1.5 2l2 4.5L1.5 11l10-4.5z"/></svg>
-                전송
-              </button>
-            </div>
-          </div>
-          <div style="margin-top:8px;font-size:11px;color:var(--ink4);line-height:1.6;padding:0 2px">
-            ⚡ 현재: 전송 버튼 → 클립보드 복사 → Codespaces 붙여넣기<br>
-            Railway 연결 후: 버튼 하나로 바로 실행
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 명령 큐 -->
-    <div>
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-ttl">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h9M2 6.5h6M2 10h4"/></svg>
-            명령 큐
-            <span style="background:var(--re);color:#fff;border-radius:8px;padding:1px 5px;font-size:9px;font-weight:700">2</span>
-          </div>
-          <button class="card-act" onclick="clearQueue()">초기화</button>
-        </div>
-        <div class="card-bd" style="padding:10px 16px">
-          <div class="queue-wrap" id="queue-list">
-            <div class="q-item run"><div class="qi-ic">🔵</div><div class="qi-body"><div class="qi-txt">에이전트 팀 전체 가동 — 버그 수정</div><div class="qi-meta">14:18 · Sonnet PM 실행중</div><div class="qi-prog"><div class="qi-fill"></div></div></div></div>
-            <div class="q-item run"><div class="qi-ic">🔵</div><div class="qi-body"><div class="qi-txt">Playwright QA 자동 테스트</div><div class="qi-meta">14:22 · Opus QA 실행중</div><div class="qi-prog"><div class="qi-fill"></div></div></div></div>
-            <div class="q-item done"><div class="qi-ic">✅</div><div class="qi-body"><div class="qi-txt">창고 도면 페이드인 애니메이션</div><div class="qi-meta">14:00 전송 · 14:25 완료</div></div></div>
-            <div class="q-item done"><div class="qi-ic">✅</div><div class="qi-body"><div class="qi-txt">줄걸이 각도 계산 오류 수정</div><div class="qi-meta">13:50 전송 · 14:10 완료</div></div></div>
-            <div class="q-item done"><div class="qi-ic">✅</div><div class="qi-body"><div class="qi-txt">NPC 경로탐색 버그 수정</div><div class="qi-meta">13:30 전송 · 13:40 완료</div></div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 서버 연결 가이드 -->
-      <div class="card">
-        <div class="card-hd">
-          <div class="card-ttl">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="11" height="7" rx="1.5"/><path d="M3.5 4V3a3 3 0 016 0v1"/></svg>
-            서버 연결 가이드
-          </div>
-        </div>
-        <div class="card-bd">
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;gap:10px;align-items:flex-start">
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--grlt);border:1px solid var(--grdk);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gr);flex-shrink:0">1</div>
-              <div style="font-size:11px;color:var(--ink3);line-height:1.5"><strong style="color:var(--ink2)">Railway 가입</strong><br>railway.app → New Project → Node.js</div>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start">
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--bllt);border:1px solid rgba(88,166,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--bl);flex-shrink:0">2</div>
-              <div style="font-size:11px;color:var(--ink3);line-height:1.5"><strong style="color:var(--ink2)">서버 배포</strong><br>Claude Code에 서버 코드 생성 → 자동 배포</div>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start">
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--pult);border:1px solid rgba(188,140,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--pu);flex-shrink:0">3</div>
-              <div style="font-size:11px;color:var(--ink3);line-height:1.5"><strong style="color:var(--ink2)">API_URL 연결</strong><br>이 파일 상단 변수 1개만 수정</div>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start">
-              <div style="width:22px;height:22px;border-radius:50%;background:var(--yelt);border:1px solid rgba(210,153,34,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--ye);flex-shrink:0">4</div>
-              <div style="font-size:11px;color:var(--ink3);line-height:1.5"><strong style="color:var(--ink2)">CLAUDE.md 업데이트</strong><br>작업 완료 시 status.json push 규칙</div>
-            </div>
-          </div>
-          <div style="margin-top:12px;padding:10px 12px;background:var(--sf2);border-radius:var(--rsm);font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);line-height:1.7">
-            예상 비용: ~$5/월 (Railway Hobby)<br>
-            완성 시: 모바일 → 지시 → 자동 개발
-          </div>
-        </div>
-      </div>
+<div class="of-wrap cmd-chat-wrap">
+  <div class="chat-history" id="chat-history">
+    <div class="chat-empty" id="chat-empty">
+      <div style="font-size:32px;margin-bottom:14px">💬</div>
+      <div style="font-size:13px;color:#8B949E;margin-bottom:6px">에이전트에게 지시를 전송하세요</div>
+      <div style="font-size:11px;color:#484F58">서버 로그가 여기에 실시간 표시됩니다 · 5초마다 자동 갱신</div>
     </div>
   </div>
-</div>
-</div>
-
-
+  <div class="chat-presets">
+    <button class="preset-chip" onclick="setCmd('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 가동</button>
+    <button class="preset-chip" onclick="setCmd('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA 테스트</button>
+    <button class="preset-chip" onclick="setCmd('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태 보고</button>
+    <button class="preset-chip" onclick="setCmd('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 즉시 Push</button>
+    <button class="preset-chip" onclick="setCmd('게임 플레이 스크린샷 찍어서 시각적 품질 분석해줘.')">🎨 품질 검토</button>
+  </div>
+  <div class="chat-input-wrap">
+    <textarea class="chat-textarea" id="cmd-input" placeholder="에이전트에게 지시할 내용을 입력하세요..." rows="2"></textarea>
+    <button class="chat-send-btn" onclick="sendCmd()">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 6.5L1.5 2l2 4.5L1.5 11l10-4.5z"/></svg>
+      전송
+    </button>
+  </div>
 </div>
 </div>
 
@@ -2374,6 +2357,7 @@ function go(id){
   });
   window.scrollTo({top:0,behavior:'smooth'});
   if(id==='gd') setTimeout(()=>bvResize(),100);
+  if(id==='cmd') startCmdPoll(); else stopCmdPoll();
 }
 
 function tt(el){el.classList.toggle('on')}
@@ -2833,39 +2817,115 @@ setInterval(()=>{
   if(_qaP>=100)_qaP=0;
 },3000);
 
-function quickSend(text){
-  navigator.clipboard.writeText(text).then(()=>{
-    const ll=document.getElementById('log-list');
-    if(ll){
-      const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
-      const r=document.createElement('div');
-      r.className='log-row';
-      r.innerHTML='<div class="log-t">'+t+'</div><div class="log-ic">\u{1F4CB}</div><div class="log-body"><span class="ok">\uD074\uB9BD\uBCF4\uB4DC \uBCF5\uC0AC</span> \u2014 Codespaces \uBD99\uC5EC\uB123\uAE30</div>';
-      ll.insertBefore(r,ll.firstChild);
-    }
-  });
+// \u2550\u2550 \uC5C5\uBB34\uC9C0\uC2DC \uCC44\uD305 UI \u2550\u2550
+let _cmdPollTimer=null;
+const _chatIds=new Set();
+
+function _esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}
+function _fmtTime(iso){try{return new Date(iso).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}catch{return''}}
+
+function _setCmdBadge(ok){
+  const badge=document.getElementById('cmd-conn-badge');
+  const dot=document.getElementById('cmd-conn-dot');
+  const txt=document.getElementById('cmd-conn-txt');
+  if(!badge)return;
+  if(ok){
+    badge.style.cssText='background:rgba(63,185,80,.12);border-color:rgba(63,185,80,.25);color:#3FB950';
+    if(dot){dot.style.background='#3FB950';dot.style.animation='';}
+    if(txt)txt.textContent='\uC5F0\uACB0\uB428';
+  }else{
+    badge.style.cssText='background:rgba(248,81,73,.12);border-color:rgba(248,81,73,.25);color:#F85149';
+    if(dot){dot.style.background='#F85149';dot.style.animation='none';}
+    if(txt)txt.textContent='\uC5F0\uACB0 \uC2E4\uD328';
+  }
 }
-function sendCmd(){
+
+function _appendChat(el){
+  const h=document.getElementById('chat-history');
+  if(!h)return;
+  document.getElementById('chat-empty')?.remove();
+  h.appendChild(el);
+  h.scrollTop=h.scrollHeight;
+}
+
+function _renderLog(log){
+  if(_chatIds.has('l'+log.id))return;
+  _chatIds.add('l'+log.id);
+  const lvlColor=log.level==='error'?'#F85149':log.level==='warn'?'#D29922':'#3FB950';
+  const el=document.createElement('div');
+  el.className='chat-msg log';
+  el.innerHTML='<div class="chat-agent">'+_esc(log.agent)+'</div>'
+    +'<div class="chat-bubble log-bubble">'
+    +'<div class="chat-meta" style="color:'+lvlColor+'">'+_esc(log.level)+'</div>'
+    +'<div class="chat-text">'+_esc(log.message)+'</div>'
+    +'<div class="chat-time">'+_fmtTime(log.timestamp)+'</div>'
+    +'</div>';
+  _appendChat(el);
+}
+
+function _renderCmd(cmd){
+  if(_chatIds.has('c'+cmd.id))return;
+  _chatIds.add('c'+cmd.id);
+  const el=document.createElement('div');
+  el.className='chat-msg user';
+  el.innerHTML='<div class="chat-bubble user-bubble">'
+    +'<div class="chat-text">'+_esc(cmd.cmd)+'</div>'
+    +'<div class="chat-time">'+_fmtTime(cmd.receivedAt)+(cmd.done?' \u2705':' \u23F3')+'</div>'
+    +'</div>';
+  _appendChat(el);
+}
+
+async function _fetchStatus(){
+  try{
+    const r=await fetch(API_URL+'/status');
+    const data=await r.json();
+    _setCmdBadge(true);
+    (data.commands||[]).forEach(_renderCmd);
+    (data.logs||[]).forEach(_renderLog);
+  }catch(e){
+    _setCmdBadge(false);
+  }
+}
+
+function startCmdPoll(){
+  _fetchStatus();
+  if(!_cmdPollTimer)_cmdPollTimer=setInterval(_fetchStatus,5000);
+}
+function stopCmdPoll(){
+  if(_cmdPollTimer){clearInterval(_cmdPollTimer);_cmdPollTimer=null;}
+}
+
+async function sendCmd(){
   const inp=document.getElementById('cmd-input');
   if(!inp||!inp.value.trim())return;
-  quickSend(inp.value.trim());
+  const text=inp.value.trim();
   inp.value='';
-}
-function setTarget(el){
-  document.querySelectorAll('.t-btn').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-}
-function clearQueue(){
-  const l=document.getElementById('queue-list');
-  if(l)l.querySelectorAll('.q-item.done').forEach(e=>e.remove());
+  try{
+    const r=await fetch(API_URL+'/command',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({cmd:text})
+    });
+    const data=await r.json();
+    if(data.ok){
+      const el=document.createElement('div');
+      el.className='chat-msg user';
+      el.innerHTML='<div class="chat-bubble user-bubble">'
+        +'<div class="chat-text">'+_esc(text)+'</div>'
+        +'<div class="chat-time">'+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})+' \u23F3</div>'
+        +'</div>';
+      _chatIds.add('c'+data.id);
+      _appendChat(el);
+    }
+  }catch(e){console.error('sendCmd:',e)}
 }
 function setCmd(text){
   const inp=document.getElementById('cmd-input');
   if(inp){inp.value=text;go('cmd');}
 }
 function clearLog(){
-  const l=document.getElementById('log-list');
-  if(l)l.innerHTML='';
+  const l=document.getElementById('chat-history');
+  if(l){l.innerHTML='';_chatIds.clear();}
 }
 </script>
 </body>
