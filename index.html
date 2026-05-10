@@ -3434,6 +3434,7 @@ function _pxSpeech(idx,text){
 function initPixelOffice(){
   if(_pxInitDone)return;
   _pxInitDone=true;
+  _pxRestoreFromLocal();
   const canvas=document.getElementById('px-canvas');
   if(!canvas)return;
   const wrap=document.getElementById('px-room-wrap');
@@ -3473,12 +3474,34 @@ function pxFill(text){
   if(inp){inp.value=text;inp.focus();}
 }
 
+// ── 채팅 로컬 저장/복원 ──
+const _PX_STORE='bulsa_chat_v2';
+function _pxSaveToLocal(entry){
+  try{
+    const arr=JSON.parse(localStorage.getItem(_PX_STORE)||'[]');
+    arr.push(entry);
+    if(arr.length>80)arr.splice(0,arr.length-80);
+    localStorage.setItem(_PX_STORE,JSON.stringify(arr));
+  }catch(e){}
+}
+function _pxRestoreFromLocal(){
+  try{
+    const arr=JSON.parse(localStorage.getItem(_PX_STORE)||'[]');
+    if(!arr.length)return;
+    document.getElementById('px-msg-empty')?.remove();
+    arr.forEach(m=>_pxAddMsg(m.emoji,m.name,m.text,m.isMe,m.msgType,m.badge,m.t,true));
+    const wrap=document.getElementById('px-msgs');
+    if(wrap)wrap.scrollTop=wrap.scrollHeight;
+  }catch(e){}
+}
+
 // ── 메시지 추가 ──
-function _pxAddMsg(emoji,name,text,isMe,msgType,statusBadge){
+function _pxAddMsg(emoji,name,text,isMe,msgType,statusBadge,savedTime,skipSave){
   const wrap=document.getElementById('px-msgs');
   if(!wrap)return null;
   document.getElementById('px-msg-empty')?.remove();
-  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  const t=savedTime||new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  if(!skipSave) _pxSaveToLocal({emoji,name,text,isMe,msgType,badge:statusBadge,t});
   const el=document.createElement('div');
   el.className='px-bwrap'+(isMe?' me':'');
   el.dataset.type=msgType||'log';
