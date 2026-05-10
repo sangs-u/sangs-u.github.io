@@ -1,0 +1,2870 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SANGS-U · Space</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{
+  --bg:#F7F5F2;--sf:#FFF;--bd:#E4DFD8;--bs:#EDE9E3;
+  --ink:#1C1C1E;--ink2:#3A3A3C;--ink3:#6C6C70;--ink4:#AEAEB2;
+  --gr:#3A7D5C;--grlt:#EBF4EF;--grmd:#C8E0D4;
+  --vi:#5B4E8A;--vilt:#EDEAF6;--vimd:#CEC8E8;
+  --ro:#9B4B5E;--rolt:#F5EAED;--romd:#E0C4CB;
+  --go:#8B6914;--golt:#F5EED8;--gomd:#DEC98A;
+  --sl:#4A6580;--sllt:#EAF0F5;--slmd:#C0D0DC;
+  --te:#2A7A8A;--telt:#E6F4F6;--temd:#A8D4DA;
+  --r:12px;--rsm:8px;--sw:220px;
+  --sh:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sd:0 4px 16px rgba(0,0,0,.07),0 1px 4px rgba(0,0,0,.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* 사이드바 */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sw);background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;z-index:50}
+.sb-top{padding:28px 20px 22px;border-bottom:1px solid var(--bs)}
+.sb-mark{width:36px;height:36px;background:var(--ink);border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.sb-mark span{font-family:'DM Serif Display',serif;font-size:15px;color:#fff}
+.sb-name{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.3px;margin-bottom:2px}
+.sb-sub{font-size:11px;color:var(--ink4);line-height:1.55}
+.sb-nav{flex:1;padding:16px 10px;overflow-y:auto}
+.nl{font-size:10px;font-weight:500;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;padding:0 10px;margin:14px 0 4px}
+.nl:first-child{margin-top:0}
+.nb{width:100%;display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:var(--rsm);border:none;background:transparent;font-family:inherit;font-size:12.5px;color:var(--ink3);cursor:pointer;text-align:left;transition:all .15s;margin-bottom:1px}
+.nb:hover{background:var(--bg);color:var(--ink)}
+.nb.on{background:var(--ink);color:#fff}
+.ni{width:15px;height:15px;flex-shrink:0}
+.sb-foot{padding:14px 20px;border-top:1px solid var(--bs)}
+.sb-url{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-bottom:2px}
+.sb-dt{font-size:11px;color:var(--ink4)}
+
+/* 메인 */
+.main{margin-left:var(--sw);min-height:100vh;padding:44px 48px 80px}
+.sec{display:none}
+.sec.on{display:block;animation:fi .22s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ph{margin-bottom:36px}
+.pe{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px}
+.pt{font-family:'DM Serif Display',serif;font-size:30px;color:var(--ink);letter-spacing:-1px;line-height:1.1}
+.pt em{font-style:italic;color:var(--ink3)}
+.pst{margin-top:9px;font-size:13px;color:var(--ink3);line-height:1.65;max-width:500px}
+.dvd{height:1px;background:var(--bd);margin:32px 0}
+.sl{font-size:10px;font-weight:500;color:var(--ink4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:32px}
+
+/* 프로젝트 카드 */
+.pc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:22px;transition:all .2s}
+.pc:hover{box-shadow:var(--sd);border-color:transparent;transform:translateY(-1px)}
+.pc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.pi{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.pi.g{background:var(--grlt)}.pi.v{background:var(--vilt)}
+.pb{font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:20px;border:1px solid var(--bd);color:var(--ink4)}
+.pb.on{border-color:var(--grmd);color:var(--gr);background:var(--grlt)}
+.pn{font-family:'DM Serif Display',serif;font-size:19px;color:var(--ink);letter-spacing:-.5px;margin-bottom:5px}
+.pd{font-size:12.5px;color:var(--ink3);line-height:1.65;margin-bottom:16px}
+.ps-row{display:flex;flex-wrap:wrap;gap:5px}
+.sch{font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:4px;background:var(--bg);color:var(--ink3)}
+
+/* 다이어그램 */
+.dg{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:24px;margin-bottom:14px;overflow-x:auto}
+.dg-t{font-size:10px;font-weight:500;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
+.eco{display:flex;align-items:center;min-width:560px}
+.en{flex:1;background:var(--bg);border:1px solid var(--bd);border-radius:var(--rsm);padding:14px 12px;text-align:center}
+.en.vi{background:var(--vilt);border-color:var(--vimd)}.en.gr{background:var(--grlt);border-color:var(--grmd)}
+.en.go{background:var(--golt);border-color:var(--gomd)}.en.sl{background:var(--sllt);border-color:var(--slmd)}
+.en-l{font-size:9px;color:var(--ink4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.en-n{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.3px;margin-bottom:3px}
+.en-s{font-size:10px;color:var(--ink3);line-height:1.4}
+.ea{display:flex;align-items:center;justify-content:center;width:34px;flex-shrink:0}
+.ag-w{display:flex;align-items:center;min-width:620px}
+.ag-l{display:flex;flex-direction:column;gap:8px;flex:1}
+.ag-r{display:flex;flex-direction:column;gap:8px;flex:1}
+.ag-c{flex-shrink:0;padding:0 14px}
+.ag-pm{background:var(--ink);color:#fff;border-radius:var(--r);padding:16px 18px;text-align:center;min-width:120px}
+.ag-pm-l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.5;margin-bottom:4px}
+.ag-pm-n{font-family:'DM Serif Display',serif;font-size:14px;letter-spacing:-.3px;margin-bottom:2px}
+.ag-pm-s{font-size:10px;opacity:.55}
+.ag-row{display:flex;align-items:center}.ag-row.l{justify-content:flex-end}
+.ag-nd{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px;max-width:165px}
+.ag-nd.gr{border-color:var(--grmd);background:var(--grlt)}.ag-nd.vi{border-color:var(--vimd);background:var(--vilt)}
+.ag-nd.ro{border-color:var(--romd);background:var(--rolt)}.ag-nd.go{border-color:var(--gomd);background:var(--golt)}
+.an-l{font-size:9px;font-weight:500;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.an-n{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;letter-spacing:-.2px}
+.an-s{font-size:10px;color:var(--ink3);line-height:1.4}
+.ag-cn{display:flex;align-items:center;padding:0 6px}
+.ag-cl{height:1px;background:var(--bd);min-width:14px}
+.ag-cd{width:4px;height:4px;border-radius:50%;background:var(--bd);flex-shrink:0}
+
+/* 타임라인 */
+.tl{position:relative;padding-left:22px}
+.tl::before{content:'';position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:var(--bd)}
+.tli{position:relative;margin-bottom:22px}
+.tli::before{content:'';position:absolute;left:-18px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--sf);border:1.5px solid var(--ink3)}
+.tli:first-child::before{background:var(--ink);border-color:var(--ink)}
+.tl-d{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-bottom:3px}
+.tl-t{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px;letter-spacing:-.2px}
+.tl-b{font-size:12px;color:var(--ink3);line-height:1.7;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rsm);padding:11px 13px}
+
+/* ══════════════════════════════
+   3D 도면 뷰어 (내장)
+══════════════════════════════ */
+.bp-viewer{background:#1A2535;border-radius:var(--r);overflow:hidden;margin-bottom:20px;border:1px solid var(--bd)}
+.bp-viewer-header{background:rgba(0,0,0,.4);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06)}
+.bvh-title{font-size:12px;font-weight:700;color:#fff;letter-spacing:-.2px}
+.bvh-sub{font-size:9px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace}
+.bvh-expand{padding:4px 10px;border:1px solid rgba(255,255,255,.15);border-radius:5px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);font-size:10px;cursor:pointer;font-family:inherit;transition:all .15s}
+.bvh-expand:hover{background:rgba(255,255,255,.12);color:#fff}
+.bp-viewer-body{display:flex;height:520px}
+
+/* 뷰어 패널 */
+.bv-panel{width:220px;flex-shrink:0;background:rgba(0,0,0,.3);border-right:1px solid rgba(255,255,255,.05);overflow-y:auto;display:flex;flex-direction:column}
+.bvp-s{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05)}
+.bvp-l{font-size:8px;font-weight:500;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.bv-bp-btn{width:100%;display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;border:none;background:transparent;font-family:inherit;cursor:pointer;text-align:left;transition:all .15s;margin-bottom:2px;color:rgba(255,255,255,.5)}
+.bv-bp-btn:hover{background:rgba(255,255,255,.06);color:#fff}
+.bv-bp-btn.on{background:rgba(255,255,255,.1);color:#fff}
+.bv-bp-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+.bv-bp-nm{font-size:11px;font-weight:600;flex:1}
+.bv-bp-sub{font-size:9px;font-family:'DM Mono',monospace;opacity:.45}
+.bv-ic-row{display:flex;justify-content:space-between;padding:2px 0;font-size:10px;border-bottom:1px solid rgba(255,255,255,.04)}
+.bv-ic-row:last-child{border:none}
+.bv-ic-k{color:rgba(255,255,255,.35)}
+.bv-ic-v{font-family:'DM Mono',monospace;color:rgba(255,255,255,.75);font-size:9px}
+.bv-phase-item{display:flex;align-items:center;gap:6px;padding:5px 6px;border-radius:5px;cursor:pointer;transition:all .15s;border:1px solid transparent;margin-bottom:2px;color:rgba(255,255,255,.45)}
+.bv-phase-item:hover{background:rgba(255,255,255,.05);color:#fff}
+.bv-phase-item.active{background:rgba(58,125,92,.2);border-color:rgba(58,125,92,.35);color:#fff}
+.bv-phase-item.done{color:rgba(255,255,255,.25)}
+.bv-ph-num{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0}
+.bv-phase-item.active .bv-ph-num{background:#3A7D5C;color:#fff}
+.bv-ph-nm{font-size:10px;font-weight:600;flex:1}
+.bv-ph-desc{font-size:8px;opacity:.45;font-family:'DM Mono',monospace}
+.bv-ctrl-row{display:flex;gap:5px;margin-bottom:5px}
+.bv-ctrl-btn{flex:1;padding:6px 4px;border:1px solid rgba(255,255,255,.08);border-radius:5px;background:rgba(255,255,255,.04);font-size:10px;font-weight:600;color:rgba(255,255,255,.6);cursor:pointer;font-family:inherit;transition:all .15s}
+.bv-ctrl-btn:hover{border-color:rgba(255,255,255,.2);color:#fff}
+.bv-ctrl-btn.primary{background:rgba(58,125,92,.35);border-color:rgba(58,125,92,.5);color:#fff}
+.bv-ctrl-full{width:100%;margin-bottom:4px}
+.bv-leg-item{display:flex;align-items:center;gap:6px;font-size:9px;color:rgba(255,255,255,.4);padding:2px 0}
+.bv-leg-col{width:10px;height:10px;border-radius:2px;flex-shrink:0;border:1px solid rgba(255,255,255,.08)}
+
+/* 뷰포트 */
+.bv-viewport{flex:1;position:relative;overflow:hidden}
+#bv-canvas{display:block;width:100%;height:100%}
+.bv-hud{position:absolute;top:12px;left:12px;pointer-events:none}
+.bv-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.4px;margin-bottom:2px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.bv-phase-txt{font-size:10px;color:rgba(255,255,255,.45);font-family:'DM Mono',monospace}
+.bv-hint{position:absolute;top:12px;right:12px;font-size:9px;color:rgba(255,255,255,.3);line-height:1.8;text-align:right;pointer-events:none}
+.bv-prog{position:absolute;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(transparent,rgba(0,0,0,.5));pointer-events:none}
+.bv-prog-bar{height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-bottom:4px}
+.bv-prog-fill{height:100%;background:#3A7D5C;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.bv-prog-txt{font-size:9px;color:rgba(255,255,255,.35);font-family:'DM Mono',monospace;text-align:center}
+
+/* 전체화면 오버레이 */
+.bv-fullscreen{display:none;position:fixed;inset:0;z-index:9999;background:#1A2535;flex-direction:column}
+.bv-fullscreen.on{display:flex}
+.bvf-header{background:rgba(0,0,0,.5);padding:10px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.bvf-title{font-size:13px;font-weight:700;color:#fff;flex:1}
+.bvf-close{padding:5px 12px;border:1px solid rgba(255,255,255,.15);border-radius:6px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;font-family:inherit}
+.bvf-body{display:flex;flex:1;overflow:hidden}
+
+/* 공정 플로우 */
+.pf{display:flex;align-items:stretch;min-width:660px}
+.pf-s{flex:1;display:flex;flex-direction:column}
+.pf-i{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rsm);padding:11px 9px;flex:1}
+.pf-s:nth-child(1) .pf-i{background:var(--sllt);border-color:var(--slmd)}
+.pf-s:nth-child(3) .pf-i{background:var(--vilt);border-color:var(--vimd)}
+.pf-s:nth-child(5) .pf-i{background:var(--golt);border-color:var(--gomd)}
+.pf-s:nth-child(7) .pf-i{background:var(--rolt);border-color:var(--romd)}
+.pf-s:nth-child(9) .pf-i{background:var(--telt);border-color:var(--temd)}
+.pf-s:nth-child(11) .pf-i{background:var(--grlt);border-color:var(--grmd)}
+.pf-n{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);margin-bottom:4px}
+.pf-nm{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:3px;letter-spacing:-.2px}
+.pf-sb{font-size:10px;color:var(--ink3);line-height:1.4}
+.pf-a{display:flex;align-items:center;justify-content:center;width:18px;flex-shrink:0;align-self:center}
+
+/* 버전 타임라인 */
+.vt{display:flex;align-items:flex-start;min-width:540px;padding-top:6px}
+.vt-i{flex:1;position:relative}
+.vt-dr{display:flex;align-items:center;margin-bottom:10px}
+.vt-d{width:11px;height:11px;border-radius:50%;background:var(--bd);border:2px solid var(--bd);flex-shrink:0;z-index:1}
+.vt-d.a{background:var(--gr);border-color:var(--gr)}.vt-d.n{background:var(--sf);border-color:var(--vi)}
+.vt-l{flex:1;height:2px;background:var(--bd)}.vt-l.a{background:var(--grmd)}
+.vt-i:last-child .vt-l{display:none}
+.vt-v{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);margin-bottom:2px}
+.vt-nm{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;letter-spacing:-.2px}
+.vt-s{font-size:10px;color:var(--ink3);line-height:1.4;padding-right:10px}
+
+/* 역할 구조도 */
+.rd-w{display:flex;flex-direction:column;align-items:center;gap:12px}
+.rd-top{display:flex;justify-content:center}
+.rd-mid{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.rd-r{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px;min-width:110px;text-align:center}
+.rd-r.foreman{background:var(--ink);border-color:var(--ink);min-width:140px}
+.rd-r.crane{background:var(--sllt);border-color:var(--slmd)}.rd-r.rigger{background:var(--vilt);border-color:var(--vimd)}
+.rd-r.signal{background:var(--golt);border-color:var(--gomd)}.rd-r.safety{background:var(--rolt);border-color:var(--romd)}
+.rd-r.worker{background:var(--grlt);border-color:var(--grmd)}
+.rd-rl{font-size:9px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.rd-rn{font-size:11px;font-weight:700;margin-bottom:2px;letter-spacing:-.2px}
+.rd-rs{font-size:10px;line-height:1.4;opacity:.7}
+.rd-r.foreman .rd-rl,.rd-r.foreman .rd-rn,.rd-r.foreman .rd-rs{color:#fff}
+.rd-vl{width:1px;height:12px;background:var(--bd);margin:0 auto}
+
+/* 도면 카드 */
+.bp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:24px}
+.bp-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;position:relative;overflow:hidden;cursor:pointer;transition:all .15s}
+.bp-card:hover{box-shadow:var(--sd);border-color:transparent}
+.bp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.bp-card.c1::before{background:var(--sl)}.bp-card.c2::before{background:var(--vi)}
+.bp-card.c3::before{background:var(--go)}.bp-card.c4::before{background:var(--ro)}.bp-card.c5::before{background:var(--te)}
+.bp-ver{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);margin-bottom:5px}
+.bp-nm{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;letter-spacing:-.2px}
+.bp-spec-row{display:flex;justify-content:space-between;font-size:10px;padding:2px 0;border-bottom:1px solid var(--bs)}
+.bp-spec-row:last-child{border:none}
+.bp-spec-k{color:var(--ink4)}
+.bp-spec-v{font-family:'DM Mono',monospace;color:var(--ink3)}
+
+/* 수익 */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:24px}
+.rev-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;transition:box-shadow .2s}
+.rev-card:hover{box-shadow:var(--sd)}
+.rev-card.free{border-color:var(--grmd);background:var(--grlt)}
+.rev-tier{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);margin-bottom:5px}
+.rev-nm{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:9px;letter-spacing:-.2px}
+.rev-list{list-style:none}
+.rev-list li{font-size:11px;color:var(--ink3);padding:2px 0 2px 10px;position:relative;line-height:1.5}
+.rev-list li::before{content:'';position:absolute;left:0;top:8px;width:3px;height:3px;border-radius:50%;background:var(--ink4)}
+.rev-card.free .rev-list li::before{background:var(--gr)}
+.rev-tag{display:inline-block;margin-top:10px;font-size:9px;font-weight:500;padding:2px 8px;border-radius:20px;letter-spacing:.05em}
+.rt-free{background:var(--gr);color:#fff}
+.rt-paid{background:var(--vilt);color:var(--vi);border:1px solid var(--vimd)}
+.rt-b2b{background:var(--golt);color:var(--go);border:1px solid var(--gomd)}
+.rt-future{background:#f0f0f0;color:var(--ink4);border:1px solid var(--bd)}
+
+/* 마케팅 */
+.mkt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:24px}
+.mkt-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px;transition:box-shadow .2s}
+.mkt-card:hover{box-shadow:var(--sd)}
+.mkt-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.mkt-icon.g{background:var(--grlt)}.mkt-icon.v{background:var(--vilt)}
+.mkt-icon.go{background:var(--golt)}.mkt-icon.r{background:var(--rolt)}.mkt-icon.s{background:var(--sllt)}
+.mkt-nm{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.mkt-tgt{font-size:9px;color:var(--ink4);font-family:'DM Mono',monospace;margin-bottom:6px}
+.mkt-desc{font-size:11px;color:var(--ink3);line-height:1.6}
+.mkt-tag{display:inline-block;margin-top:8px;font-size:9px;padding:2px 7px;border-radius:20px;font-weight:500}
+.mt-r{background:var(--gr);color:#fff}.mt-s{background:var(--vilt);color:var(--vi);border:1px solid var(--vimd)}.mt-l{background:#f0f0f0;color:var(--ink4);border:1px solid var(--bd)}
+
+/* 체크리스트 */
+.cklist{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
+.cki{display:flex;align-items:flex-start;gap:11px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rsm);padding:11px 14px;cursor:pointer;transition:all .15s}
+.cki:hover{border-color:var(--ink4)}
+.cki.done{opacity:.4}.cki.done .ckt{text-decoration:line-through}
+.ckbox{width:16px;height:16px;border:1.5px solid var(--bd);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px}
+.cki.done .ckbox{background:var(--ink);border-color:var(--ink)}
+.ckt{font-size:12.5px;color:var(--ink2);flex:1}
+.cks{font-size:10px;color:var(--ink4);margin-top:2px}
+.ckb{font-size:9px;padding:2px 7px;border-radius:20px;background:var(--bg);color:var(--ink4);border:1px solid var(--bd);white-space:nowrap;align-self:flex-start;margin-top:1px}
+
+/* 로드맵 */
+.rmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:24px}
+.rmc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:15px;transition:box-shadow .2s}
+.rmc:hover{box-shadow:var(--sd)}.rmc.hl{border-color:var(--grmd);background:var(--grlt)}
+.rmv{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);margin-bottom:4px}
+.rmt{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:9px;letter-spacing:-.2px}
+.rml{list-style:none}
+.rml li{font-size:11px;color:var(--ink3);padding:2px 0 2px 10px;position:relative;line-height:1.5}
+.rml li::before{content:'';position:absolute;left:0;top:8px;width:3px;height:3px;border-radius:50%;background:var(--ink4)}
+.rmc.hl .rml li::before{background:var(--gr)}
+.rmt-tag{display:inline-block;margin-top:9px;font-size:9px;font-weight:500;padding:2px 7px;border-radius:20px;letter-spacing:.05em}
+.rt-now{background:var(--gr);color:#fff}
+.rt-next{background:var(--vilt);color:var(--vi);border:1px solid var(--vimd)}
+.rt-later{background:#f0f0f0;color:var(--ink4);border:1px solid var(--bd)}
+.rt-money{background:var(--golt);color:var(--go);border:1px solid var(--gomd)}
+
+/* 메모 */
+.mc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:20px;box-shadow:var(--sh)}
+.mh{padding:14px 18px 0}
+.mti{width:100%;font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);border:none;outline:none;background:transparent;letter-spacing:-.3px;margin-bottom:10px}
+.mti::placeholder{color:var(--ink4)}
+.msep{height:1px;background:var(--bs)}
+.mbi{width:100%;min-height:100px;padding:12px 18px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--ink2);border:none;outline:none;resize:none;background:transparent;line-height:1.8}
+.mbi::placeholder{color:var(--ink4)}
+.mf{padding:10px 18px;border-top:1px solid var(--bs);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tr{display:flex;gap:5px;flex-wrap:wrap}
+.tc{font-size:11px;padding:3px 9px;border-radius:20px;border:1px solid var(--bd);color:var(--ink4);cursor:pointer;transition:all .15s;background:none;font-family:inherit}
+.tc:hover,.tc.on{border-color:var(--ink);color:var(--ink);background:var(--bg)}
+.bp2{padding:7px 18px;background:var(--ink);color:#fff;border:none;border-radius:20px;font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;transition:opacity .15s}
+.bp2:hover{opacity:.8}
+.ml{display:flex;flex-direction:column;gap:7px}
+.mr{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rsm);padding:13px 17px;display:flex;gap:13px;cursor:pointer;transition:all .15s}
+.mr:hover{border-color:var(--ink);box-shadow:var(--sh)}
+.mline{width:2px;align-self:stretch;border-radius:2px;background:var(--vimd);flex-shrink:0}
+.mbody{flex:1;min-width:0}
+.mrt{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mrp{font-size:11px;color:var(--ink3);line-height:1.6}
+.mrm{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:6px;display:flex;gap:8px}
+
+/* 프롬프트 */
+.prc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:8px}
+.prh{padding:11px 16px;border-bottom:1px solid var(--bs);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.prn{font-size:12px;font-weight:600;color:var(--ink)}
+.prcat{font-size:9px;color:var(--ink4);font-family:'DM Mono',monospace}
+.bc{font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--bd);background:none;color:var(--ink3);font-family:inherit;cursor:pointer;transition:all .15s}
+.bc:hover{border-color:var(--ink);color:var(--ink)}
+.bc.ok{border-color:var(--gr);color:var(--gr);background:var(--grlt)}
+.prb{padding:12px 16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink2);line-height:1.9;background:var(--bg);white-space:pre-wrap;word-break:break-word}
+
+/* 모바일 */
+.mob{display:none}
+@media(max-width:720px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:24px 18px 90px}
+  .g2,.rmg,.mkt-grid,.rev-grid,.bp-grid{grid-template-columns:1fr}
+  .bp-viewer-body{flex-direction:column;height:auto}
+  .bv-panel{width:100%;height:200px;border-right:none;border-bottom:1px solid rgba(255,255,255,.05)}
+  .bv-viewport{height:300px}
+  .mob{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--bd);padding:8px 0 calc(8px + env(safe-area-inset-bottom));z-index:100;justify-content:space-around}
+}
+.mb{display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;cursor:pointer;font-family:inherit;font-size:9px;color:var(--ink4);padding:4px 10px;transition:color .15s}
+.mb.on{color:var(--ink)}
+.mb svg{width:19px;height:19px}
+
+
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 헤더 ── */
+.hdr {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(13,17,23,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--bd);
+}
+.hdr-inner {
+  max-width: 1600px; margin: 0 auto;
+  padding: 0 20px;
+  height: 52px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hdr-logo {
+  display: flex; align-items: center; gap: 9px;
+  flex-shrink: 0;
+}
+.hdr-mark {
+  width: 26px; height: 26px;
+  background: var(--gr);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+.hdr-mark span { font-size: 12px; font-weight: 800; color: #000; }
+.hdr-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.hdr-sep { width: 1px; height: 18px; background: var(--bd); flex-shrink: 0; }
+.hdr-tabs { display: flex; gap: 0; }
+.hdr-tab {
+  padding: 0 14px; height: 52px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; color: var(--ink3);
+  cursor: pointer; border: none; background: none;
+  border-bottom: 2px solid transparent;
+  font-family: inherit; transition: all .15s; white-space: nowrap;
+}
+.hdr-tab:hover { color: var(--ink); }
+.hdr-tab.on { color: var(--bl); border-bottom-color: var(--bl); }
+.hdr-tab svg { opacity: .6; }
+.hdr-tab.on svg { opacity: 1; }
+.hdr-right {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 10px;
+}
+.live-badge {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  background: var(--grlt);
+  border: 1px solid rgba(63,185,80,.25);
+  border-radius: 20px;
+  font-size: 10px; font-weight: 600; color: var(--gr);
+  font-family: 'DM Mono', monospace;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gr);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.hdr-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--ink4);
+}
+
+/* ── 섹션 ── */
+.sec { display: none; }
+.sec.on { display: block; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── 레이아웃 ── */
+.page { max-width: 1600px; margin: 0 auto; padding: 20px 20px 100px; }
+
+/* ── 카드 ── */
+.card {
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.card-hd {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--bd2);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.card-ttl {
+  font-size: 11px; font-weight: 600;
+  color: var(--ink3); letter-spacing: .04em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+}
+.card-ttl svg { opacity: .5; }
+.card-act {
+  font-size: 11px; color: var(--bl); cursor: pointer;
+  background: none; border: none; font-family: inherit;
+  padding: 3px 8px; border-radius: 4px; transition: background .15s;
+}
+.card-act:hover { background: var(--bllt); }
+.card-bd { padding: 14px 16px; }
+
+/* ══════════════════════════════
+   사무실 탭
+══════════════════════════════ */
+.office-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 320px;
+  grid-template-rows: auto auto auto;
+  gap: 14px;
+}
+
+/* 에이전트 현황 */
+.agent-section { grid-column: 1 / 3; }
+.agents-wrap {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.ag {
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.ag::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+}
+.ag.gr::after { background: var(--gr); }
+.ag.bl::after { background: var(--bl); }
+.ag.pu::after { background: var(--pu); }
+.ag.or::after { background: var(--or); }
+.ag.ye::after { background: var(--ye); }
+.ag.offline { opacity: .45; }
+
+.ag-top { margin-bottom: 10px; }
+.ag-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.ag-role { font-size: 10px; color: var(--ink4); font-family: 'DM Mono', monospace; }
+.ag-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 20px;
+  font-size: 9px; font-weight: 700;
+  margin-top: 6px;
+}
+.ag-bd-dot { width: 5px; height: 5px; border-radius: 50%; }
+.b-gr { background: var(--grlt); color: var(--gr); }
+.b-gr .ag-bd-dot { background: var(--gr); animation: pulse 2s infinite; }
+.b-bl { background: var(--bllt); color: var(--bl); }
+.b-bl .ag-bd-dot { background: var(--bl); animation: pulse 1.5s infinite; }
+.b-ye { background: var(--yelt); color: var(--ye); }
+.b-ye .ag-bd-dot { background: var(--ye); }
+.b-gy { background: var(--sf3); color: var(--ink4); }
+.b-gy .ag-bd-dot { background: var(--ink4); }
+
+.ag-task {
+  font-size: 11px; color: var(--ink2);
+  line-height: 1.5; margin: 8px 0;
+  min-height: 34px;
+}
+.ag-prog {
+  height: 2px; background: var(--sf3);
+  border-radius: 2px; overflow: hidden; margin-bottom: 5px;
+}
+.ag-prog-fill { height: 100%; border-radius: 2px; transition: width 1s; }
+.ag-meta { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink4); }
+
+/* 라이브 로그 */
+.log-section { grid-column: 1 / 3; }
+.log-wrap {
+  max-height: 240px; overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.log-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--bd2);
+  animation: slideIn .25s ease;
+}
+.log-row:last-child { border-bottom: none; }
+@keyframes slideIn { from{opacity:0;transform:translateY(-3px)} to{opacity:1;transform:translateY(0)} }
+.log-t { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--ink4); flex-shrink: 0; min-width: 40px; margin-top: 1px; }
+.log-ic { font-size: 12px; flex-shrink: 0; }
+.log-msg { font-size: 11px; color: var(--ink2); line-height: 1.5; flex: 1; }
+.log-msg .tag { font-family: 'DM Mono', monospace; font-size: 10px; }
+.ok { color: var(--gr); }
+.bl { color: var(--bl); }
+.warn { color: var(--ye); }
+.err { color: var(--re); }
+
+/* 사이드 패널 */
+.side-panel { grid-column: 3; grid-row: 1 / 4; display: flex; flex-direction: column; gap: 14px; }
+
+/* 통계 */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat {
+  background: var(--sf2); border: 1px solid var(--bd);
+  border-radius: var(--rsm); padding: 12px;
+}
+.stat-v { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.stat-l { font-size: 10px; color: var(--ink3); }
+.stat-c { font-size: 10px; font-family: 'DM Mono', monospace; margin-top: 3px; }
+
+/* 진행률 */
+.prog-section {}
+.prog-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
+.prog-bar { height: 6px; background: var(--sf3); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+.prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gr), var(--bl)); }
+.prog-markers { display: flex; justify-content: space-between; font-size: 9px; color: var(--ink4); font-family: 'DM Mono', monospace; }
+
+/* 빠른 지시 */
+.quick-list { display: flex; flex-direction: column; gap: 5px; }
+.quick-btn {
+  width: 100%; padding: 9px 12px;
+  background: var(--sf2); border: 1px solid var(--bd);
+  border-radius: var(--rsm); font-size: 11px;
+  color: var(--ink2); cursor: pointer;
+  font-family: inherit; text-align: left;
+  transition: all .15s;
+  display: flex; align-items: center; gap: 8px;
+}
+.quick-btn:hover { border-color: var(--bl); color: var(--ink); background: var(--bllt); }
+.quick-btn:active { transform: scale(.98); }
+
+/* ══════════════════════════════
+   지시 탭
+══════════════════════════════ */
+.cmd-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 14px;
+}
+
+.preset-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.preset-chip {
+  padding: 5px 11px;
+  background: var(--sf2); border: 1px solid var(--bd);
+  border-radius: 20px; font-size: 11px; color: var(--ink3);
+  cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.preset-chip:hover { border-color: var(--bl); color: var(--bl); background: var(--bllt); }
+
+.cmd-box {
+  background: var(--sf2); border: 1px solid var(--bd);
+  border-radius: var(--r); overflow: hidden;
+  transition: border-color .15s;
+}
+.cmd-box:focus-within { border-color: var(--bl); }
+.cmd-textarea {
+  width: 100%; padding: 14px 16px;
+  background: transparent; border: none; outline: none;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px; color: var(--ink);
+  resize: none; min-height: 120px; line-height: 1.7;
+}
+.cmd-textarea::placeholder { color: var(--ink4); }
+.cmd-foot {
+  padding: 10px 16px; border-top: 1px solid var(--bd2);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: rgba(0,0,0,.2);
+}
+.target-row { display: flex; gap: 5px; }
+.t-btn {
+  padding: 4px 10px; border: 1px solid var(--bd);
+  border-radius: 20px; background: transparent;
+  font-size: 10px; color: var(--ink3);
+  cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.t-btn.on { border-color: var(--gr); color: var(--gr); background: var(--grlt); }
+.send-btn {
+  padding: 8px 20px;
+  background: var(--grdk); color: #fff;
+  border: none; border-radius: var(--rsm);
+  font-size: 12px; font-weight: 600;
+  font-family: inherit; cursor: pointer;
+  transition: all .15s;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.send-btn:hover { background: var(--gr); transform: translateY(-1px); }
+.send-btn:active { transform: scale(.97); }
+
+/* 큐 */
+.queue-wrap { display: flex; flex-direction: column; gap: 6px; }
+.q-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px;
+  background: var(--sf2); border: 1px solid var(--bd);
+  border-radius: var(--rsm);
+  transition: border-color .2s;
+}
+.q-item.run { border-color: rgba(88,166,255,.4); }
+.q-item.done { opacity: .45; }
+.q-item.fail { border-color: rgba(248,81,73,.4); }
+.qi-ic { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.qi-body { flex: 1; min-width: 0; }
+.qi-txt { font-size: 11px; color: var(--ink2); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qi-meta { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink4); }
+.qi-prog { height: 2px; background: var(--sf3); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+.qi-fill { height: 100%; background: var(--bl); border-radius: 2px; animation: sweep 2s infinite; }
+@keyframes sweep { 0%{width:0%;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0%;margin-left:100%} }
+
+/* ══════════════════════════════
+   히스토리 탭
+══════════════════════════════ */
+.hist-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 14px;
+}
+
+.tl { position: relative; padding-left: 22px; }
+.tl::before {
+  content: ''; position: absolute;
+  left: 6px; top: 6px; bottom: 6px;
+  width: 1px; background: var(--bd);
+}
+.tl-day { margin-bottom: 20px; position: relative; }
+.tl-day::before {
+  content: ''; position: absolute;
+  left: -19px; top: 5px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--sf); border: 1.5px solid var(--ink4);
+}
+.tl-day.today::before { background: var(--gr); border-color: var(--gr); }
+.tl-day.recent::before { background: var(--bl); border-color: var(--bl); }
+.tl-date {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--ink4); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tl-date-badge {
+  padding: 1px 6px; border-radius: 3px;
+  font-size: 9px; font-weight: 700;
+}
+.tl-date-badge.today { background: var(--grlt); color: var(--gr); }
+.tl-commits { display: flex; flex-direction: column; gap: 5px; }
+.commit {
+  background: var(--sf2); border: 1px solid var(--bd2);
+  border-radius: var(--rsm); padding: 9px 12px;
+  transition: border-color .15s;
+}
+.commit:hover { border-color: var(--bd); }
+.commit-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
+.commit-msg { font-size: 11px; color: var(--ink2); line-height: 1.4; flex: 1; }
+.commit-tag {
+  padding: 1px 6px; border-radius: 3px;
+  font-size: 9px; font-weight: 700;
+  white-space: nowrap; flex-shrink: 0;
+}
+.ct-feat { background: var(--bllt); color: var(--bl); }
+.ct-fix { background: var(--relt); color: var(--re); }
+.ct-auto { background: var(--grlt); color: var(--gr); }
+.ct-design { background: var(--pult); color: var(--pu); }
+.ct-init { background: var(--yelt); color: var(--ye); }
+.commit-meta {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink4);
+}
+.commit-hash { color: var(--bl); cursor: pointer; }
+.commit-hash:hover { text-decoration: underline; }
+
+/* 히스토리 사이드 */
+.hist-side { display: flex; flex-direction: column; gap: 14px; }
+.contrib-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.contrib-cell {
+  aspect-ratio: 1; border-radius: 2px;
+  background: var(--sf3);
+}
+.contrib-cell.l1 { background: rgba(63,185,80,.3); }
+.contrib-cell.l2 { background: rgba(63,185,80,.5); }
+.contrib-cell.l3 { background: rgba(63,185,80,.75); }
+.contrib-cell.l4 { background: var(--gr); }
+
+/* 태그 분포 */
+.tag-dist { display: flex; flex-direction: column; gap: 6px; }
+.tag-row { display: flex; align-items: center; gap: 8px; }
+.tag-name { font-size: 10px; color: var(--ink3); width: 40px; flex-shrink: 0; }
+.tag-bar-wrap { flex: 1; height: 6px; background: var(--sf3); border-radius: 3px; overflow: hidden; }
+.tag-bar { height: 100%; border-radius: 3px; }
+.tag-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--ink4); width: 20px; text-align: right; flex-shrink: 0; }
+
+/* 연결 배너 */
+.connect-banner {
+  background: linear-gradient(135deg, var(--yelt), rgba(240,136,62,.08));
+  border: 1px solid rgba(210,153,34,.25);
+  border-radius: var(--r); padding: 12px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 14px;
+}
+.cb-ic { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.cb-title { font-size: 12px; font-weight: 700; color: var(--ye); margin-bottom: 3px; }
+.cb-desc { font-size: 11px; color: var(--ink3); line-height: 1.55; }
+
+/* ── 모바일 하단 탭 ── */
+.mob-bar {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(22,27,34,.95);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--bd);
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  z-index: 200;
+  justify-content: space-around;
+}
+.mob-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  border: none; background: none; cursor: pointer;
+  font-family: inherit; font-size: 9px; color: var(--ink4);
+  padding: 4px 20px; transition: color .15s;
+}
+.mob-tab.on { color: var(--bl); }
+.mob-tab svg { width: 20px; height: 20px; }
+
+/* ── 반응형 ── */
+@media (max-width: 1200px) {
+  .agents-wrap { grid-template-columns: repeat(3, 1fr); }
+  .office-grid { grid-template-columns: 1fr 280px; }
+  .agent-section { grid-column: 1; }
+  .log-section { grid-column: 1; }
+  .side-panel { grid-column: 2; grid-row: 1 / 4; }
+}
+
+@media (max-width: 900px) {
+  .office-grid { grid-template-columns: 1fr; }
+  .agent-section { grid-column: 1; }
+  .log-section { grid-column: 1; }
+  .side-panel { grid-column: 1; grid-row: auto; }
+  .cmd-layout { grid-template-columns: 1fr; }
+  .hist-layout { grid-template-columns: 1fr; }
+  .agents-wrap { grid-template-columns: repeat(2, 1fr); }
+  .hdr-tabs { display: none; }
+  .mob-bar { display: flex; }
+  .hdr-time { display: none; }
+  .page { padding: 16px 16px 100px; }
+}
+
+@media (max-width: 480px) {
+  .agents-wrap { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(4, 1fr); }
+  .stat-v { font-size: 18px; }
+}
+
+/* ── 채팅 모달 ── */
+.chat-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(4px);
+  animation: fadeOvl .2s ease;
+}
+.chat-overlay.on { display: flex; align-items: flex-end; justify-content: flex-end; padding: 20px; }
+@keyframes fadeOvl { from{opacity:0} to{opacity:1} }
+
+.chat-window {
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: 14px;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  height: 580px;
+  max-height: calc(100vh - 40px);
+  display: flex; flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+  animation: slideUp .25s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+.chat-hd {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--bd2);
+  display: flex; align-items: center; gap: 11px;
+  flex-shrink: 0;
+}
+.chat-avatar {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+  position: relative;
+}
+.chat-avatar-status {
+  position: absolute; bottom: -2px; right: -2px;
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--sf);
+}
+.chat-agent-info { flex: 1; min-width: 0; }
+.chat-agent-name { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -.2px; }
+.chat-agent-role { font-size: 10px; color: var(--ink4); font-family: 'DM Mono', monospace; margin-top: 1px; }
+.chat-close {
+  width: 28px; height: 28px;
+  border-radius: 6px; border: none;
+  background: var(--sf2); color: var(--ink3);
+  cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; flex-shrink: 0;
+}
+.chat-close:hover { background: var(--sf3); color: var(--ink); }
+
+.chat-messages {
+  flex: 1; overflow-y: auto;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+/* 메시지 버블 */
+.msg { display: flex; gap: 8px; align-items: flex-end; }
+.msg.me { flex-direction: row-reverse; }
+
+.msg-bubble {
+  max-width: 80%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.msg-bubble.agent {
+  background: var(--sf2);
+  border: 1px solid var(--bd2);
+  color: var(--ink2);
+  border-bottom-left-radius: 4px;
+}
+.msg-bubble.me {
+  background: var(--grdk);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.msg-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; color: var(--ink4);
+  margin-top: 3px; flex-shrink: 0;
+}
+.msg.me .msg-meta { text-align: right; }
+
+/* 타이핑 인디케이터 */
+.typing-indicator {
+  display: flex; gap: 4px; padding: 10px 14px;
+  background: var(--sf2); border: 1px solid var(--bd2);
+  border-radius: 14px; border-bottom-left-radius: 4px;
+  width: fit-content;
+}
+.typing-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ink4);
+  animation: typingBounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+/* 시스템 메시지 */
+.msg-system {
+  text-align: center;
+  font-size: 10px; color: var(--ink4);
+  font-family: 'DM Mono', monospace;
+  padding: 4px 0;
+}
+
+/* 채팅 입력 */
+.chat-input-area {
+  padding: 10px 12px;
+  border-top: 1px solid var(--bd2);
+  display: flex; align-items: flex-end; gap: 8px;
+  flex-shrink: 0;
+  background: rgba(0,0,0,.15);
+}
+.chat-input {
+  flex: 1;
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12.5px; color: var(--ink);
+  outline: none; resize: none;
+  max-height: 100px; min-height: 38px;
+  line-height: 1.5;
+  transition: border-color .15s;
+}
+.chat-input::placeholder { color: var(--ink4); }
+.chat-input:focus { border-color: var(--bd); }
+.chat-send {
+  width: 36px; height: 36px;
+  background: var(--grdk);
+  border: none; border-radius: 9px;
+  cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.chat-send:hover { background: var(--gr); transform: scale(1.05); }
+.chat-send:active { transform: scale(.95); }
+
+/* 에이전트 카드 클릭 가능 표시 */
+.ag { cursor: pointer; }
+.ag:hover { border-color: var(--bd); }
+.ag.gr:hover { border-color: rgba(63,185,80,.4); }
+.ag.bl:hover { border-color: rgba(88,166,255,.4); }
+.ag.pu:hover { border-color: rgba(188,140,255,.4); }
+.ag-chat-hint {
+  font-size: 9px; color: var(--ink4);
+  font-family: 'DM Mono', monospace;
+  margin-top: 5px; display: flex; align-items: center; gap: 3px;
+  opacity: 0; transition: opacity .15s;
+}
+.ag:hover .ag-chat-hint { opacity: 1; }
+
+/* 모바일 채팅 모달 */
+@media (max-width: 480px) {
+  .chat-overlay { padding: 0; align-items: flex-end; }
+  .chat-window { width: 100%; max-width: 100%; border-radius: 14px 14px 0 0; height: 70vh; }
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--sf3); border-radius: 2px; }
+
+/* ── 사무실 탭 다크 래퍼 ── */
+.office-dark{background:#0D1117;color:#E6EDF3;border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.of-hdr{height:48px;background:rgba(13,17,23,.95);border-bottom:1px solid #30363D;display:flex;align-items:center;padding:0 20px;gap:12px}
+.of-hdr-mark{width:24px;height:24px;background:#3FB950;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#000}
+.of-hdr-title{font-size:13px;font-weight:700;color:#E6EDF3}
+.of-hdr-badge{margin-left:auto;display:flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.25);border-radius:20px;font-size:10px;color:#3FB950;font-weight:600;font-family:'DM Mono',monospace}
+.of-hdr-dot{width:5px;height:5px;border-radius:50%;background:#3FB950;animation:ofPulse 2s infinite}
+@keyframes ofPulse{0%,100%{opacity:1}50%{opacity:.3}}
+.of-tab-bar{display:flex;border-bottom:1px solid #21262D;background:#161B22}
+.of-tab{padding:10px 16px;font-size:12px;font-weight:500;color:#8B949E;cursor:pointer;border:none;background:none;font-family:inherit;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.of-tab:hover{color:#E6EDF3}
+.of-tab.on{color:#58A6FF;border-bottom-color:#58A6FF}
+.of-wrap{background:#0D1117;min-height:600px}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-top">
+    <div class="sb-mark"><span>S</span></div>
+    <div class="sb-name">SANGS-U</div>
+    <div class="sb-sub">안전을 게임으로<br>세상을 더 안전하게</div>
+  </div>
+  <nav class="sb-nav">
+        <div class="nl">사무실</div>
+    <button class="nb" onclick="go('of')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="13" height="10" rx="1.5"/><path d="M1 6h13"/><path d="M5 10h5"/></svg>
+      에이전트 현황
+    </button>
+    <button class="nb" onclick="go('cmd')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7.5h9M7 4l4.5 3.5L7 11"/></svg>
+      업무 지시
+    </button>
+    <button class="nb" onclick="go('hist')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="7.5" r="5.5"/><path d="M7.5 4.5v3l1.5 1.5"/></svg>
+      개발 히스토리
+    </button>
+    <div class="nl">공간</div>
+    <button class="nb on" onclick="go('p')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="5.5" height="5.5" rx="1.2"/><rect x="8.5" y="1" width="5.5" height="5.5" rx="1.2"/><rect x="1" y="8.5" width="5.5" height="5.5" rx="1.2"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1.2"/></svg>
+      프로젝트 기록
+    </button>
+    <button class="nb" onclick="go('gd')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="13" height="9" rx="1.5"/><path d="M4 6h7M4 9h4"/></svg>
+      게임 설계
+    </button>
+    <button class="nb" onclick="go('m')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h11M2 7.5h7M2 11h5"/></svg>
+      아이디어 · 메모
+    </button>
+    <button class="nb" onclick="go('r')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,11 4.5,5.5 8,8 14,2.5"/><polyline points="10.5,2.5 14,2.5 14,6"/></svg>
+      로드맵 · 목표
+    </button>
+    <button class="nb" onclick="go('mk')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="7.5" r="6"/><path d="M7.5 4v3.5l2.5 1.5"/></svg>
+      마케팅 · 수익
+    </button>
+    <button class="nb" onclick="go('q')">
+      <svg class="ni" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="13" height="11" rx="1.8"/><path d="M4 6h5.5M4 9h3.5"/></svg>
+      프롬프트 모음
+    </button>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-url">sangs-u.github.io</div>
+    <div class="sb-dt" id="sb-dt"></div>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- 프로젝트 기록 -->
+<div class="sec on" id="s-p">
+  <div class="ph"><div class="pe" id="eyebrow"></div><div class="pt">프로젝트 <em>기록</em></div><div class="pst">어떤 결정을 왜 했는지, 어떤 과정으로 여기까지 왔는지 기록합니다.</div></div>
+  <div class="sl">진행중인 프로젝트</div>
+  <div class="g2">
+    <div class="pc"><div class="pc-top"><div class="pi g"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#3A7D5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="9" width="15" height="7.5" rx="1.5"/><path d="M4.5 9V6.5A4.5 4.5 0 0113.5 6.5V9"/><circle cx="9" cy="12.5" r="1.3" fill="#3A7D5C" stroke="none"/></svg></div><span class="pb on">진행중</span></div><div class="pn">BULSA · 불사</div><div class="pd">안전기준을 지키며 건물→공장→마을→도시를 건설하는 안전 문명 시뮬레이터. 플레이어는 작업반장.</div><div class="ps-row"><span class="sch">Three.js</span><span class="sch">KOSHA</span><span class="sch">GitHub Pages</span><span class="sch">v0.1</span></div></div>
+    <div class="pc"><div class="pc-top"><div class="pi v"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#5B4E8A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 1.5L2.5 6.5V16.5H15.5V6.5L9 1.5z"/><path d="M6 16.5V11H12V16.5"/></svg></div><span class="pb">운영중</span></div><div class="pn">무사이 · Musaai</div><div class="pd">현장 안전관리 도구 플랫폼. 양중 검토, 작업계획서, 위험성 평가, TBM 등 실무 도구 모음.</div><div class="ps-row"><span class="sch">HTML/JS</span><span class="sch">KOSHA 기준</span><span class="sch">실무용</span></div></div>
+  </div>
+  <div class="sl">전체 생태계 흐름</div>
+  <div class="dg"><div class="dg-t">MUSAAI → BULSA → GLOBAL B2B</div><div class="eco"><div class="en vi"><div class="en-l">플랫폼</div><div class="en-n">무사이</div><div class="en-s">서류·계산<br>KOSHA 기준</div></div><div class="ea"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#AEAEB2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M10 4l6 6-6 6"/></svg></div><div class="en gr"><div class="en-l">게임 v1.0</div><div class="en-n">불사</div><div class="en-s">건물 한 채<br>줄걸이 시나리오</div></div><div class="ea"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#AEAEB2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M10 4l6 6-6 6"/></svg></div><div class="en go"><div class="en-l">확장 v5.0</div><div class="en-n">안전 도시</div><div class="en-s">마을·도시<br>멀티플레이어</div></div><div class="ea"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#AEAEB2" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12M10 4l6 6-6 6"/></svg></div><div class="en sl"><div class="en-l">수익화</div><div class="en-n">글로벌 B2B</div><div class="en-s">중동·동남아<br>기업 라이선스</div></div></div></div>
+  <div class="sl" style="margin-top:20px">자동화 에이전트 팀 (5개)</div>
+  <div class="dg"><div class="dg-t">PM(Sonnet) + QA/분석 + 품질 + 콘텐츠 + 데이터 (Opus)</div><div class="ag-w"><div class="ag-l"><div class="ag-row l"><div class="ag-nd gr"><div class="an-l">Opus · QA/분석</div><div class="an-n">QA + 분석</div><div class="an-s">Playwright 플레이<br>오류 수집 + 원인 파악</div></div><div class="ag-cn"><div class="ag-cd"></div><div class="ag-cl"></div></div></div><div class="ag-row l"><div class="ag-nd vi"><div class="an-l">Opus · 품질</div><div class="an-n">디자인 + 게임플레이</div><div class="an-s">시각품질·몰입감<br>교육효과 판단</div></div><div class="ag-cn"><div class="ag-cd"></div><div class="ag-cl"></div></div></div></div><div class="ag-c"><div class="ag-pm"><div class="ag-pm-l">PM · Sonnet</div><div class="ag-pm-n">메인 에이전트</div><div class="ag-pm-s">실행 · 수정 · Push</div></div></div><div class="ag-r"><div class="ag-row"><div class="ag-cn"><div class="ag-cl"></div><div class="ag-cd"></div></div><div class="ag-nd ro"><div class="an-l">Opus · 콘텐츠</div><div class="an-n">마케팅 콘텐츠</div><div class="an-s">SNS·PH<br>다국어 카피</div></div></div><div class="ag-row"><div class="ag-cn"><div class="ag-cl"></div><div class="ag-cd"></div></div><div class="ag-nd go"><div class="an-l">Opus · 데이터</div><div class="an-n">데이터 분석</div><div class="an-s">피드백<br>개선 우선순위</div></div></div></div></div></div>
+  <div class="dvd"></div>
+  <div class="sl">개발 히스토리</div>
+  <div class="tl">
+    <div class="tli"><div class="tl-d">2025 · 05</div><div class="tl-t">도면 시스템 + 게임성 설계 완료</div><div class="tl-b">프리셋 도면 5종 (창고/사무소/공장/아파트/교량). Three.js 치수 기반 실제 건물 형태 자동 생성. 창문·난간·셔터·트러스 디테일 구현. 공정 완료마다 실제 형태로 올라가는 구조 설계.</div></div>
+    <div class="tli"><div class="tl-d">2025 · 05</div><div class="tl-t">자동화 에이전트 팀 5개 구축</div><div class="tl-b">QA/분석·품질·콘텐츠·데이터 + PM Sonnet 구조 확립. Playwright 자동 QA. CLAUDE.md 헌법 확정.</div></div>
+    <div class="tli"><div class="tl-d">2025 · 05</div><div class="tl-t">완전 설계서 v1.0 완성</div><div class="tl-b">6단계 공정, 6개 역할, 불안전행동 감지, 돌발이벤트, 구조물 생성, 무사이 계산엔진 연동.</div></div>
+    <div class="tli"><div class="tl-d">2025 · 05</div><div class="tl-t">BULSA 프로젝트 시작 · 제목 확정</div><div class="tl-b">무사이에서 아이디어 출발. 불사(不死)로 제목 확정. Three.js + GitHub Pages 선택.</div></div>
+  </div>
+</div>
+
+<!-- 게임 설계 -->
+<div class="sec" id="s-gd">
+  <div class="ph"><div class="pe">GAME DESIGN</div><div class="pt">게임 <em>설계</em></div><div class="pst">도면 시스템, 공정 흐름, 역할 구조를 기록하고 실시간 3D로 확인합니다.</div></div>
+
+  <!-- ══ 3D 도면 뷰어 내장 ══ -->
+  <div class="sl">도면 미리보기 — 실시간 3D</div>
+  <div class="bp-viewer">
+    <div class="bp-viewer-header">
+      <div><div class="bvh-title">BULSA · Blueprint Viewer</div><div class="bvh-sub">Three.js · 실제 치수 기반 · 공정별 시공 시뮬레이션</div></div>
+      <button class="bvh-expand" onclick="toggleFullscreen()">⛶ 전체화면</button>
+    </div>
+    <div class="bp-viewer-body">
+      <!-- 패널 -->
+      <div class="bv-panel" id="bv-panel">
+        <div class="bvp-s">
+          <div class="bvp-l">도면 선택</div>
+          <button class="bv-bp-btn on" onclick="bvSelectBP(0)"><div class="bv-bp-dot" style="background:#4A6580"></div><div><div class="bv-bp-nm">단층 창고</div><div class="bv-bp-sub">20×15×8m · 25t</div></div></button>
+          <button class="bv-bp-btn" onclick="bvSelectBP(1)"><div class="bv-bp-dot" style="background:#5B4E8A"></div><div><div class="bv-bp-nm">2층 사무소</div><div class="bv-bp-sub">15×10×14m · 50t</div></div></button>
+          <button class="bv-bp-btn" onclick="bvSelectBP(2)"><div class="bv-bp-dot" style="background:#8B6914"></div><div><div class="bv-bp-nm">공장 건물</div><div class="bv-bp-sub">30×20×12m · 100t</div></div></button>
+          <button class="bv-bp-btn" onclick="bvSelectBP(3)"><div class="bv-bp-dot" style="background:#9B4B5E"></div><div><div class="bv-bp-nm">아파트 골조</div><div class="bv-bp-sub">20×15×15m · 타워크레인</div></div></button>
+          <button class="bv-bp-btn" onclick="bvSelectBP(4)"><div class="bv-bp-dot" style="background:#2A7A8A"></div><div><div class="bv-bp-nm">교량</div><div class="bv-bp-sub">50×6×5m · 200t</div></div></button>
+        </div>
+        <div class="bvp-s"><div class="bvp-l">도면 정보</div><div id="bv-info-specs"></div></div>
+        <div class="bvp-s"><div class="bvp-l">인양 작업</div><div id="bv-info-lift"></div></div>
+        <div class="bvp-s" style="flex:1"><div class="bvp-l">공정 단계</div><div id="bv-phase-list"></div></div>
+        <div class="bvp-s">
+          <div class="bvp-l">시공 시뮬레이션</div>
+          <div class="bv-ctrl-row"><button class="bv-ctrl-btn" onclick="bvPrev()">← 이전</button><button class="bv-ctrl-btn primary" onclick="bvNext()">다음 →</button></div>
+          <button class="bv-ctrl-btn bv-ctrl-full" onclick="bvAuto()">▶ 자동 시공</button>
+          <button class="bv-ctrl-btn bv-ctrl-full" onclick="bvReset()">↺ 처음부터</button>
+        </div>
+        <div class="bvp-s">
+          <div class="bvp-l">범례</div>
+          <div class="bv-leg-item"><div class="bv-leg-col" style="background:#5A8AB0"></div>기초</div>
+          <div class="bv-leg-item"><div class="bv-leg-col" style="background:#8B8B8B"></div>기둥</div>
+          <div class="bv-leg-item"><div class="bv-leg-col" style="background:#8B5E3C"></div>보</div>
+          <div class="bv-leg-item"><div class="bv-leg-col" style="background:#C4B89A"></div>슬라브</div>
+          <div class="bv-leg-item"><div class="bv-leg-col" style="background:#6B9E84"></div>트러스</div>
+          <div class="bv-leg-item"><div class="bv-leg-col" style="background:#7AACCF"></div>창문</div>
+          <div class="bv-leg-item"><div class="bv-leg-col" style="background:rgba(100,160,210,.15);border:1px dashed rgba(100,160,210,.3)"></div>완성 예정</div>
+        </div>
+      </div>
+      <!-- 뷰포트 -->
+      <div class="bv-viewport" id="bv-viewport">
+        <canvas id="bv-canvas"></canvas>
+        <div class="bv-hud"><div class="bv-name" id="bv-name">단층 창고</div><div class="bv-phase-txt" id="bv-phase-txt">마우스 드래그 · 회전 / 스크롤 · 줌</div></div>
+        <div class="bv-hint">드래그 · 회전<br>스크롤 · 줌<br>우클릭 · 이동</div>
+        <div class="bv-prog"><div class="bv-prog-bar"><div class="bv-prog-fill" id="bv-prog-fill" style="width:0%"></div></div><div class="bv-prog-txt" id="bv-prog-txt">시공 시작 전</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 전체화면 오버레이 -->
+  <div class="bv-fullscreen" id="bv-fullscreen">
+    <div class="bvf-header">
+      <div class="bvf-title">BULSA · Blueprint Viewer — 전체화면</div>
+      <button class="bvf-close" onclick="toggleFullscreen()">✕ 닫기</button>
+    </div>
+    <div class="bvf-body" id="bvf-body"></div>
+  </div>
+
+  <div class="dvd"></div>
+  <div class="sl">S01 줄걸이 공정 흐름</div>
+  <div class="dg"><div class="pf">
+    <div class="pf-s"><div class="pf-i"><div class="pf-n">01</div><div class="pf-nm">작업계획서</div><div class="pf-sb">화물·크레인·경로</div></div></div>
+    <div class="pf-a"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#AEAEB2" stroke-width="1.3"><path d="M2 6h8M6 3l3 3-3 3"/></svg></div>
+    <div class="pf-s"><div class="pf-i"><div class="pf-n">02</div><div class="pf-nm">안전성 검토</div><div class="pf-sb">무사이 계산 엔진</div></div></div>
+    <div class="pf-a"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#AEAEB2" stroke-width="1.3"><path d="M2 6h8M6 3l3 3-3 3"/></svg></div>
+    <div class="pf-s"><div class="pf-i"><div class="pf-n">03</div><div class="pf-nm">장비 세팅</div><div class="pf-sb">크레인·아웃트리거</div></div></div>
+    <div class="pf-a"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#AEAEB2" stroke-width="1.3"><path d="M2 6h8M6 3l3 3-3 3"/></svg></div>
+    <div class="pf-s"><div class="pf-i"><div class="pf-n">04</div><div class="pf-nm">줄걸이 선정</div><div class="pf-sb">슬링·각도·체결</div></div></div>
+    <div class="pf-a"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#AEAEB2" stroke-width="1.3"><path d="M2 6h8M6 3l3 3-3 3"/></svg></div>
+    <div class="pf-s"><div class="pf-i"><div class="pf-n">05</div><div class="pf-nm">현장 세팅</div><div class="pf-sb">반경·표지·TBM</div></div></div>
+    <div class="pf-a"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#AEAEB2" stroke-width="1.3"><path d="M2 6h8M6 3l3 3-3 3"/></svg></div>
+    <div class="pf-s"><div class="pf-i"><div class="pf-n">06</div><div class="pf-nm">인양 실행</div><div class="pf-sb">시운전·거치·완성</div></div></div>
+  </div></div>
+
+  <div class="sl" style="margin-top:20px">현장 역할 구조</div>
+  <div class="dg"><div class="rd-w">
+    <div class="rd-top"><div class="rd-r foreman"><div class="rd-rl">플레이어 · 작업반장</div><div class="rd-rn" style="font-size:13px">FOREMAN</div><div class="rd-rs">전체 지휘 · 작업 시작/중단</div></div></div>
+    <div class="rd-vl"></div>
+    <div class="rd-mid">
+      <div class="rd-r crane"><div class="rd-rl">크레인 운전원</div><div class="rd-rn">CRANE OP.</div><div class="rd-rs">정격하중·신호<br>위험 시 거부 가능</div></div>
+      <div class="rd-r rigger"><div class="rd-rl">줄걸이 작업자</div><div class="rd-rn">RIGGER</div><div class="rd-rs">슬링·각도·체결</div></div>
+      <div class="rd-r signal"><div class="rd-rl">신호수</div><div class="rd-rn">SIGNALMAN</div><div class="rd-rs">경로 확인<br>신호 전달</div></div>
+      <div class="rd-r safety"><div class="rd-rl">안전감시자</div><div class="rd-rn">SAFETY</div><div class="rd-rs">반경 통제<br>위험요소 감시</div></div>
+      <div class="rd-r worker"><div class="rd-rl">일반 근로자</div><div class="rd-rn">WORKER</div><div class="rd-rs">아흐마드·응우옌<br>대피·보조</div></div>
+    </div>
+  </div></div>
+
+  <div class="dvd"></div>
+  <div class="sl">도면 5종 제원표</div>
+  <div class="bp-grid">
+    <div class="bp-card c1" onclick="bvSelectBP(0);go('gd');document.querySelector('.bp-viewer').scrollIntoView({behavior:'smooth'})">
+      <div class="bp-ver">BLUEPRINT 01</div><div class="bp-nm">단층 창고</div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크기</span><span class="bp-spec-v">20×15×8m</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크레인</span><span class="bp-spec-v">25t 이동식</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">최대 부재</span><span class="bp-spec-v">보 10m/2t</span></div>
+    </div>
+    <div class="bp-card c2" onclick="bvSelectBP(1);go('gd');document.querySelector('.bp-viewer').scrollIntoView({behavior:'smooth'})">
+      <div class="bp-ver">BLUEPRINT 02</div><div class="bp-nm">2층 사무소</div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크기</span><span class="bp-spec-v">15×10×14m</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크레인</span><span class="bp-spec-v">50t 이동식</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">최대 부재</span><span class="bp-spec-v">슬라브 8t</span></div>
+    </div>
+    <div class="bp-card c3" onclick="bvSelectBP(2);go('gd');document.querySelector('.bp-viewer').scrollIntoView({behavior:'smooth'})">
+      <div class="bp-ver">BLUEPRINT 03</div><div class="bp-nm">공장 건물</div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크기</span><span class="bp-spec-v">30×20×12m</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크레인</span><span class="bp-spec-v">100t 이동식</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">최대 부재</span><span class="bp-spec-v">트러스 15t</span></div>
+    </div>
+    <div class="bp-card c4" onclick="bvSelectBP(3);go('gd');document.querySelector('.bp-viewer').scrollIntoView({behavior:'smooth'})">
+      <div class="bp-ver">BLUEPRINT 04</div><div class="bp-nm">아파트 골조</div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크기</span><span class="bp-spec-v">20×15×15m</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크레인</span><span class="bp-spec-v">타워크레인</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">최대 부재</span><span class="bp-spec-v">슬라브 30t</span></div>
+    </div>
+    <div class="bp-card c5" onclick="bvSelectBP(4);go('gd');document.querySelector('.bp-viewer').scrollIntoView({behavior:'smooth'})">
+      <div class="bp-ver">BLUEPRINT 05</div><div class="bp-nm">교량</div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크기</span><span class="bp-spec-v">50×6×5m</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">크레인</span><span class="bp-spec-v">200t 크롤러</span></div>
+      <div class="bp-spec-row"><span class="bp-spec-k">최대 부재</span><span class="bp-spec-v">주형 40t</span></div>
+    </div>
+  </div>
+
+  <div class="dvd"></div>
+
+  <!-- NPC 시스템 설계 -->
+  <div class="sl">NPC 시스템 설계</div>
+  <div class="info-box" style="margin-bottom:16px">💡 <strong>핵심 설계 원칙</strong> — NPC의 멍청함이 버그가 아니라 게임의 핵심 메카닉. 확률 기반 행동 테이블로 구현. 진짜 AI가 아닌 스크립트 조합으로 살아있는 것처럼 느껴지게 설계.</div>
+
+  <!-- NPC 등급 -->
+  <div class="sl" style="margin-top:0;margin-bottom:10px">NPC 등급 × 변수</div>
+  <div class="g2" style="margin-bottom:16px">
+    <div class="pc" style="border-left:3px solid var(--gr)">
+      <div class="pc-top"><div class="pi g"><span style="font-size:16px">👷</span></div><span class="pb on">숙련공</span></div>
+      <div class="pn" style="font-size:15px">박영수 (10년차)</div>
+      <div class="pd">정확도 85% · 혼자 판단 가능 · 피로 누적 시 실수 확률 상승</div>
+      <div class="ps-row"><span class="sch">정확도 85%</span><span class="sch">자율판단 O</span><span class="sch">피로 민감</span></div>
+    </div>
+    <div class="pc" style="border-left:3px solid var(--sl)">
+      <div class="pc-top"><div class="pi" style="background:var(--sllt)"><span style="font-size:16px">🧑‍🔧</span></div><span class="pb">반숙련공</span></div>
+      <div class="pn" style="font-size:15px">김민수 (3년차)</div>
+      <div class="pd">정확도 65% · 감독 필요 · 지시 없으면 안전조치 스킵 확률 높음</div>
+      <div class="ps-row"><span class="sch">정확도 65%</span><span class="sch">감독 필요</span><span class="sch">안전스킵 위험</span></div>
+    </div>
+    <div class="pc" style="border-left:3px solid var(--ye)">
+      <div class="pc-top"><div class="pi" style="background:var(--golt)"><span style="font-size:16px">🆕</span></div><span class="pb">신입</span></div>
+      <div class="pn" style="font-size:15px">이재현 (1년차)</div>
+      <div class="pd">정확도 40% · TBM 필수 · 시범 안 보이면 엉뚱하게 작업</div>
+      <div class="ps-row"><span class="sch">정확도 40%</span><span class="sch">TBM 필수</span><span class="sch">시범 필요</span></div>
+    </div>
+    <div class="pc" style="border-left:3px solid var(--ro)">
+      <div class="pc-top"><div class="pi" style="background:var(--rolt)"><span style="font-size:16px">🌏</span></div><span class="pb">외국인</span></div>
+      <div class="pn" style="font-size:15px">아흐마드 / 응우옌</div>
+      <div class="pd">한국어 이해도 60% · 언어 오해 확률 40% · 그림/몸짓 TBM 필요</div>
+      <div class="ps-row"><span class="sch">언어장벽 40%</span><span class="sch">그림TBM</span><span class="sch">오해 위험</span></div>
+    </div>
+  </div>
+
+  <!-- NPC 실수 확률 공식 -->
+  <div class="dg" style="margin-bottom:16px">
+    <div class="dg-t">NPC 실수 확률 계산식</div>
+    <div style="background:#0d1117;border-radius:8px;padding:16px;font-family:'DM Mono',monospace;font-size:12px;color:#e6edf3;line-height:2">
+      <span style="color:#58a6ff">mistakeRate</span> = <span style="color:#3fb950">(fatigue/100 × 0.3)</span> + <span style="color:#f0883e">((1 - skill) × 0.2)</span> + <span style="color:#ff7b72">languageGap × 0.4</span><br>
+      <span style="color:#8b949e">// fatigue: 피로도 0~100 | skill: 숙련도 0~1 | languageGap: 언어장벽 0~1</span><br><br>
+      <span style="color:#58a6ff">TBM 실시 시</span>: mistakeRate <span style="color:#3fb950">× 0.6</span> <span style="color:#8b949e">// 40% 감소</span><br>
+      <span style="color:#58a6ff">시범 보임 시</span>: mistakeRate <span style="color:#3fb950">× 0.5</span> <span style="color:#8b949e">// 50% 감소</span><br>
+      <span style="color:#58a6ff">그림TBM 시</span>: languageGap <span style="color:#3fb950">× 0.3</span> <span style="color:#8b949e">// 외국인 오해 70% 감소</span>
+    </div>
+  </div>
+
+  <!-- 행동 스크립트 구조 -->
+  <div class="sl">행동 스크립트 구조 (공통 + 공종별)</div>
+  <div class="dg" style="margin-bottom:16px">
+    <div class="dg-t">스크립트 = 공통 행동 70% + 공종 전용 30% → 조합으로 경우의 수 극대화</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:500px">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--gr);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">공통 행동 (재사용)</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="background:var(--grlt);border:1px solid var(--grmd);border-radius:6px;padding:8px 10px;font-size:11px">
+            <div style="font-weight:700;color:var(--ink);margin-bottom:2px">A. 이동</div>
+            <div style="color:var(--ink3)">정상 이동 / 엉뚱한 방향 / 딴짓하며 이동</div>
+          </div>
+          <div style="background:var(--grlt);border:1px solid var(--grmd);border-radius:6px;padding:8px 10px;font-size:11px">
+            <div style="font-weight:700;color:var(--ink);margin-bottom:2px">B. 자재 집기</div>
+            <div style="color:var(--ink3)">정확한 규격 / 다른 규격 집음 / 빠뜨림</div>
+          </div>
+          <div style="background:var(--grlt);border:1px solid var(--grmd);border-radius:6px;padding:8px 10px;font-size:11px">
+            <div style="font-weight:700;color:var(--ink);margin-bottom:2px">C. 확인</div>
+            <div style="color:var(--ink3)">꼼꼼히 확인 / 대충 확인 / 확인 생략</div>
+          </div>
+          <div style="background:var(--grlt);border:1px solid var(--grmd);border-radius:6px;padding:8px 10px;font-size:11px">
+            <div style="font-weight:700;color:var(--ink);margin-bottom:2px">D. 보고</div>
+            <div style="color:var(--ink3)">즉시 보고 / 늦게 보고 / 보고 안 함</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--vi);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">공종 전용 (별도 제작)</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="background:var(--vilt);border:1px solid var(--vimd);border-radius:6px;padding:8px 10px;font-size:11px">
+            <div style="font-weight:700;color:var(--ink);margin-bottom:2px">토공사 전용</div>
+            <div style="color:var(--ink3)">라바콘 설치 / 탐지봉 꽂기 / 버팀보 연결 / 경사계 측정</div>
+          </div>
+          <div style="background:var(--vilt);border:1px solid var(--vimd);border-radius:6px;padding:8px 10px;font-size:11px">
+            <div style="font-weight:700;color:var(--ink);margin-bottom:2px">철근공 전용</div>
+            <div style="color:var(--ink3)">결속선 묶기 / 간격 체크 / 피복두께 확인 / 캡 설치</div>
+          </div>
+          <div style="background:var(--vilt);border:1px solid var(--vimd);border-radius:6px;padding:8px 10px;font-size:11px">
+            <div style="font-weight:700;color:var(--ink);margin-bottom:2px">형틀공 전용</div>
+            <div style="color:var(--ink3)">긴결재 조이기 / 수직도 확인 / 박리제 도포 / 살수</div>
+          </div>
+          <div style="background:var(--vilt);border:1px solid var(--vimd);border-radius:6px;padding:8px 10px;font-size:11px">
+            <div style="font-weight:700;color:var(--ink);margin-bottom:2px">줄걸이공 전용</div>
+            <div style="color:var(--ink3)">슬링 체결 / 각도 확인 / 샤클 핀 결속 / 신호 확인</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토공사 공정별 구현 가능 여부 -->
+  <div class="sl">5층 RC조 공정별 안전기준 × 구현 가능 여부</div>
+  <div class="warn-box" style="margin-bottom:14px">⚠️ <strong>행위 기반 원칙</strong> — 모든 안전조치는 버튼 클릭이 아닌 캐릭터의 직접 행위로 구현. 라바콘 설치, 경사계 측정, 탐지봉 꽂기 등 실제 동작으로 조건 충족.</div>
+
+  <!-- 공정별 테이블 -->
+  <div style="overflow-x:auto;margin-bottom:16px">
+    <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:600px">
+      <thead>
+        <tr style="background:var(--ink);color:#fff">
+          <th style="padding:10px 12px;text-align:left;font-weight:700;border-radius:8px 0 0 0">공정</th>
+          <th style="padding:10px 12px;text-align:left;font-weight:700">안전기준 (법적 근거)</th>
+          <th style="padding:10px 12px;text-align:left;font-weight:700">행위 구현</th>
+          <th style="padding:10px 12px;text-align:center;font-weight:700;border-radius:0 8px 0 0">v1.0</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 토공사 -->
+        <tr style="background:var(--sllt)"><td colspan="4" style="padding:7px 12px;font-weight:700;font-size:10px;color:var(--sl);text-transform:uppercase;letter-spacing:.08em">① 토공사 (굴착)</td></tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">지하매설물 탐지</td>
+          <td style="padding:9px 12px;color:var(--ink3)">산안규칙 제340조<br>굴착공사 표준안전작업지침</td>
+          <td style="padding:9px 12px;color:var(--ink2)">캐릭터가 탐지봉 들고 구역별 직접 탐지<br>미탐지 구역 굴착 시 파손 이벤트</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">작업반경 라바콘</td>
+          <td style="padding:9px 12px;color:var(--ink3)">산안규칙 제340조<br>굴착기 KOSHA GUIDE C-105</td>
+          <td style="padding:9px 12px;color:var(--ink2)">인벤토리 라바콘 들고 이동 후 E키 설치<br>미설치 구역 NPC 진입 시 사고</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">굴착 경사 측정</td>
+          <td style="padding:9px 12px;color:var(--ink3)">산안규칙 제340조<br>모래1:1.8 점토1:1.2 암반1:0.5</td>
+          <td style="padding:9px 12px;color:var(--ink2)">경사계 들고 굴착면 접근 → 수치 UI 표시<br>기준 초과 시 굴착기 정지 명령 필요</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">흙막이 버팀보</td>
+          <td style="padding:9px 12px;color:var(--ink3)">산안규칙 제347~349조<br>굴착깊이 1.5m 초과 시 필수</td>
+          <td style="padding:9px 12px;color:var(--ink2)">자재 운반 → 위치 지정 → 설치 애니메이션<br>수직도 레벨기로 측정 행위</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">집수정 + 배수</td>
+          <td style="padding:9px 12px;color:var(--ink3)">산안규칙 제340조 제2항</td>
+          <td style="padding:9px 12px;color:var(--ink2)">집수정 위치 직접 선정 → 삽질 → 펌프 설치<br>강우 이벤트 시 수위 상승 → 펌프 작동</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">굴착기 조작</td>
+          <td style="padding:9px 12px;color:var(--ink3)">KOSHA GUIDE C-105-2021</td>
+          <td style="padding:9px 12px;color:var(--ink2)">방향키 기본 조작 + 버킷 동작</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">⚠️ 단순</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">토사 붕괴 연출</td>
+          <td style="padding:9px 12px;color:var(--ink3)">사고 결과 연출</td>
+          <td style="padding:9px 12px;color:var(--ink2)">미리 제작된 붕괴 애니메이션<br>카메라 흔들림 + 사운드</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">⚠️ 연출</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">실시간 물리 토사</td>
+          <td style="padding:9px 12px;color:var(--ink3)">-</td>
+          <td style="padding:9px 12px;color:var(--ink2)">Cannon.js 물리엔진 필요</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">❌ v2.0</td>
+        </tr>
+
+        <!-- 거푸집+동바리 -->
+        <tr style="background:var(--vilt)"><td colspan="4" style="padding:7px 12px;font-weight:700;font-size:10px;color:var(--vi);text-transform:uppercase;letter-spacing:.08em">② 거푸집 + 동바리</td></tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">동바리 종류 선택</td>
+          <td style="padding:9px 12px;color:var(--ink3)">KCS 21 50 05<br>4m 초과 시 시스템 동바리 필수</td>
+          <td style="padding:9px 12px;color:var(--ink2)">동바리 종류 카드 선택 후 설치 행위<br>높이 초과 선택 시 경고 표시</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">조립도 승인</td>
+          <td style="padding:9px 12px;color:var(--ink3)">산안규칙 제331조<br>조립도 작성 → 감독자 승인</td>
+          <td style="padding:9px 12px;color:var(--ink2)">조립도 제출 행위 → 승인 대기 시간<br>미승인 타설 시 붕괴 이벤트</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">살수 (보습)</td>
+          <td style="padding:9px 12px;color:var(--ink3)">KCS 21 50 05<br>타설 전 거푸집 살수 필수</td>
+          <td style="padding:9px 12px;color:var(--ink2)">호스 들고 거푸집 전체 살수 행위<br>미살수 타설 시 품질 불량 판정</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">존치기간 준수</td>
+          <td style="padding:9px 12px;color:var(--ink3)">KCS 21 50 05<br>슬라브 설계강도 2/3 이상</td>
+          <td style="padding:9px 12px;color:var(--ink2)">양생 일수 카운터 표시<br>기간 전 해체 시도 → 경고 → 붕괴</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+
+        <!-- 갱폼 -->
+        <tr style="background:var(--golt)"><td colspan="4" style="padding:7px 12px;font-weight:700;font-size:10px;color:var(--go);text-transform:uppercase;letter-spacing:.08em">③ 갱폼 인상</td></tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">앵커볼트 체결</td>
+          <td style="padding:9px 12px;color:var(--ink3)">KCS 21 50 10<br>앵커볼트 설치 누락 금지</td>
+          <td style="padding:9px 12px;color:var(--ink2)">전동렌치 들고 볼트 전수 체결 행위<br>미체결 인양 시 갱폼 낙하</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">풍속 확인</td>
+          <td style="padding:9px 12px;color:var(--ink3)">KCS 21 50 10<br>풍속 10m/s 초과 시 작업 중단</td>
+          <td style="padding:9px 12px;color:var(--ink2)">풍속계 확인 행위 → 중단 여부 선택<br>강풍 무시 인양 시 사고</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+
+        <!-- 철근 배근 -->
+        <tr style="background:var(--rolt)"><td colspan="4" style="padding:7px 12px;font-weight:700;font-size:10px;color:var(--ro);text-transform:uppercase;letter-spacing:.08em">④ 철근 배근</td></tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">실족방지망 설치</td>
+          <td style="padding:9px 12px;color:var(--ink3)">산안규칙 제1편 제3장<br>철근 사이 발빠짐 방지</td>
+          <td style="padding:9px 12px;color:var(--ink2)">배근 전 망 설치 → 타설 전 제거 행위<br>미제거 타설 시 품질 불량</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">선단부 캡 설치</td>
+          <td style="padding:9px 12px;color:var(--ink3)">산안규칙 제2편<br>수직철근 선단부 캡 필수</td>
+          <td style="padding:9px 12px;color:var(--ink2)">캡 인벤토리 → 철근 상단 E키 설치<br>미설치 상태 이동 시 관통 사고</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">피복두께 확인</td>
+          <td style="padding:9px 12px;color:var(--ink3)">건축물구조기준 제51조<br>슬라브 20mm 이상</td>
+          <td style="padding:9px 12px;color:var(--ink2)">피복두께 게이지로 측정 행위<br>미달 시 구조 불량 누적</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+
+        <!-- 콘크리트 타설 -->
+        <tr style="background:var(--grlt)"><td colspan="4" style="padding:7px 12px;font-weight:700;font-size:10px;color:var(--gr);text-transform:uppercase;letter-spacing:.08em">⑤ 콘크리트 타설</td></tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">타설 속도 조절</td>
+          <td style="padding:9px 12px;color:var(--ink3)">KCS 14 20 12<br>측압 고려 타설 속도 제한</td>
+          <td style="padding:9px 12px;color:var(--ink2)">펌프카 속도 슬라이더 조작<br>과속 시 거푸집 측압 초과 → 터짐</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:9px 12px;color:var(--ink2)">한파 양생</td>
+          <td style="padding:9px 12px;color:var(--ink3)">건축물구조기준 제49조<br>양생 중 2°C 이상 유지</td>
+          <td style="padding:9px 12px;color:var(--ink2)">한파 이벤트 → 보온양생 조치 선택<br>미조치 시 균열 발생 → 구조 불량</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">✅</td>
+        </tr>
+        <tr>
+          <td style="padding:9px 12px;color:var(--ink2)">유체 시뮬레이션</td>
+          <td style="padding:9px 12px;color:var(--ink3)">-</td>
+          <td style="padding:9px 12px;color:var(--ink2)">실시간 콘크리트 흐름 표현</td>
+          <td style="padding:9px 12px;text-align:center;font-size:14px">❌ v2.0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RPG 성장 + 경제 시스템 -->
+  <div class="dvd"></div>
+  <div class="sl">RPG 성장 시스템</div>
+  <div class="info-box" style="margin-bottom:16px">💡 <strong>핵심 철학</strong> — 과금은 스킨만. 승급은 실제 경험으로만. 현실 건설현장 경력 구조와 동일하게 설계해서 B2B 설득력 확보.</div>
+
+  <!-- 승급 구조 -->
+  <div class="dg" style="margin-bottom:14px">
+    <div class="dg-t">직종별 승급 구조 (줄걸이공 예시)</div>
+    <div style="display:flex;align-items:center;min-width:600px;gap:0">
+      <div style="flex:1;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--ink4);font-family:'DM Mono',monospace;margin-bottom:4px">Lv.1~2</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)">신입 파티원</div>
+        <div style="font-size:10px;color:var(--ink3);margin-top:4px;line-height:1.7">슬링 체결 100회<br>인양 50회 무사고</div>
+      </div>
+      <div style="padding:0 6px;color:var(--ink4);font-size:18px">→</div>
+      <div style="flex:1;background:var(--sllt);border:1px solid var(--slmd);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--sl);font-family:'DM Mono',monospace;margin-bottom:4px">Lv.3~4</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)">숙련 파티원</div>
+        <div style="font-size:10px;color:var(--ink3);margin-top:4px;line-height:1.7">실수율 10% 이하<br>신입 지도 10회</div>
+      </div>
+      <div style="padding:0 6px;color:var(--ink4);font-size:18px">→</div>
+      <div style="flex:1;background:var(--vilt);border:1px solid var(--vimd);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--vi);font-family:'DM Mono',monospace;margin-bottom:4px">Lv.5+</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)">반장 자격</div>
+        <div style="font-size:10px;color:var(--ink3);margin-top:4px;line-height:1.7">창고 완공 3회<br>무사이 통과율 90%</div>
+      </div>
+      <div style="padding:0 6px;color:var(--ink4);font-size:18px">→</div>
+      <div style="flex:1;background:var(--grlt);border:1px solid var(--grmd);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:10px;color:var(--gr);font-family:'DM Mono',monospace;margin-bottom:4px">반장</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ink)">프로젝트 수주</div>
+        <div style="font-size:10px;color:var(--ink3);margin-top:4px;line-height:1.7">파티 모집 권한<br>수익 분배 권한</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 파티 시스템 -->
+  <div class="sl">파티 + 프로젝트 시스템</div>
+  <div class="g2" style="margin-bottom:16px">
+    <div class="pc">
+      <div class="pc-top"><div class="pi g"><span style="font-size:16px">📋</span></div><span class="pb on">반장</span></div>
+      <div class="pn" style="font-size:14px">프로젝트 수주 + 파티 모집</div>
+      <div class="pd" style="font-size:11px;line-height:1.7">게시판에 공고 올리기<br>"5층 아파트 철근배근<br>철근공 Lv.3↑ 2명 구함<br>일당 500코인"</div>
+      <div class="ps-row"><span class="sch">수익 분배 권한</span><span class="sch">NPC 고용 가능</span><span class="sch">평판 시스템</span></div>
+    </div>
+    <div class="pc">
+      <div class="pc-top"><div class="pi v"><span style="font-size:16px">🧑‍🔧</span></div><span class="pb">파티원</span></div>
+      <div class="pn" style="font-size:14px">공고 보고 지원</div>
+      <div class="pd" style="font-size:11px;line-height:1.7">공사 참여 → 경험치 + 코인<br>완공 기여도에 따라 인센티브<br>반장 평가 남기기</div>
+      <div class="ps-row"><span class="sch">경험치 획득</span><span class="sch">코인 획득</span><span class="sch">반장 평가</span></div>
+    </div>
+  </div>
+
+  <!-- 경제 시스템 -->
+  <div class="sl">게임 내 경제 시스템</div>
+  <div class="dg" style="margin-bottom:14px">
+    <div class="dg-t">코인 흐름 — 파티원 → 벌기 / 반장 → 수주 후 순이익</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:480px">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--gr);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em">버는 방법</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--grlt);border-radius:6px"><span style="color:var(--ink2)">파티원 참여 (시급)</span><span style="font-family:'DM Mono',monospace;color:var(--gr)">+100~200/h</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--grlt);border-radius:6px"><span style="color:var(--ink2)">무사고 클리어 보너스</span><span style="font-family:'DM Mono',monospace;color:var(--gr)">+50%</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--grlt);border-radius:6px"><span style="color:var(--ink2)">반장 프로젝트 순이익</span><span style="font-family:'DM Mono',monospace;color:var(--gr)">+500~2000</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--grlt);border-radius:6px"><span style="color:var(--ink2)">신입 지도 보너스</span><span style="font-family:'DM Mono',monospace;color:var(--gr)">+30/회</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--grlt);border-radius:6px"><span style="color:var(--ink2)">업적 달성 보상</span><span style="font-family:'DM Mono',monospace;color:var(--gr)">+100~1000</span></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--ro);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em">쓰는 방법</div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:11px">
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--rolt);border-radius:6px"><span style="color:var(--ink2)">스킨 구매</span><span style="font-family:'DM Mono',monospace;color:var(--ro)">-200~500</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--rolt);border-radius:6px"><span style="color:var(--ink2)">NPC 고용</span><span style="font-family:'DM Mono',monospace;color:var(--ro)">-50/일</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--rolt);border-radius:6px"><span style="color:var(--ink2)">장비 업그레이드</span><span style="font-family:'DM Mono',monospace;color:var(--ro)">-300~800</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--rolt);border-radius:6px"><span style="color:var(--ink2)">프리미엄 도면 입찰</span><span style="font-family:'DM Mono',monospace;color:var(--ro)">-1000~</span></div>
+          <div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--rolt);border-radius:6px"><span style="color:var(--ink2)">현장 확장 (미래)</span><span style="font-family:'DM Mono',monospace;color:var(--ro)">-5000~</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 스킨 과금 -->
+  <div class="sl">스킨 과금 설계</div>
+  <div class="rev-grid" style="margin-bottom:16px">
+    <div class="rev-card free">
+      <div class="rev-tier">FREE</div>
+      <div class="rev-nm">기본 스킨</div>
+      <ul class="rev-list">
+        <li>기본 안전모 (흰색)</li>
+        <li>기본 안전복 (주황)</li>
+        <li>레벨업 보상 스킨</li>
+        <li>업적 달성 스킨</li>
+      </ul>
+      <span class="rev-tag rt-free">항상 무료</span>
+    </div>
+    <div class="rev-card">
+      <div class="rev-tier">PAID · $2~5</div>
+      <div class="rev-nm">직종별 스킨</div>
+      <ul class="rev-list">
+        <li>철근공 검정 작업복</li>
+        <li>형틀공 카키 작업복</li>
+        <li>헬멧 컬러/스티커</li>
+        <li>장갑/부츠 커스텀</li>
+      </ul>
+      <span class="rev-tag rt-paid">페이투윈 없음</span>
+    </div>
+    <div class="rev-card">
+      <div class="rev-tier">RARE · 이벤트</div>
+      <div class="rev-nm">희귀 스킨</div>
+      <ul class="rev-list">
+        <li>무사고 100일 달성</li>
+        <li>최초 교량 완공 기념</li>
+        <li>돈으로 못 사는 스킨</li>
+        <li>자랑하고 싶어지는 것</li>
+      </ul>
+      <span class="rev-tag rt-future">업적 전용</span>
+    </div>
+    <div class="rev-card">
+      <div class="rev-tier">B2B · $29/월</div>
+      <div class="rev-nm">기업 스킨</div>
+      <ul class="rev-list">
+        <li>회사 로고 헬멧/유니폼</li>
+        <li>직원 계정 통합 관리</li>
+        <li>수료증 커스텀 발급</li>
+        <li>팀 색상 지정</li>
+      </ul>
+      <span class="rev-tag rt-b2b">B2B 전용</span>
+    </div>
+  </div>
+
+  <!-- 건물 소유 + 경제 순환 -->
+  <div class="dvd"></div>
+  <div class="sl">건물 소유 + 오픈월드 경제</div>
+  <div class="info-box" style="margin-bottom:14px">💡 <strong>핵심</strong> — 땅/건물은 없어지지 않음. 증축·임대·거래로 가치가 계속 올라감. 재난으로 소멸 없음.</div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="pc" style="border-left:3px solid var(--go)">
+      <div class="pc-top"><div class="pi" style="background:var(--golt)"><span style="font-size:16px">🏠</span></div><span class="pb">건물주</span></div>
+      <div class="pn" style="font-size:14px">땅 구매 → 발주</div>
+      <div class="pd" style="font-size:11px;line-height:1.7">도심 비쌈 / 외곽 저렴<br>창고→사무소→공장→아파트<br>완공 후 임대 수익 (오프라인도 쌓임)<br>증축하면 가치 상승<br>플레이어간 부동산 거래 가능</div>
+    </div>
+    <div class="pc" style="border-left:3px solid var(--te)">
+      <div class="pc-top"><div class="pi" style="background:var(--telt)"><span style="font-size:16px">🚧</span></div><span class="pb">장비 운전원</span></div>
+      <div class="pn" style="font-size:14px">장비 구매 → 임대</div>
+      <div class="pd" style="font-size:11px;line-height:1.7">굴착기/크레인/펌프카 직접 소유<br>반장한테 임대 수익<br>직접 운전해서 참여도 가능<br>장비 많을수록 "장비회사" 운영<br>"김씨 장비임대" 브랜드화</div>
+    </div>
+  </div>
+
+  <!-- 차량 + 이동수단 -->
+  <div class="sl">차량 + 이동수단 시스템</div>
+  <div class="info-box" style="margin-bottom:12px">💡 맵이 넓어질수록 이동수단이 핵심. 차 없으면 가까운 현장만. 차 있으면 맵 전체 참여 가능 → 수익 극대화.</div>
+
+  <div style="overflow-x:auto;margin-bottom:16px">
+    <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:560px">
+      <thead>
+        <tr style="background:var(--ink);color:#fff">
+          <th style="padding:9px 12px;text-align:left;border-radius:8px 0 0 0">차량/장비</th>
+          <th style="padding:9px 12px;text-align:left">현실 모델</th>
+          <th style="padding:9px 12px;text-align:left">게임 효과</th>
+          <th style="padding:9px 12px;text-align:left;border-radius:0 8px 0 0">획득</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:8px 12px;font-weight:700">🚶 도보</td>
+          <td style="padding:8px 12px;color:var(--ink3)">신입 기본</td>
+          <td style="padding:8px 12px;color:var(--ink3)">느림 / 가까운 현장만</td>
+          <td style="padding:8px 12px;color:var(--gr);font-weight:600">기본</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:8px 12px;font-weight:700">🏍 오토바이</td>
+          <td style="padding:8px 12px;color:var(--ink3)">현장 순찰</td>
+          <td style="padding:8px 12px;color:var(--ink3)">이동 빠름 / 자재 못 실음</td>
+          <td style="padding:8px 12px;color:var(--ink2)">코인 800</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:8px 12px;font-weight:700">🛻 픽업트럭</td>
+          <td style="padding:8px 12px;color:var(--ink3)">반장 출퇴근</td>
+          <td style="padding:8px 12px;color:var(--ink3)">자재 운반 2배 / 먼 현장 이동</td>
+          <td style="padding:8px 12px;color:var(--ink2)">코인 2000</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:8px 12px;font-weight:700">🚐 승합차</td>
+          <td style="padding:8px 12px;color:var(--ink3)">인력 이동</td>
+          <td style="padding:8px 12px;color:var(--ink3)">NPC 5명 동시 이동 / 파티 이동</td>
+          <td style="padding:8px 12px;color:var(--ink2)">코인 3000</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:8px 12px;font-weight:700">🚚 덤프트럭</td>
+          <td style="padding:8px 12px;color:var(--ink3)">잔토 반출</td>
+          <td style="padding:8px 12px;color:var(--ink3)">토공사 외주비 절감 / 임대 수익</td>
+          <td style="padding:8px 12px;color:var(--ink2)">코인 5000</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:8px 12px;font-weight:700">🏗 굴착기</td>
+          <td style="padding:8px 12px;color:var(--ink3)">토공사 핵심</td>
+          <td style="padding:8px 12px;color:var(--ink3)">굴착 직접 수행 / 임대 수익</td>
+          <td style="padding:8px 12px;color:var(--ink2)">코인 8000</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--bd)">
+          <td style="padding:8px 12px;font-weight:700">🚛 펌프카</td>
+          <td style="padding:8px 12px;color:var(--ink3)">콘크리트 타설</td>
+          <td style="padding:8px 12px;color:var(--ink3)">타설 공정 직접 수행 / 임대</td>
+          <td style="padding:8px 12px;color:var(--ink2)">코인 10000</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;font-weight:700">🏗 타워크레인</td>
+          <td style="padding:8px 12px;color:var(--ink3)">고층 현장 필수</td>
+          <td style="padding:8px 12px;color:var(--ink3)">고층 프로젝트 수주 가능 / 임대</td>
+          <td style="padding:8px 12px;color:var(--ink2)">코인 20000+</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="warn-box" style="margin-bottom:16px">🎨 <strong>차량 스킨 과금</strong> — 트럭 도색 커스텀 / 회사 로고 래핑 / 한정판 색상. "김씨반장 빨간 픽업트럭" 맵에서 알아볼 수 있음 → 브랜드화. 차량도 페이투윈 없이 스킨만 과금.</div>
+
+  <!-- 플레이스타일 -->
+  <div class="sl">플레이스타일 분기</div>
+  <div class="g2" style="margin-bottom:16px">
+    <div class="pc"><div class="pn" style="font-size:13px">🏠 건물주형</div><div class="pd" style="font-size:11px;line-height:1.7">땅 사서 발주만 함 → 관리/수익 플레이<br>오프라인에도 임대료 쌓임<br>부동산 매매로 자산 증식</div></div>
+    <div class="pc"><div class="pn" style="font-size:13px">👷 현장형</div><div class="pd" style="font-size:11px;line-height:1.7">반장으로 프로젝트 수주<br>파티 꾸려서 직접 시공<br>완공 이력이 곧 명함</div></div>
+    <div class="pc"><div class="pn" style="font-size:13px">🚧 장비왕형</div><div class="pd" style="font-size:11px;line-height:1.7">장비 사서 임대업<br>직접 운전도 함<br>장비 많을수록 수동 수익</div></div>
+    <div class="pc"><div class="pn" style="font-size:13px">🔧 기능공형</div><div class="pd" style="font-size:11px;line-height:1.7">철근공으로 레벨업만<br>고레벨 되면 몸값 올라감<br>어디서나 불려다님</div></div>
+  </div>
+
+  <!-- 장기 콘텐츠 -->
+  <div class="sl">장기 콘텐츠 — 땅 다 팔린 이후</div>
+  <div class="g2" style="margin-bottom:16px">
+    <div class="pc" style="border-left:3px solid var(--vi)">
+      <div class="pn" style="font-size:13px">📦 증축 · 재개발</div>
+      <div class="pd" style="font-size:11px;line-height:1.7">창고 → 2층 증축<br>사무소 → 공장으로 리모델링<br>더 크게 키울수록 가치 상승<br>재개발 = 새 공정 경험</div>
+    </div>
+    <div class="pc" style="border-left:3px solid var(--sl)">
+      <div class="pn" style="font-size:13px">🏆 처녀 공사</div>
+      <div class="pd" style="font-size:11px;line-height:1.7">그 땅 최초 시공 기록<br>건물에 영구 마크 새겨짐<br>"2025.06 · 김씨반장"<br>서버 초기 유저만 달성 가능<br>맵 역사에 이름 남김</div>
+    </div>
+    <div class="pc" style="border-left:3px solid var(--gr)">
+      <div class="pn" style="font-size:13px">📋 수집 · 완성 욕구</div>
+      <div class="pd" style="font-size:11px;line-height:1.7">전 공종 마스터 뱃지<br>희귀 장비 컬렉션<br>건물 도감 (내가 지은 건물 목록)<br>서버 최초 기록들</div>
+    </div>
+    <div class="pc" style="border-left:3px solid var(--go)">
+      <div class="pn" style="font-size:13px">🏟 건설 대회</div>
+      <div class="pd" style="font-size:11px;line-height:1.7">같은 도면 최단시간 완공<br>무사고 기록 경쟁<br>최소 비용 완공<br>우승팀 영구 랭킹 + 한정 스킨</div>
+    </div>
+  </div>
+
+  <!-- 시즌제 -->
+  <div class="sl">시즌제 운영</div>
+  <div class="dg" style="margin-bottom:16px">
+    <div class="dg-t">분기마다 새 안전 시나리오 + 한정 스킨 → 매 분기 돌아올 이유</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;min-width:520px">
+      <div style="background:var(--sllt);border:1px solid var(--slmd);border-radius:8px;padding:11px;text-align:center">
+        <div style="font-size:18px;margin-bottom:5px">❄️</div>
+        <div style="font-size:10px;font-weight:700;color:var(--sl);margin-bottom:3px">Q1 · 동절기</div>
+        <div style="font-size:10px;color:var(--ink3);line-height:1.6">한파 양생<br>동파 방지<br>결빙 안전</div>
+      </div>
+      <div style="background:var(--telt);border:1px solid var(--temd);border-radius:8px;padding:11px;text-align:center">
+        <div style="font-size:18px;margin-bottom:5px">🌧</div>
+        <div style="font-size:10px;font-weight:700;color:var(--te);margin-bottom:3px">Q2 · 우기</div>
+        <div style="font-size:10px;color:var(--ink3);line-height:1.6">장마 배수<br>흙막이 강화<br>낙뢰 대피</div>
+      </div>
+      <div style="background:var(--rolt);border:1px solid var(--romd);border-radius:8px;padding:11px;text-align:center">
+        <div style="font-size:18px;margin-bottom:5px">☀️</div>
+        <div style="font-size:10px;font-weight:700;color:var(--ro);margin-bottom:3px">Q3 · 폭염</div>
+        <div style="font-size:10px;color:var(--ink3);line-height:1.6">열사병 관리<br>음용수 배치<br>온열 모니터링</div>
+      </div>
+      <div style="background:var(--golt);border:1px solid var(--gomd);border-radius:8px;padding:11px;text-align:center">
+        <div style="font-size:18px;margin-bottom:5px">📅</div>
+        <div style="font-size:10px;font-weight:700;color:var(--go);margin-bottom:3px">Q4 · 연말</div>
+        <div style="font-size:10px;color:var(--ink3);line-height:1.6">공기 촉박<br>무리한 야간작업<br>안전 vs 공기 선택</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 자격증 연동 -->
+  <div class="info-box" style="margin-bottom:16px">🎓 <strong>불사만의 장기 콘텐츠</strong> — 게임 숙련도 Lv.10 달성 → 실제 KOSHA 교육 이수 인정 → 자격증 시험 응시 자격. "게임 하다가 자격증 땄어" → 유저가 떠날 이유가 없음.</div>
+
+  <!-- 구현 범위 요약 -->
+  <div class="dg">
+    <div class="dg-t">v1.0 구현 범위 요약</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;min-width:480px">
+      <div style="background:var(--grlt);border:1px solid var(--grmd);border-radius:8px;padding:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--gr);margin-bottom:6px">✅ 완전 구현</div>
+        <div style="font-size:11px;color:var(--ink3);line-height:1.9">행위 기반 안전조치<br>NPC 확률 행동 시스템<br>공정별 체크포인트<br>돌발 이벤트 (강우/한파)<br>TBM 시스템<br>언어 장벽 변수</div>
+      </div>
+      <div style="background:var(--yelt);border:1px solid var(--gomd);border-radius:8px;padding:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--go);margin-bottom:6px">⚠️ 부분 구현</div>
+        <div style="font-size:11px;color:var(--ink3);line-height:1.9">굴착기 단순 조작<br>사고 연출 (애니메이션)<br>토사 붕괴 (스크립트)<br>콘크리트 타설 (단순)</div>
+      </div>
+      <div style="background:var(--rolt);border:1px solid var(--romd);border-radius:8px;padding:12px">
+        <div style="font-size:11px;font-weight:700;color:var(--ro);margin-bottom:6px">❌ v2.0 이후</div>
+        <div style="font-size:11px;color:var(--ink3);line-height:1.9">실시간 물리 토사<br>유체 시뮬레이션<br>굴착기 정밀 조작<br>지하수 실시간 표현<br>진짜 NPC AI</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 아이디어 메모 -->
+<div class="sec" id="s-m">
+  <div class="ph"><div class="pe">MEMO</div><div class="pt">아이디어 <em>·</em> 메모</div><div class="pst">떠오른 생각, 아이디어, 삶의 기록을 자유롭게.</div></div>
+  <div class="mc">
+    <div class="mh"><input class="mti" id="mti" placeholder="제목"></div>
+    <div class="msep"></div>
+    <textarea class="mbi" id="mbi" placeholder="자유롭게 적어보세요..."></textarea>
+    <div class="mf"><div class="tr"><button class="tc" onclick="tt(this)">아이디어</button><button class="tc" onclick="tt(this)">불사</button><button class="tc" onclick="tt(this)">무사이</button><button class="tc" onclick="tt(this)">마케팅</button><button class="tc" onclick="tt(this)">할일</button><button class="tc" onclick="tt(this)">삶</button></div><button class="bp2" onclick="sm()">저장</button></div>
+  </div>
+  <div class="sl">저장된 메모</div>
+  <div class="ml" id="ml">
+    <div class="mr"><div class="mline"></div><div class="mbody"><div class="mrt">멀티플레이어 협동 게임 구조</div><div class="mrp">각 역할을 실제 플레이어가 담당. 언어 달라도 신호/제스처로 소통 가능.</div><div class="mrm"><span>2025.05.09</span><span>불사</span></div></div></div>
+    <div class="mr"><div class="mline" style="background:var(--gomd)"></div><div class="mbody"><div class="mrt">1인 기업 현실적 타임라인</div><div class="mrp">0~3개월: 개발+무료배포. 3~6개월: 첫 기업 레퍼런스. 6개월~1년: B2B 5~10곳.</div><div class="mrm"><span>2025.05.09</span><span>불사</span></div></div></div>
+  </div>
+</div>
+
+<!-- 로드맵 -->
+<div class="sec" id="s-r">
+  <div class="ph"><div class="pe">ROADMAP</div><div class="pt">로드맵 <em>·</em> 목표</div><div class="pst">단계별 성장 계획과 내가 직접 해야 할 것들.</div></div>
+  <div class="sl">버전 흐름</div>
+  <div class="dg"><div class="vt">
+    <div class="vt-i"><div class="vt-dr"><div class="vt-d a"></div><div class="vt-l a"></div></div><div class="vt-v">v1.0 · 진행중</div><div class="vt-nm">건물 한 채</div><div class="vt-s">줄걸이·고소·밀폐·전기·화재</div></div>
+    <div class="vt-i"><div class="vt-dr"><div class="vt-d n"></div><div class="vt-l"></div></div><div class="vt-v">v2.0</div><div class="vt-nm">건설현장 전체</div><div class="vt-s">복합공정·중장비·물리엔진</div></div>
+    <div class="vt-i"><div class="vt-dr"><div class="vt-d"></div><div class="vt-l"></div></div><div class="vt-v">v3.0</div><div class="vt-nm">자유 모드</div><div class="vt-s">직접 설계·시공·붕괴</div></div>
+    <div class="vt-i"><div class="vt-dr"><div class="vt-d"></div><div class="vt-l"></div></div><div class="vt-v">v4.0</div><div class="vt-nm">제조시설</div><div class="vt-s">공장·설치·유지보수</div></div>
+    <div class="vt-i"><div class="vt-dr"><div class="vt-d"></div><div class="vt-l"></div></div><div class="vt-v">v5.0</div><div class="vt-nm">마을 · 도시</div><div class="vt-s">멀티플레이·리더보드</div></div>
+  </div></div>
+  <div class="sl" style="margin-top:20px">버전별 계획</div>
+  <div class="rmg">
+    <div class="rmc hl"><div class="rmv">VERSION 1.0</div><div class="rmt">건물 한 채</div><ul class="rml"><li>줄걸이·인양</li><li>고소작업</li><li>밀폐공간</li><li>전기작업</li><li>도면 5종</li></ul><span class="rmt-tag rt-now">진행중</span></div>
+    <div class="rmc"><div class="rmv">VERSION 2.0</div><div class="rmt">건설현장 전체</div><ul class="rml"><li>복합 공정</li><li>중장비 운전</li><li>물리엔진</li><li>오픈월드</li></ul><span class="rmt-tag rt-next">다음</span></div>
+    <div class="rmc"><div class="rmv">VERSION 3.0</div><div class="rmt">자유 모드</div><ul class="rml"><li>파라미터 설계</li><li>안전검토 통과</li><li>실패 시 붕괴</li></ul><span class="rmt-tag rt-later">나중에</span></div>
+    <div class="rmc"><div class="rmv">VERSION 4~5</div><div class="rmt">제조시설·도시</div><ul class="rml"><li>공장·유지보수</li><li>마을·도시</li><li>멀티플레이어</li></ul><span class="rmt-tag rt-later">나중에</span></div>
+    <div class="rmc"><div class="rmv">BUSINESS</div><div class="rmt">수익화</div><ul class="rml"><li>v1.0 무료 배포</li><li>B2B 라이선스</li><li>중동·동남아</li></ul><span class="rmt-tag rt-money">목표</span></div>
+  </div>
+  <div class="dvd"></div>
+  <div class="sl">내가 직접 해야 할 것들</div>
+  <div class="cklist">
+    <div class="cki" onclick="ck(this)"><div class="ckbox"><svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="1.5,4.5 3.5,6.5 7.5,2"/></svg></div><div><div class="ckt">CLAUDE.md 에이전트 5개로 업데이트</div><div class="cks">집 가서 PC로 적용</div></div><span class="ckb">코드</span></div>
+    <div class="cki" onclick="ck(this)"><div class="ckbox"><svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="1.5,4.5 3.5,6.5 7.5,2"/></svg></div><div><div class="ckt">불사 설계서 + 도면 시스템 Claude Code 적용</div><div class="cks">blueprint-manager + structure-builder 구현</div></div><span class="ckb">코드</span></div>
+    <div class="cki" onclick="ck(this)"><div class="ckbox"><svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="1.5,4.5 3.5,6.5 7.5,2"/></svg></div><div><div class="ckt">Adobe 계정 생성 + Meshy AI 트라이얼</div><div class="cks">캐릭터 5종 + 건물/크레인 에셋</div></div><span class="ckb">에셋</span></div>
+    <div class="cki" onclick="ck(this)"><div class="ckbox"><svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="1.5,4.5 3.5,6.5 7.5,2"/></svg></div><div><div class="ckt">sangs-u.github.io 개인 레포 + 사이트 배포</div><div class="cks">이 사이트를 index.html로 올리기</div></div><span class="ckb">배포</span></div>
+    <div class="cki" onclick="ck(this)"><div class="ckbox"><svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="1.5,4.5 3.5,6.5 7.5,2"/></svg></div><div><div class="ckt">Product Hunt 계정 생성</div><div class="cks">출시 준비 — 헌터 연결</div></div><span class="ckb">마케팅</span></div>
+    <div class="cki" onclick="ck(this)"><div class="ckbox"><svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="1.5,4.5 3.5,6.5 7.5,2"/></svg></div><div><div class="ckt">불사 주 1회 플레이 테스트</div><div class="cks">sangs-u.github.io/bulsa</div></div><span class="ckb">반복</span></div>
+  </div>
+</div>
+
+<!-- 마케팅 · 수익 -->
+<div class="sec" id="s-mk">
+  <div class="ph"><div class="pe">MARKETING · REVENUE</div><div class="pt">마케팅 <em>·</em> 수익</div><div class="pst">채널별 전략과 수익 모델 큰 틀. 세부 설계는 v1.0 배포 후.</div></div>
+  <div class="sl">수익 모델 큰 틀</div>
+  <div class="rev-grid">
+    <div class="rev-card free"><div class="rev-tier">FREE · 기본</div><div class="rev-nm">무료 플레이</div><ul class="rev-list"><li>모든 시나리오 기본 플레이</li><li>수료증 발급</li><li>기본 캐릭터</li></ul><span class="rev-tag rt-free">항상 무료</span></div>
+    <div class="rev-card"><div class="rev-tier">PREMIUM · 개인</div><div class="rev-nm">추가 콘텐츠</div><ul class="rev-list"><li>추가 시나리오 패스</li><li>캐릭터 커스터마이징</li><li>고급 도면 해금</li></ul><span class="rev-tag rt-paid">시나리오당 $2~5</span></div>
+    <div class="rev-card"><div class="rev-tier">B2B · 기업</div><div class="rev-nm">기업용 기능</div><ul class="rev-list"><li>직원 관리 대시보드</li><li>커스텀 수료증</li><li>팀 플레이 모드</li></ul><span class="rev-tag rt-b2b">월 $29/기업</span></div>
+    <div class="rev-card"><div class="rev-tier">ENTERPRISE</div><div class="rev-nm">화이트라벨</div><ul class="rev-list"><li>자사 브랜드 커스텀</li><li>자사 시나리오</li><li>전용 서버</li></ul><span class="rev-tag rt-b2b">연 $5,000~</span></div>
+    <div class="rev-card"><div class="rev-tier">FUTURE</div><div class="rev-nm">확장 수익</div><ul class="rev-list"><li>시나리오 마켓플레이스</li><li>보험사 연계</li><li>정부 납품</li><li>VR 버전</li></ul><span class="rev-tag rt-future">v2.0 이후</span></div>
+  </div>
+  <div class="dvd"></div>
+  <div class="sl">채널별 마케팅 전략</div>
+  <div class="mkt-grid">
+    <div class="mkt-card"><div class="mkt-icon g"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#3A7D5C" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="5.5"/><path d="M7 2C7 2 5 5 5 7s2 5 2 5"/><path d="M1.5 7h11"/></svg></div><div class="mkt-nm">Product Hunt</div><div class="mkt-tgt">GLOBAL · 개발자/스타트업</div><div class="mkt-desc">출시 당일. 무료+브라우저 실행이 강점. 콘텐츠 에이전트가 영문 소개글 작성.</div><span class="mkt-tag mt-r">출시 시 바로</span></div>
+    <div class="mkt-card"><div class="mkt-icon v"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#5B4E8A" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="1.5" width="11" height="11" rx="2"/><path d="M5 7h4M7 5v4"/></svg></div><div class="mkt-nm">LinkedIn</div><div class="mkt-tgt">B2B · 중동/동남아 안전담당자</div><div class="mkt-desc">수료증이 핵심 셀링포인트. 한/영/아랍어 메시지. 콘텐츠 에이전트가 작성.</div><span class="mkt-tag mt-r">출시 시 바로</span></div>
+    <div class="mkt-card"><div class="mkt-icon go"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#8B6914" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="5.5"/><path d="M4.5 7l2 2 3.5-3.5"/></svg></div><div class="mkt-nm">Reddit</div><div class="mkt-tgt">커뮤니티 · 게임/안전</div><div class="mkt-desc">r/gamedev · r/indiegaming · r/occupationalhealth 각각 다른 각도로.</div><span class="mkt-tag mt-s">출시 후</span></div>
+    <div class="mkt-card"><div class="mkt-icon r"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#9B4B5E" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="7,1 8.8,5.5 13,5.5 9.5,8.5 11,13 7,10 3,13 4.5,8.5 1,5.5 5.2,5.5"/></svg></div><div class="mkt-nm">X (트위터)</div><div class="mkt-tgt">빌드 인 퍼블릭</div><div class="mkt-desc">"한국인 혼자 AI로 만든 안전교육 게임" 개발 과정 공유.</div><span class="mkt-tag mt-s">지금부터</span></div>
+    <div class="mkt-card"><div class="mkt-icon s"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#4A6580" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="3" width="11" height="8" rx="1.5"/><path d="M4.5 3V2M9.5 3V2M1.5 6h11"/></svg></div><div class="mkt-nm">YouTube</div><div class="mkt-tgt">영상 · 게임 플레이</div><div class="mkt-desc">사고 연출 장면이 임팩트 있음. 콘텐츠 에이전트가 스크립트 작성.</div><span class="mkt-tag mt-l">v1.0 완성 후</span></div>
+  </div>
+</div>
+
+<!-- 프롬프트 -->
+<div class="sec" id="s-q">
+  <div class="ph"><div class="pe">PROMPTS</div><div class="pt">프롬프트 <em>모음</em></div><div class="pst">Claude Code에 그대로 붙여넣기. 복사 버튼으로 바로 사용.</div></div>
+  <div class="sl">에이전트 · 자동화</div>
+  <div class="prc"><div class="prh"><div><div class="prn">에이전트 팀 전체 가동</div><div class="prcat">AGENT · AUTO</div></div><button class="bc" onclick="cp(this)">복사</button></div>
+  <div class="prb">CLAUDE.md 읽어라.
+Opus 서브에이전트 호출해서 bulsa 전체 파일 분석 후
+현재 발생 가능한 모든 버그 목록 작성.
+분석 완료되면 Sonnet이 우선순위대로
+전부 수정하고 git push 완료해라.
+완료되면 "✅ 완료 — 확인해주세요" 보고해.</div></div>
+  <div class="prc"><div class="prh"><div><div class="prn">새 세션 컨텍스트 복구</div><div class="prcat">AGENT · CONTEXT</div></div><button class="bc" onclick="cp(this)">복사</button></div>
+  <div class="prb">CLAUDE.md 읽어라.
+BULSA 궁적적 목표: 안전기준을 지키며 건물→공장→마을→도시를
+직접 건설하는 안전 문명 시뮬레이터. 플레이어는 작업반장.
+동료 NPC 지시하며 KOSHA 기준 준수 시 구조물 완성. 위반 시 사고 발생.
+현재 상태 파악 후 CLAUDE.md 규칙대로 에이전트 팀 가동해서 자동화 루프 시작해라.</div></div>
+  <div class="sl" style="margin-top:20px">개발 · 수정</div>
+  <div class="prc"><div class="prh"><div><div class="prn">도면 시스템 구현</div><div class="prcat">DEV · BLUEPRINT</div></div><button class="bc" onclick="cp(this)">복사</button></div>
+  <div class="prb">scenarios/lifting/blueprints/ 폴더 생성.
+blueprints/blueprint-manager.js — 도면 선택 UI + 3D 미리보기
+5개 도면 JSON 생성: warehouse/office/factory/apartment/bridge
+각 JSON: { name, elements:[{type,x,y,z,w,h,d}], phases:[{phase,elements:[]}] }
+core/structure-builder.js — JSON→Three.js 메시 자동 생성
+타입별 색상: column=#8B8B8B beam=#6B4F3A slab=#C4B89A
+공정 완료 시 0.3초 간격 순차 페이드인 + 완성 시 카메라 오빗 컷씬 5초
+완료 후 git push.</div></div>
+  <div class="prc"><div class="prh"><div><div class="prn">QA 자동 테스트</div><div class="prcat">QA · PLAYWRIGHT</div></div><button class="bc" onclick="cp(this)">복사</button></div>
+  <div class="prb">Playwright로 게임 자동 플레이 후
+스크린샷 분석해서 기술오류 + 시각적 문제 + 게임플레이 문제 전부 보고해라.
+발견된 문제 즉시 수정 후 git push.</div></div>
+  <div class="sl" style="margin-top:20px">마케팅 · 에셋</div>
+  <div class="prc"><div class="prh"><div><div class="prn">Product Hunt 소개글</div><div class="prcat">MARKETING · PH</div></div><button class="bc" onclick="cp(this)">복사</button></div>
+  <div class="prb">BULSA Product Hunt 출시용 영문 소개글 작성.
+이름: BULSA (불사, 不死) / 설명: First-person 3D safety education simulator
+플랫폼: Browser (free) / 특징: KOSHA-based, Korean-made, certificate system
+작성: 1.Tagline(60자) 2.Description(260자) 3.First comment 4.태그 5개</div></div>
+  <div class="prc"><div class="prh"><div><div class="prn">Meshy — 건설 작업자</div><div class="prcat">ASSET · MESHY</div></div><button class="bc" onclick="cp(this)">복사</button></div>
+  <div class="prb">realistic construction worker, male, full body,
+hard hat, orange safety vest, work boots, safety gloves, tool belt,
+neutral standing pose, T-pose, game ready, high quality PBR textures</div></div>
+</div>
+
+
+<!-- ══ 사무실 탭 ══ -->
+<div class="sec" id="s-of">
+<div class="of-hdr">
+  <div class="of-hdr-mark">B</div>
+  <div class="of-hdr-title">BULSA · 에이전트 현황</div>
+  <div class="of-hdr-badge"><div class="of-hdr-dot"></div>UI 미리보기</div>
+  <div style="font-family:'DM Mono',monospace;font-size:11px;color:#484F58;margin-left:12px" id="hdr-time"></div>
+</div>
+<div class="of-wrap" id="s-of-inner">
+<div class="page">
+  <div class="office-grid">
+
+    <!-- 에이전트 현황 -->
+    <div class="agent-section">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.5" cy="4" r="1.8"/><circle cx="8.5" cy="4" r="1.8"/><path d="M1 11c0-1.9 1.6-3.5 3.5-3.5h4C10.4 7.5 12 9.1 12 11"/></svg>
+            에이전트 현황
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)" id="upd-time">방금 업데이트</div>
+        </div>
+        <div class="card-bd">
+          <div class="agents-wrap">
+
+            <div class="ag gr" onclick="openChat('pm')" title="Sonnet PM과 채팅">
+              <div class="ag-top">
+                <div class="ag-name">Sonnet PM</div>
+                <div class="ag-role">실행 · 수정 · Push</div>
+                <div class="ag-badge b-gr"><div class="ag-bd-dot"></div>작업중</div>
+              </div>
+              <div class="ag-task">core/npc.js — 상태머신 리팩토링 중</div>
+              <div class="ag-prog"><div class="ag-prog-fill" style="width:67%;background:var(--gr)"></div></div>
+              <div class="ag-meta">14:18 시작 · 12분 경과</div>
+              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
+            </div>
+
+            <div class="ag bl" onclick="openChat('qa')" title="Opus QA와 채팅">
+              <div class="ag-top">
+                <div class="ag-name">Opus QA/분석</div>
+                <div class="ag-role">오류 수집 · 원인 파악</div>
+                <div class="ag-badge b-bl"><div class="ag-bd-dot"></div>분석중</div>
+              </div>
+              <div class="ag-task">Playwright 완료 — 오류 2개 분석 중</div>
+              <div class="ag-prog"><div class="ag-prog-fill" style="width:45%;background:var(--bl)"></div></div>
+              <div class="ag-meta">14:22 시작 · 오류 2개 발견</div>
+              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
+            </div>
+
+            <div class="ag pu" onclick="openChat('quality')" title="Opus 품질과 채팅">
+              <div class="ag-top">
+                <div class="ag-name">Opus 품질</div>
+                <div class="ag-role">디자인 · 게임플레이</div>
+                <div class="ag-badge b-gy"><div class="ag-bd-dot"></div>대기중</div>
+              </div>
+              <div class="ag-task">QA 결과 대기 중</div>
+              <div class="ag-prog"><div class="ag-prog-fill" style="width:0%;background:var(--pu)"></div></div>
+              <div class="ag-meta">마지막: 13:55 완료</div>
+              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
+            </div>
+
+            <div class="ag or offline" onclick="openChat('content')" title="Opus 콘텐츠와 채팅">
+              <div class="ag-top">
+                <div class="ag-name">Opus 콘텐츠</div>
+                <div class="ag-role">SNS · 다국어 카피</div>
+                <div class="ag-badge b-gy"><div class="ag-bd-dot"></div>오프라인</div>
+              </div>
+              <div class="ag-task">대기 중 — 지시 없음</div>
+              <div class="ag-prog"><div class="ag-prog-fill" style="width:0%"></div></div>
+              <div class="ag-meta">마지막: 09:30</div>
+              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
+            </div>
+
+            <div class="ag ye offline" onclick="openChat('data')" title="Opus 데이터와 채팅">
+              <div class="ag-top">
+                <div class="ag-name">Opus 데이터</div>
+                <div class="ag-role">피드백 · 개선 우선순위</div>
+                <div class="ag-badge b-gy"><div class="ag-bd-dot"></div>배포 후 활성화</div>
+              </div>
+              <div class="ag-task">사용자 데이터 없음</div>
+              <div class="ag-prog"><div class="ag-prog-fill" style="width:0%"></div></div>
+              <div class="ag-meta">v1.0 배포 후 시작</div>
+              <div class="ag-chat-hint"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 3h8M1 5.5h5.5M1 8h4"/></svg>클릭해서 채팅</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 라이브 로그 -->
+    <div class="log-section">
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="2" width="11" height="9" rx="1.5"/><path d="M3 5h7M3 7.5h4"/></svg>
+            라이브 로그
+          </div>
+          <button class="card-act" onclick="clearLog()">지우기</button>
+        </div>
+        <div class="card-bd" style="padding:8px 16px">
+          <div class="log-wrap" id="log-list">
+            <div class="log-row"><div class="log-t">14:30</div><div class="log-ic">🔧</div><div class="log-msg"><span class="tag bl">Sonnet PM</span> — <span class="ok">core/npc.js 상태머신 리팩토링 시작</span></div></div>
+            <div class="log-row"><div class="log-t">14:28</div><div class="log-ic">🔍</div><div class="log-msg"><span class="tag bl">Opus QA</span> — Playwright 완료. <span class="warn">오류 2개 발견</span></div></div>
+            <div class="log-row"><div class="log-t">14:25</div><div class="log-ic">✅</div><div class="log-msg"><span class="tag bl">Sonnet PM</span> — <span class="ok">git push</span> · feat: 창고 도면 페이드인 애니메이션</div></div>
+            <div class="log-row"><div class="log-t">14:22</div><div class="log-ic">▶️</div><div class="log-msg"><span class="tag bl">Opus QA</span> — Playwright 게임 자동 플레이 시작</div></div>
+            <div class="log-row"><div class="log-t">14:18</div><div class="log-ic">📋</div><div class="log-msg">에이전트 팀 가동 — CLAUDE.md 읽기 완료</div></div>
+            <div class="log-row"><div class="log-t">14:10</div><div class="log-ic">✅</div><div class="log-msg"><span class="tag bl">Sonnet PM</span> — <span class="ok">git push</span> · fix: 줄걸이 각도 계산 오류</div></div>
+            <div class="log-row"><div class="log-t">13:55</div><div class="log-ic">🎨</div><div class="log-msg"><span class="tag bl">Opus 품질</span> — 스크린샷 분석 완료. 시각적 문제 없음</div></div>
+            <div class="log-row"><div class="log-t">13:40</div><div class="log-ic">✅</div><div class="log-msg"><span class="tag bl">Sonnet PM</span> — <span class="ok">git push</span> · fix: NPC 경로탐색 버그</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 사이드 패널 -->
+    <div class="side-panel">
+
+      <!-- 통계 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,10 4,6.5 7,8 10,4.5 12,2"/></svg>
+            오늘의 현황
+          </div>
+          <div id="today-d" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)"></div>
+        </div>
+        <div class="card-bd">
+          <div class="stat-grid">
+            <div class="stat"><div class="stat-v" style="color:var(--gr)">4</div><div class="stat-l">완료</div><div class="stat-c" style="color:var(--gr)">↑ 오늘</div></div>
+            <div class="stat"><div class="stat-v" style="color:var(--bl)">2</div><div class="stat-l">진행중</div><div class="stat-c" style="color:var(--bl)">실행중</div></div>
+            <div class="stat"><div class="stat-v" style="color:var(--ye)">2</div><div class="stat-l">오류</div><div class="stat-c" style="color:var(--ye)">분석중</div></div>
+            <div class="stat"><div class="stat-v" style="color:var(--pu)">7</div><div class="stat-l">커밋</div><div class="stat-c" style="color:var(--pu)">오늘</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 진행률 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6.5" r="5"/><circle cx="6.5" cy="6.5" r="2"/></svg>
+            v1.0 진행률
+          </div>
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gr);font-weight:700">34%</span>
+        </div>
+        <div class="card-bd">
+          <div class="prog-bar" style="margin-bottom:6px"><div class="prog-fill" style="width:34%"></div></div>
+          <div class="prog-markers"><span>v0.1 시작</span><span>v1.0 출시</span></div>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
+              <span style="color:var(--ink3);display:flex;align-items:center;gap:5px"><span style="color:var(--gr)">✓</span> 설계서 완성</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gr)">완료</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
+              <span style="color:var(--ink3);display:flex;align-items:center;gap:5px"><span style="color:var(--gr)">✓</span> 에이전트 팀 구축</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gr)">완료</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
+              <span style="color:var(--bl);display:flex;align-items:center;gap:5px"><span>▶</span> 도면 시스템</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--bl)">진행중</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
+              <span style="color:var(--ink4);display:flex;align-items:center;gap:5px"><span>○</span> QA 자동화</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)">대기</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
+              <span style="color:var(--ink4);display:flex;align-items:center;gap:5px"><span>○</span> 캐릭터 에셋</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)">대기</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
+              <span style="color:var(--ink4);display:flex;align-items:center;gap:5px"><span>○</span> 배포</span>
+              <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)">대기</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 빠른 지시 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h9M7 3l4.5 3.5L7 10"/></svg>
+            빠른 지시
+          </div>
+        </div>
+        <div class="card-bd" style="padding:10px 16px">
+          <div class="quick-list">
+            <button class="quick-btn" onclick="quickSend('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 전체 가동</button>
+            <button class="quick-btn" onclick="quickSend('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA 테스트</button>
+            <button class="quick-btn" onclick="quickSend('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태 보고</button>
+            <button class="quick-btn" onclick="quickSend('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 즉시 Push</button>
+            <button class="quick-btn" onclick="go('command')">✏️ 직접 입력 →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+
+</div>
+
+<div class="sec" id="s-cmd">
+<div class="of-hdr">
+  <div class="of-hdr-mark">B</div>
+  <div class="of-hdr-title">BULSA · 업무 지시</div>
+  <div class="of-hdr-badge" style="background:rgba(63,185,80,.12);border-color:rgba(63,185,80,.25);color:#3FB950"><div class="of-hdr-dot"></div>클립보드 복사 모드</div>
+</div>
+<div class="of-wrap">
+
+<div class="sec" id="s-command">
+<div class="page">
+  <div class="cmd-layout">
+    <div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5h9M7 3l4.5 3.5L7 10"/></svg>
+            업무 지시
+          </div>
+          <div style="font-size:10px;color:var(--ink4)">Railway 연결 후 실시간 전송</div>
+        </div>
+        <div class="card-bd">
+          <div class="preset-grid">
+            <button class="preset-chip" onclick="setCmd('에이전트 팀 전체 가동. CLAUDE.md 읽고 버그 수정 후 git push.')">🤖 팀 가동</button>
+            <button class="preset-chip" onclick="setCmd('Playwright로 게임 자동 플레이 후 오류 수집. 발견된 문제 즉시 수정.')">🔍 QA 테스트</button>
+            <button class="preset-chip" onclick="setCmd('blueprints/ 폴더 생성. 도면 5종 JSON + structure-builder.js 구현. 완료 후 git push.')">🏗 도면 구현</button>
+            <button class="preset-chip" onclick="setCmd('현재 상태 보고해줘. 완료된 작업, 진행중, 남은 작업 목록.')">📋 상태 보고</button>
+            <button class="preset-chip" onclick="setCmd('git status 확인 후 변경사항 전부 커밋하고 push.')">📤 즉시 Push</button>
+            <button class="preset-chip" onclick="setCmd('게임 플레이 스크린샷 찍어서 시각적 품질 분석해줘.')">🎨 품질 검토</button>
+            <button class="preset-chip" onclick="setCmd('Product Hunt 영문 소개글 작성해줘. Tagline + Description + First comment.')">📣 PH 소개글</button>
+            <button class="preset-chip" onclick="setCmd('LinkedIn B2B 영업 메시지 한/영/아랍어로 작성해줘.')">💼 B2B 메시지</button>
+          </div>
+
+          <div class="cmd-box">
+            <textarea class="cmd-textarea" id="cmd-input" placeholder="에이전트에게 지시할 내용을 입력하세요...
+
+예) CLAUDE.md 읽고 현재 상태 파악 후
+    NPC 상태머신 버그 수정해줘.
+    완료 후 git push."></textarea>
+            <div class="cmd-foot">
+              <div class="target-row">
+                <button class="t-btn on" onclick="setTarget(this)">전체 팀</button>
+                <button class="t-btn" onclick="setTarget(this)">PM만</button>
+                <button class="t-btn" onclick="setTarget(this)">QA만</button>
+                <button class="t-btn" onclick="setTarget(this)">콘텐츠</button>
+              </div>
+              <button class="send-btn" onclick="sendCmd()">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 6.5L1.5 2l2 4.5L1.5 11l10-4.5z"/></svg>
+                전송
+              </button>
+            </div>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--ink4);line-height:1.6;padding:0 2px">
+            ⚡ 현재: 전송 버튼 → 클립보드 복사 → Codespaces 붙여넣기<br>
+            Railway 연결 후: 버튼 하나로 바로 실행
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 명령 큐 -->
+    <div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h9M2 6.5h6M2 10h4"/></svg>
+            명령 큐
+            <span style="background:var(--re);color:#fff;border-radius:8px;padding:1px 5px;font-size:9px;font-weight:700">2</span>
+          </div>
+          <button class="card-act" onclick="clearQueue()">초기화</button>
+        </div>
+        <div class="card-bd" style="padding:10px 16px">
+          <div class="queue-wrap" id="queue-list">
+            <div class="q-item run"><div class="qi-ic">🔵</div><div class="qi-body"><div class="qi-txt">에이전트 팀 전체 가동 — 버그 수정</div><div class="qi-meta">14:18 · Sonnet PM 실행중</div><div class="qi-prog"><div class="qi-fill"></div></div></div></div>
+            <div class="q-item run"><div class="qi-ic">🔵</div><div class="qi-body"><div class="qi-txt">Playwright QA 자동 테스트</div><div class="qi-meta">14:22 · Opus QA 실행중</div><div class="qi-prog"><div class="qi-fill"></div></div></div></div>
+            <div class="q-item done"><div class="qi-ic">✅</div><div class="qi-body"><div class="qi-txt">창고 도면 페이드인 애니메이션</div><div class="qi-meta">14:00 전송 · 14:25 완료</div></div></div>
+            <div class="q-item done"><div class="qi-ic">✅</div><div class="qi-body"><div class="qi-txt">줄걸이 각도 계산 오류 수정</div><div class="qi-meta">13:50 전송 · 14:10 완료</div></div></div>
+            <div class="q-item done"><div class="qi-ic">✅</div><div class="qi-body"><div class="qi-txt">NPC 경로탐색 버그 수정</div><div class="qi-meta">13:30 전송 · 13:40 완료</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 서버 연결 가이드 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="11" height="7" rx="1.5"/><path d="M3.5 4V3a3 3 0 016 0v1"/></svg>
+            서버 연결 가이드
+          </div>
+        </div>
+        <div class="card-bd">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--grlt);border:1px solid var(--grdk);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gr);flex-shrink:0">1</div>
+              <div style="font-size:11px;color:var(--ink3);line-height:1.5"><strong style="color:var(--ink2)">Railway 가입</strong><br>railway.app → New Project → Node.js</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--bllt);border:1px solid rgba(88,166,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--bl);flex-shrink:0">2</div>
+              <div style="font-size:11px;color:var(--ink3);line-height:1.5"><strong style="color:var(--ink2)">서버 배포</strong><br>Claude Code에 서버 코드 생성 → 자동 배포</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--pult);border:1px solid rgba(188,140,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--pu);flex-shrink:0">3</div>
+              <div style="font-size:11px;color:var(--ink3);line-height:1.5"><strong style="color:var(--ink2)">API_URL 연결</strong><br>이 파일 상단 변수 1개만 수정</div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--yelt);border:1px solid rgba(210,153,34,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--ye);flex-shrink:0">4</div>
+              <div style="font-size:11px;color:var(--ink3);line-height:1.5"><strong style="color:var(--ink2)">CLAUDE.md 업데이트</strong><br>작업 완료 시 status.json push 규칙</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:10px 12px;background:var(--sf2);border-radius:var(--rsm);font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);line-height:1.7">
+            예상 비용: ~$5/월 (Railway Hobby)<br>
+            완성 시: 모바일 → 지시 → 자동 개발
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+</div>
+</div>
+
+<div class="sec" id="s-hist">
+<div class="of-hdr">
+  <div class="of-hdr-mark">B</div>
+  <div class="of-hdr-title">BULSA · 개발 히스토리</div>
+  <div class="of-hdr-badge" style="background:rgba(88,166,255,.12);border-color:rgba(88,166,255,.25);color:#58A6FF"><div class="of-hdr-dot" style="background:#58A6FF"></div>GitHub 연동 예정</div>
+</div>
+<div class="of-wrap">
+
+<div class="sec" id="s-history">
+<div class="page">
+  <div class="hist-layout">
+
+    <!-- 타임라인 -->
+    <div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6.5" r="5"/><path d="M6.5 4v2.5l1.5 1.5"/></svg>
+            커밋 히스토리
+          </div>
+          <div style="font-size:10px;color:var(--ink4)">GitHub 연동 후 자동 갱신</div>
+        </div>
+        <div class="card-bd">
+          <div class="tl">
+
+            <div class="tl-day today">
+              <div class="tl-date">2025.05.10 <span class="tl-date-badge today">오늘</span></div>
+              <div class="tl-commits">
+                <div class="commit"><div class="commit-top"><div class="commit-msg">feat: 창고 도면 페이드인 애니메이션 구현</div><span class="commit-tag ct-feat">feat</span></div><div class="commit-meta"><span class="commit-hash">a3f8c2d</span><span>Sonnet PM</span><span>14:25</span></div></div>
+                <div class="commit"><div class="commit-top"><div class="commit-msg">fix: 줄걸이 각도 계산 오류 수정</div><span class="commit-tag ct-fix">fix</span></div><div class="commit-meta"><span class="commit-hash">b9e1f4a</span><span>Sonnet PM</span><span>14:10</span></div></div>
+                <div class="commit"><div class="commit-top"><div class="commit-msg">fix: NPC 경로탐색 버그 수정</div><span class="commit-tag ct-fix">fix</span></div><div class="commit-meta"><span class="commit-hash">c2d7b8e</span><span>Sonnet PM</span><span>13:40</span></div></div>
+                <div class="commit"><div class="commit-top"><div class="commit-msg">auto: 에이전트 팀 세션 자동 저장</div><span class="commit-tag ct-auto">auto</span></div><div class="commit-meta"><span class="commit-hash">d5f3a1c</span><span>자동</span><span>13:30</span></div></div>
+              </div>
+            </div>
+
+            <div class="tl-day recent">
+              <div class="tl-date">2025.05.09</div>
+              <div class="tl-commits">
+                <div class="commit"><div class="commit-top"><div class="commit-msg">feat: 도면 5종 + 창문·난간·셔터 디테일 구현</div><span class="commit-tag ct-feat">feat</span></div><div class="commit-meta"><span class="commit-hash">e8a2d6f</span><span>Sonnet PM</span><span>18:44</span></div></div>
+                <div class="commit"><div class="commit-top"><div class="commit-msg">design: Three.js 건물 디테일 개선 (창문 프레임, 트러스)</div><span class="commit-tag ct-design">design</span></div><div class="commit-meta"><span class="commit-hash">f1b9c3e</span><span>Opus 품질</span><span>17:22</span></div></div>
+                <div class="commit"><div class="commit-top"><div class="commit-msg">feat: blueprint-manager.js 초안</div><span class="commit-tag ct-feat">feat</span></div><div class="commit-meta"><span class="commit-hash">g4d7a8b</span><span>Sonnet PM</span><span>15:10</span></div></div>
+                <div class="commit"><div class="commit-top"><div class="commit-msg">feat: CLAUDE.md 에이전트 5개 체계 확정</div><span class="commit-tag ct-feat">feat</span></div><div class="commit-meta"><span class="commit-hash">h2e5f1d</span><span>Sonnet PM</span><span>11:30</span></div></div>
+              </div>
+            </div>
+
+            <div class="tl-day">
+              <div class="tl-date">2025.05.08</div>
+              <div class="tl-commits">
+                <div class="commit"><div class="commit-top"><div class="commit-msg">feat: 완전 설계서 v1.0 완성 (6단계 공정, 6개 역할)</div><span class="commit-tag ct-feat">feat</span></div><div class="commit-meta"><span class="commit-hash">i9c4e2a</span><span>Sonnet PM</span><span>20:15</span></div></div>
+                <div class="commit"><div class="commit-top"><div class="commit-msg">feat: NPC 역할 시스템 + 불안전행동 감지 구현</div><span class="commit-tag ct-feat">feat</span></div><div class="commit-meta"><span class="commit-hash">j3b8f5c</span><span>Sonnet PM</span><span>16:40</span></div></div>
+                <div class="commit"><div class="commit-top"><div class="commit-msg">feat: Three.js 씬 초기 렌더링 + 그리드</div><span class="commit-tag ct-feat">feat</span></div><div class="commit-meta"><span class="commit-hash">k7a2d9e</span><span>Sonnet PM</span><span>14:22</span></div></div>
+              </div>
+            </div>
+
+            <div class="tl-day">
+              <div class="tl-date">2025.05.07 · 프로젝트 시작</div>
+              <div class="tl-commits">
+                <div class="commit"><div class="commit-top"><div class="commit-msg">init: BULSA 프로젝트 초기화 + CLAUDE.md + Codespaces</div><span class="commit-tag ct-init">init</span></div><div class="commit-meta"><span class="commit-hash">l5f1b3d</span><span>sangs-u</span><span>21:00</span></div></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 히스토리 사이드 -->
+    <div class="hist-side">
+
+      <!-- 기여도 히트맵 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="3" height="3" rx=".5"/><rect x="5" y="1" width="3" height="3" rx=".5"/><rect x="9" y="1" width="3" height="3" rx=".5"/><rect x="1" y="5" width="3" height="3" rx=".5"/><rect x="5" y="5" width="3" height="3" rx=".5"/><rect x="9" y="5" width="3" height="3" rx=".5"/><rect x="1" y="9" width="3" height="3" rx=".5"/><rect x="5" y="9" width="3" height="3" rx=".5"/><rect x="9" y="9" width="3" height="3" rx=".5"/></svg>
+            커밋 히트맵
+          </div>
+          <div style="font-size:10px;color:var(--ink4)">최근 4주</div>
+        </div>
+        <div class="card-bd">
+          <div style="display:flex;gap:2px;margin-bottom:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);justify-content:space-between">
+            <span>Mon</span><span>Wed</span><span>Fri</span><span>Sun</span>
+          </div>
+          <div class="contrib-grid" id="contrib-grid"></div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:8px;font-size:10px;color:var(--ink4)">
+            <span>적음</span>
+            <div style="display:flex;gap:2px">
+              <div style="width:10px;height:10px;border-radius:2px;background:var(--sf3)"></div>
+              <div style="width:10px;height:10px;border-radius:2px;background:rgba(63,185,80,.3)"></div>
+              <div style="width:10px;height:10px;border-radius:2px;background:rgba(63,185,80,.5)"></div>
+              <div style="width:10px;height:10px;border-radius:2px;background:rgba(63,185,80,.75)"></div>
+              <div style="width:10px;height:10px;border-radius:2px;background:var(--gr)"></div>
+            </div>
+            <span>많음</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 커밋 태그 분포 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,10 4,6.5 7,8 10,4.5 12,2"/></svg>
+            작업 유형 분포
+          </div>
+        </div>
+        <div class="card-bd">
+          <div class="tag-dist">
+            <div class="tag-row">
+              <div class="tag-name" style="color:var(--bl)">feat</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:70%;background:var(--bl)"></div></div>
+              <div class="tag-count" style="color:var(--bl)">12</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name" style="color:var(--re)">fix</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:25%;background:var(--re)"></div></div>
+              <div class="tag-count" style="color:var(--re)">5</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name" style="color:var(--pu)">design</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:15%;background:var(--pu)"></div></div>
+              <div class="tag-count" style="color:var(--pu)">3</div>
+            </div>
+            <div class="tag-row">
+              <div class="tag-name" style="color:var(--gr)">auto</div>
+              <div class="tag-bar-wrap"><div class="tag-bar" style="width:10%;background:var(--gr)"></div></div>
+              <div class="tag-count" style="color:var(--gr)">2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 에이전트 기여도 -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-ttl">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="4.5" cy="4" r="1.8"/><circle cx="8.5" cy="4" r="1.8"/><path d="M1 11c0-1.9 1.6-3.5 3.5-3.5h4C10.4 7.5 12 9.1 12 11"/></svg>
+            에이전트별 기여도
+          </div>
+        </div>
+        <div class="card-bd">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--ink2)">Sonnet PM</span><span style="font-family:'DM Mono',monospace;color:var(--gr)">18커밋</span></div>
+              <div style="height:5px;background:var(--sf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:82%;background:var(--gr);border-radius:3px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--ink2)">Opus QA/분석</span><span style="font-family:'DM Mono',monospace;color:var(--bl)">2세션</span></div>
+              <div style="height:5px;background:var(--sf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:35%;background:var(--bl);border-radius:3px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--ink2)">Opus 품질</span><span style="font-family:'DM Mono',monospace;color:var(--pu)">2커밋</span></div>
+              <div style="height:5px;background:var(--sf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:18%;background:var(--pu);border-radius:3px"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:var(--ink4)">Opus 콘텐츠</span><span style="font-family:'DM Mono',monospace;color:var(--ink4)">대기중</span></div>
+              <div style="height:5px;background:var(--sf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:0%;background:var(--or);border-radius:3px"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+</main>
+
+<!-- 모바일 하단 -->
+<nav class="mob">
+  <button class="mb" onclick="go('of')">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="18" height="13" rx="2"/><path d="M1 8h18"/></svg>
+    사무실
+  </button>
+  <button class="mb on" onclick="go('p')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="8" height="8" rx="2"/><rect x="11" y="1" width="8" height="8" rx="2"/><rect x="1" y="11" width="8" height="8" rx="2"/><rect x="11" y="11" width="8" height="8" rx="2"/></svg>프로젝트</button>
+  <button class="mb" onclick="go('gd')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="12" rx="2"/><path d="M6 8h8M6 12h5"/></svg>게임설계</button>
+  <button class="mb" onclick="go('m')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h14M3 10h9M3 15h7"/></svg>메모</button>
+  <button class="mb" onclick="go('r')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,15 7,8 12,11 18,4"/><polyline points="14,4 18,4 18,8"/></svg>로드맵</button>
+  <button class="mb" onclick="go('mk')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg>마케팅</button>
+  <button class="mb" onclick="go('q')"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="14" rx="2"/><path d="M6 8h6M6 12h4"/></svg>프롬프트</button>
+</nav>
+
+<script>
+// ══════════════════════════════
+// 사이트 내비게이션
+// ══════════════════════════════
+const now=new Date();
+const d=now.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+document.querySelectorAll('#sb-dt,#eyebrow').forEach(e=>e&&(e.textContent=d));
+
+const M={p:'s-p',gd:'s-gd',m:'s-m',r:'s-r',mk:'s-mk',q:'s-q',of:'s-of',cmd:'s-cmd',hist:'s-hist'};
+function go(id){
+  Object.values(M).forEach(s=>document.getElementById(s)?.classList.remove('on'));
+  document.querySelectorAll('.nb,.mb').forEach(b=>b.classList.remove('on'));
+  document.getElementById(M[id])?.classList.add('on');
+  document.querySelectorAll('.nb,.mb').forEach(b=>{
+    if(b.getAttribute('onclick')?.includes(`'${id}'`))b.classList.add('on');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='gd') setTimeout(()=>bvResize(),100);
+}
+
+function tt(el){el.classList.toggle('on')}
+
+const COLS=['var(--vimd)','var(--grmd)','var(--romd)','var(--gomd)'];
+function addRow(m,i,pre){
+  const el=document.createElement('div');
+  el.className='mr';
+  el.innerHTML=`<div class="mline" style="background:${COLS[i%4]}"></div>
+  <div class="mbody"><div class="mrt">${m.title}</div>
+  <div class="mrp">${m.body.slice(0,90)}${m.body.length>90?'…':''}</div>
+  <div class="mrm"><span>${m.date}</span>${m.tags.map(t=>`<span>${t}</span>`).join('')}</div></div>`;
+  const l=document.getElementById('ml');
+  pre?l.insertBefore(el,l.firstChild):l.appendChild(el);
+}
+function sm(){
+  const title=document.getElementById('mti').value.trim();
+  const body=document.getElementById('mbi').value.trim();
+  if(!title&&!body)return;
+  const tags=[...document.querySelectorAll('.tc.on')].map(c=>c.textContent);
+  const memos=JSON.parse(localStorage.getItem('su_m')||'[]');
+  const m={id:Date.now(),title:title||'(제목 없음)',body,tags,date:d};
+  memos.unshift(m);localStorage.setItem('su_m',JSON.stringify(memos));
+  document.getElementById('mti').value='';document.getElementById('mbi').value='';
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('on'));
+  addRow(m,0,true);
+}
+(function(){JSON.parse(localStorage.getItem('su_m')||'[]').forEach((m,i)=>addRow(m,i,false))})();
+
+function ck(el){
+  el.classList.toggle('done');
+  const svg=el.querySelector('.ckbox svg');
+  if(svg)svg.style.display=el.classList.contains('done')?'block':'none';
+}
+function cp(btn){
+  const text=btn.closest('.prc').querySelector('.prb').textContent.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✓ 복사됨';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='복사';btn.classList.remove('ok');},1800);
+  });
+}
+
+// ══════════════════════════════
+// Three.js 3D 도면 뷰어
+// ══════════════════════════════
+const bvCanvas = document.getElementById('bv-canvas');
+const bvRenderer = new THREE.WebGLRenderer({ canvas:bvCanvas, antialias:true });
+bvRenderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+bvRenderer.shadowMap.enabled=true;
+bvRenderer.shadowMap.type=THREE.PCFSoftShadowMap;
+bvRenderer.toneMapping=THREE.ACESFilmicToneMapping;
+bvRenderer.toneMappingExposure=1.1;
+
+const bvScene=new THREE.Scene();
+bvScene.background=new THREE.Color('#1A2535');
+bvScene.fog=new THREE.FogExp2('#1A2535',0.008);
+const bvCamera=new THREE.PerspectiveCamera(45,1,0.1,500);
+
+// 조명
+bvScene.add(new THREE.AmbientLight(0xffffff,0.35));
+const bvSun=new THREE.DirectionalLight(0xFFEDD5,1.4);
+bvSun.position.set(25,50,30);bvSun.castShadow=true;
+bvSun.shadow.mapSize.set(2048,2048);
+bvSun.shadow.camera.left=-80;bvSun.shadow.camera.right=80;
+bvSun.shadow.camera.top=80;bvSun.shadow.camera.bottom=-80;
+bvSun.shadow.camera.far=200;bvSun.shadow.bias=-0.001;
+bvScene.add(bvSun);
+const bvFill=new THREE.DirectionalLight(0x8BBACC,0.5);
+bvFill.position.set(-30,20,-20);bvScene.add(bvFill);
+bvScene.add(new THREE.DirectionalLight(0x4466AA,0.3).position.set(0,10,-50));
+
+// 바닥 + 그리드
+const bvGround=new THREE.Mesh(new THREE.PlaneGeometry(300,300),new THREE.MeshStandardMaterial({color:'#1C2B3A',roughness:0.95}));
+bvGround.rotation.x=-Math.PI/2;bvGround.receiveShadow=true;bvScene.add(bvGround);
+bvScene.add(new THREE.GridHelper(120,60,'#253545','#1E2D3C'));
+
+// 재질
+function bvMat(color,roughness=0.7,metalness=0,opacity=1){
+  const m=new THREE.MeshStandardMaterial({color,roughness,metalness});
+  if(opacity<1){m.transparent=true;m.opacity=opacity;}
+  return m;
+}
+const BVM={
+  foundation:bvMat('#5A7A96',0.85),column:bvMat('#8A8A8A',0.75),column_dark:bvMat('#6A6A6A',0.8),
+  beam:bvMat('#8B5E3C',0.65),slab:bvMat('#C4B89A',0.85),slab_dark:bvMat('#A8A090',0.85),
+  truss:bvMat('#6B9E84',0.5,0.4),wall:bvMat('#D0C8BC',0.9),wall_dark:bvMat('#B8B0A4',0.9),
+  window:bvMat('#7AACCF',0.1,0.1,0.7),window_frame:bvMat('#4A6A7A',0.6),
+  shutter:bvMat('#6A6A6A',0.5,0.3),rail:bvMat('#5A6A7A',0.4,0.5),rail_post:bvMat('#4A5A6A',0.5,0.4),
+  pier:bvMat('#7A8A96',0.75),deck:bvMat('#9A9A8C',0.8),asphalt:bvMat('#3A3A3A',0.95),
+  ghost:bvMat('#6496C8',0.5,0,0.1),roof_metal:bvMat('#8A9AA6',0.3,0.5),glass_wall:bvMat('#88BBDD',0.05,0.1,0.4),
+};
+
+function bvMesh(geo,mat,sh=true){const m=new THREE.Mesh(geo,mat);if(sh){m.castShadow=true;m.receiveShadow=true;}return m;}
+const BB=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+const BC=(r,h,s=10)=>new THREE.CylinderGeometry(r,r,h,s);
+
+function bvMakeWindow(w,h){
+  const g=new THREE.Group();
+  g.add(bvMesh(BB(w,h,0.05),BVM.window,false));
+  const fw=0.06;
+  [[-w/2,0],[w/2,0]].forEach(([x])=>{const p=bvMesh(BB(fw,h+fw,fw),BVM.window_frame,false);p.position.set(x,0,0);g.add(p);});
+  [[0,-h/2],[0,h/2]].forEach(([,y])=>{const p=bvMesh(BB(w+fw,fw,fw),BVM.window_frame,false);p.position.set(0,y,0);g.add(p);});
+  const mid=bvMesh(BB(w,fw,fw),BVM.window_frame,false);g.add(mid);
+  return g;
+}
+function bvMakeRailing(length,height=1.0){
+  const g=new THREE.Group();
+  const top=bvMesh(BB(length,0.06,0.06),BVM.rail,false);top.position.set(0,height,0);g.add(top);
+  const posts=Math.floor(length/1.5);
+  for(let i=0;i<=posts;i++){const p=bvMesh(BB(0.06,height,0.06),BVM.rail_post,false);p.position.set(-length/2+i*(length/posts),height/2,0);g.add(p);}
+  return g;
+}
+function bvMakeTruss(length,height=2){
+  const g=new THREE.Group();const seg=Math.floor(length/3);
+  const top=bvMesh(BB(length,0.2,0.2),BVM.truss);top.position.y=height;g.add(top);
+  g.add(bvMesh(BB(length,0.2,0.2),BVM.truss));
+  for(let i=0;i<seg;i++){
+    const x=-length/2+(i+0.5)*(length/seg);
+    const diag=bvMesh(BB(0.12,Math.sqrt(height*height+(length/seg)*(length/seg)),0.12),BVM.truss);
+    diag.position.set(x,height/2,0);diag.rotation.z=i%2===0?Math.atan2(height,length/seg):-Math.atan2(height,length/seg);g.add(diag);
+    const vert=bvMesh(BB(0.1,height,0.1),BVM.truss);vert.position.set(x,height/2,0);g.add(vert);
+  }
+  return g;
+}
+
+// 빌더들
+function bvBuildWarehouse(){
+  const W=20,D=15,H=8,cx=W/2,cz=D/2;const groups=[];
+  const g0=new THREE.Group();
+  const fn=bvMesh(BB(W+2,0.6,D+2),BVM.foundation);fn.position.set(cx,-0.3,cz);g0.add(fn);
+  [[cx,0],[cx,D]].forEach(([x,z])=>{const c=bvMesh(BB(W+2.4,0.2,0.3),BVM.column_dark);c.position.set(x,0.1,z);g0.add(c);});
+  [[0,cz],[W,cz]].forEach(([x,z])=>{const c=bvMesh(BB(0.3,0.2,D+2),BVM.column_dark);c.position.set(x,0.1,z);g0.add(c);});
+  groups.push(g0);
+  const g1=new THREE.Group();
+  [[0,0],[W/2,0],[W,0],[0,D],[W/2,D],[W,D]].forEach(([x,z])=>{const c=bvMesh(BB(0.5,H,0.5),BVM.column);c.position.set(x,H/2,z);g1.add(c);});
+  [[cx,0],[cx,D]].forEach(([x,z])=>{const b=bvMesh(BB(W,0.6,0.4),BVM.beam);b.position.set(x,H,z);g1.add(b);});
+  for(let x=0;x<=W;x+=W/2){const b=bvMesh(BB(0.4,0.4,D),BVM.beam);b.position.set(x,H-0.1,cz);g1.add(b);}
+  for(let i=1;i<4;i++){const p=bvMesh(BB(W,0.25,0.2),BVM.beam);p.position.set(cx,H,i*(D/4));g1.add(p);}
+  groups.push(g1);
+  const g2=new THREE.Group();
+  const fw1=bvMesh(BB(W/2-3.5,H,0.2),BVM.wall);fw1.position.set(W/4-1.5,H/2,0);g2.add(fw1);
+  const fw2=bvMesh(BB(W/2-3.5,H,0.2),BVM.wall);fw2.position.set(W*3/4+1.5,H/2,0);g2.add(fw2);
+  const ft=bvMesh(BB(W,2,0.2),BVM.wall);ft.position.set(cx,H-1,0);g2.add(ft);
+  [[W/4,0],[W*3/4,0]].forEach(([x,z])=>{
+    const sh=bvMesh(BB(5,5,0.15),BVM.shutter);sh.position.set(x,2.5,z);g2.add(sh);
+    for(let i=1;i<5;i++){const l=bvMesh(BB(5,0.06,0.18),BVM.column_dark);l.position.set(x,i*1,z);g2.add(l);}
+  });
+  const bw=bvMesh(BB(W,H,0.2),BVM.wall);bw.position.set(cx,H/2,D);g2.add(bw);
+  for(let i=0;i<3;i++){const win=bvMakeWindow(2.5,1.5);win.position.set(3.5+i*5.5,4.5,D+0.1);g2.add(win);}
+  [[0,cz],[W,cz]].forEach(([x,z])=>{
+    const wall=bvMesh(BB(0.2,H,D),BVM.wall);wall.position.set(x,H/2,z);g2.add(wall);
+    for(let i=0;i<2;i++){const win=bvMakeWindow(3,1.8);win.position.set(x===0?-0.15:0.15,4.5,3.5+i*6);win.rotation.y=Math.PI/2;g2.add(win);}
+  });
+  groups.push(g2);
+  const g3=new THREE.Group();
+  const roof=bvMesh(BB(W+0.6,0.25,D+0.6),BVM.slab);roof.position.set(cx,H+0.12,cz);g3.add(roof);
+  [[cx,0],[cx,D]].forEach(([x,z])=>{const p=bvMesh(BB(W+0.6,0.6,0.2),BVM.wall_dark);p.position.set(x,H+0.55,z);g3.add(p);});
+  [[0,cz],[W,cz]].forEach(([x,z])=>{const p=bvMesh(BB(0.2,0.6,D+0.6),BVM.wall_dark);p.position.set(x,H+0.55,z);g3.add(p);});
+  for(let i=0;i<3;i++){const sk=bvMesh(BB(3,0.1,1.5),BVM.window);sk.position.set(5+i*5,H+0.3,cz);g3.add(sk);const fr=bvMesh(BB(3.1,0.2,1.6),BVM.window_frame);fr.position.set(5+i*5,H+0.2,cz);g3.add(fr);}
+  groups.push(g3);
+  const ghost=new THREE.Group();const gh=bvMesh(BB(W,H,D),BVM.ghost,false);gh.position.set(cx,H/2,cz);ghost.add(gh);
+  return{groups,ghost};
+}
+
+function bvBuildOffice(){
+  const W=15,D=10,FH=7,cx=W/2,cz=D/2;const groups=[];
+  const g0=new THREE.Group();const f=bvMesh(BB(W+2,0.6,D+2),BVM.foundation);f.position.set(cx,-0.3,cz);g0.add(f);groups.push(g0);
+  const colPos=[[0,0],[W/3,0],[W*2/3,0],[W,0],[0,D/2],[W,D/2],[0,D],[W/3,D],[W*2/3,D],[W,D]];
+  const g1=new THREE.Group();
+  colPos.forEach(([x,z])=>{const c=bvMesh(BB(0.4,FH,0.4),BVM.column);c.position.set(x,FH/2,z);g1.add(c);});
+  [[cx,0],[cx,D]].forEach(([x,z])=>{const b=bvMesh(BB(W,0.5,0.3),BVM.beam);b.position.set(x,FH,z);g1.add(b);});
+  [[0,cz],[W,cz]].forEach(([x,z])=>{const b=bvMesh(BB(0.3,0.5,D),BVM.beam);b.position.set(x,FH,z);g1.add(b);});
+  const s1=bvMesh(BB(W+0.2,0.22,D+0.2),BVM.slab);s1.position.set(cx,FH+0.11,cz);g1.add(s1);groups.push(g1);
+  const g2=new THREE.Group();
+  [[W/6,0],[W*5/6,0]].forEach(([x,z])=>{
+    const wall=bvMesh(BB(W/3-0.2,FH-2.5,0.18),BVM.wall);wall.position.set(x,1.25+FH/2-1.25,z);g2.add(wall);
+    const win=bvMakeWindow(W/3-1,2);win.position.set(x,FH/2+0.5,z+0.1);g2.add(win);
+  });
+  const door=bvMesh(BB(3,3,0.15),BVM.glass_wall);door.position.set(cx,1.5,0.1);g2.add(door);
+  const df=bvMesh(BB(3.2,3.2,0.18),BVM.window_frame);df.position.set(cx,1.5,0);g2.add(df);
+  const cwall=bvMesh(BB(W,FH/2,0.18),BVM.glass_wall);cwall.position.set(cx,FH-FH/4,0.1);g2.add(cwall);
+  const back=bvMesh(BB(W,FH,0.18),BVM.wall);back.position.set(cx,FH/2,D);g2.add(back);
+  for(let i=0;i<3;i++){const win=bvMakeWindow(2.5,1.8);win.position.set(2.5+i*4.8,FH/2+0.5,D+0.1);g2.add(win);}
+  [[0,cz],[W,cz]].forEach(([x,z])=>{
+    const wall=bvMesh(BB(0.18,FH,D),BVM.wall);wall.position.set(x,FH/2,z);g2.add(wall);
+    for(let i=0;i<2;i++){const win=bvMakeWindow(2,1.6);win.position.set(x===0?-0.1:0.1,FH/2+0.3,2.5+i*4.5);win.rotation.y=Math.PI/2;g2.add(win);}
+  });
+  groups.push(g2);
+  const g3=new THREE.Group();
+  colPos.forEach(([x,z])=>{const c=bvMesh(BB(0.4,FH,0.4),BVM.column);c.position.set(x,FH+FH/2,z);g3.add(c);});
+  [[cx,0],[cx,D]].forEach(([x,z])=>{const b=bvMesh(BB(W,0.5,0.3),BVM.beam);b.position.set(x,FH*2,z);g3.add(b);});
+  [[0,cz],[W,cz]].forEach(([x,z])=>{const b=bvMesh(BB(0.3,0.5,D),BVM.beam);b.position.set(x,FH*2,z);g3.add(b);});
+  const s2=bvMesh(BB(W+0.2,0.22,D+0.2),BVM.slab);s2.position.set(cx,FH*2+0.11,cz);g3.add(s2);groups.push(g3);
+  const g4=new THREE.Group();
+  [[cx,0],[cx,D]].forEach(([x,z])=>{
+    const cw=bvMesh(BB(W,FH,0.18),BVM.glass_wall);cw.position.set(x,FH+FH/2,z+0.1);g4.add(cw);
+    for(let i=0;i<4;i++){const mull=bvMesh(BB(0.08,FH,0.15),BVM.window_frame);mull.position.set(-W/2+W/5*(i+1)+x-cx,FH+FH/2,z+0.12);g4.add(mull);}
+  });
+  [[0,cz],[W,cz]].forEach(([x,z])=>{
+    const wall=bvMesh(BB(0.18,FH,D),BVM.wall);wall.position.set(x,FH+FH/2,z);g4.add(wall);
+    for(let i=0;i<3;i++){const win=bvMakeWindow(1.8,1.4);win.position.set(x===0?-0.1:0.1,FH+FH/2+0.2,2+i*3.2);win.rotation.y=Math.PI/2;g4.add(win);}
+  });
+  [[cx,0],[cx,D]].forEach(([x,z])=>{const p=bvMesh(BB(W+0.3,0.8,0.2),BVM.wall_dark);p.position.set(x,FH*2+0.6,z);g4.add(p);});
+  [[0,cz],[W,cz]].forEach(([x,z])=>{const p=bvMesh(BB(0.2,0.8,D+0.3),BVM.wall_dark);p.position.set(x,FH*2+0.6,z);g4.add(p);});
+  groups.push(g4);
+  const ghost=new THREE.Group();const gh=bvMesh(BB(W,FH*2,D),BVM.ghost,false);gh.position.set(cx,FH,cz);ghost.add(gh);
+  return{groups,ghost};
+}
+
+function bvBuildFactory(){
+  const W=30,D=20,H=12,cx=W/2,cz=D/2;const groups=[];
+  const anch=[[0,0],[W/2,0],[W,0],[0,D/2],[W/2,D/2],[W,D/2],[0,D],[W/2,D],[W,D]];
+  const g0=new THREE.Group();const f=bvMesh(BB(W+3,0.8,D+3),BVM.foundation);f.position.set(cx,-0.4,cz);g0.add(f);
+  anch.forEach(([x,z])=>{const a=bvMesh(BB(0.8,0.3,0.8),BVM.column_dark);a.position.set(x,0.05,z);g0.add(a);});groups.push(g0);
+  const g1=new THREE.Group();
+  anch.forEach(([x,z])=>{
+    const web=bvMesh(BB(0.15,H,0.5),BVM.column);web.position.set(x,H/2,z);g1.add(web);
+    const fl=bvMesh(BB(0.5,H,0.1),BVM.column);fl.position.set(x,H/2,z);g1.add(fl);
+  });groups.push(g1);
+  const g2=new THREE.Group();
+  for(let zi=0;zi<=D;zi+=D/2){const t=bvMakeTruss(W,2.5);t.position.set(cx,H,zi);g2.add(t);}
+  const mt=bvMakeTruss(W,2.5);mt.position.set(cx,H,D/4);g2.add(mt);
+  const mt2=bvMakeTruss(W,2.5);mt2.position.set(cx,H,D*3/4);g2.add(mt2);
+  const rl=bvMesh(BB(W,0.3,0.15),BVM.column_dark);rl.position.set(cx,H+1.8,cz);g2.add(rl);groups.push(g2);
+  const g3=new THREE.Group();
+  [[cx,0],[cx,D]].forEach(([x,z])=>{
+    const wall=bvMesh(BB(W,H,0.2),BVM.wall);wall.position.set(x,H/2,z);g3.add(wall);
+    for(let i=1;i<5;i++){const s=bvMesh(BB(W,0.05,0.22),BVM.wall_dark);s.position.set(x,i*(H/5),z);g3.add(s);}
+    for(let i=0;i<3;i++){const win=bvMakeWindow(4,2);win.position.set(-W/2+W/6+i*(W/3)+x-cx,H-1.5,z+0.12);g3.add(win);}
+  });
+  [[0,cz],[W,cz]].forEach(([x,z])=>{
+    const wall=bvMesh(BB(0.2,H,D),BVM.wall);wall.position.set(x,H/2,z);g3.add(wall);
+    for(let i=0;i<2;i++){const win=bvMakeWindow(4,2);win.position.set(x===0?-0.12:0.12,H-1.5,D/4+i*(D/2));win.rotation.y=Math.PI/2;g3.add(win);}
+  });
+  const mon=bvMesh(BB(W*0.6,0.15,4),BVM.window);mon.position.set(cx,H+2.55,cz);g3.add(mon);groups.push(g3);
+  const g4=new THREE.Group();
+  const rf=bvMesh(BB(W+0.5,0.2,D+0.5),BVM.roof_metal);rf.position.set(cx,H+2.6,cz);g4.add(rf);
+  [[W/4,0],[W*3/4,0],[W/4,D],[W*3/4,D]].forEach(([x,z])=>{
+    const sh=bvMesh(BB(6,6,0.18),BVM.shutter);sh.position.set(x,3,z);g4.add(sh);
+    for(let i=0;i<8;i++){const l=bvMesh(BB(6,0.05,0.2),BVM.column_dark);l.position.set(x,0.5+i*0.75,z);g4.add(l);}
+  });groups.push(g4);
+  const ghost=new THREE.Group();const gh=bvMesh(BB(W,H+2.6,D),BVM.ghost,false);gh.position.set(cx,(H+2.6)/2,cz);ghost.add(gh);
+  return{groups,ghost};
+}
+
+function bvBuildApartment(){
+  const W=20,D=15,FH=3,FLOORS=5,cx=W/2,cz=D/2;const groups=[];
+  const g0=new THREE.Group();const f=bvMesh(BB(W+3,1,D+3),BVM.foundation);f.position.set(cx,-0.5,cz);g0.add(f);groups.push(g0);
+  const colXZ=[[0,0],[W/4,0],[W/2,0],[W*3/4,0],[W,0],[0,D/3],[W/4,D/3],[W/2,D/3],[W*3/4,D/3],[W,D/3],[0,D*2/3],[W/4,D*2/3],[W/2,D*2/3],[W*3/4,D*2/3],[W,D*2/3],[0,D],[W/4,D],[W/2,D],[W*3/4,D],[W,D]];
+  for(let fl=0;fl<FLOORS;fl++){
+    const g=new THREE.Group();const y0=fl*FH;
+    colXZ.forEach(([x,z])=>{const c=bvMesh(BB(0.3,FH,0.3),BVM.column);c.position.set(x,y0+FH/2,z);g.add(c);});
+    const s=bvMesh(BB(W+0.2,0.22,D+0.2),BVM.slab);s.position.set(cx,y0+FH+0.11,cz);g.add(s);
+    for(let zi=0;zi<=D;zi+=D/3){const b=bvMesh(BB(W,0.4,0.25),BVM.beam);b.position.set(cx,y0+FH-0.2,zi);g.add(b);}
+    for(let xi=0;xi<=W;xi+=W/4){const b=bvMesh(BB(0.25,0.4,D),BVM.beam);b.position.set(xi,y0+FH-0.2,cz);g.add(b);}
+    for(let i=0;i<4;i++){const win=bvMakeWindow(W/4-0.4,FH-0.8);win.position.set(W/8+i*(W/4),y0+FH/2+0.2,-0.1);g.add(win);}
+    for(let i=0;i<4;i++){const win=bvMakeWindow(W/4-0.6,1.4);win.position.set(W/8+i*(W/4),y0+FH/2+0.3,D+0.1);g.add(win);}
+    [[0,cz],[W,cz]].forEach(([x,z])=>{
+      for(let i=0;i<2;i++){const win=bvMakeWindow(2,1.4);win.position.set(x===0?-0.1:0.1,y0+FH/2+0.2,D/4+i*(D/2));win.rotation.y=Math.PI/2;g.add(win);}
+    });
+    groups.push(g);
+  }
+  const g5=new THREE.Group();
+  for(let fl=1;fl<=FLOORS;fl++){
+    const y0=fl*FH;
+    const bal=bvMesh(BB(W+0.2,0.15,1.5),BVM.slab_dark);bal.position.set(cx,y0+0.07,-0.75);g5.add(bal);
+    const r=bvMakeRailing(W,1.0);r.position.set(cx,y0+0.15,-1.5);g5.add(r);
+    for(let i=1;i<4;i++){const div=bvMesh(BB(0.12,1.2,1.5),BVM.wall_dark);div.position.set(i*(W/4),y0+0.6,-0.75);g5.add(div);}
+  }
+  const rt=bvMesh(BB(W+0.3,1,D+0.3),BVM.wall_dark);rt.position.set(cx,FLOORS*FH+0.5,cz);g5.add(rt);
+  [[cx,0],[cx,D],[0,cz],[W,cz]].forEach(([x,z],i)=>{const r=bvMakeRailing(i<2?W:D,1.0);if(i>=2)r.rotation.y=Math.PI/2;r.position.set(x,FLOORS*FH+1,z);g5.add(r);});
+  groups.push(g5);
+  const ghost=new THREE.Group();const gh=bvMesh(BB(W,FH*FLOORS,D),BVM.ghost,false);gh.position.set(cx,FH*FLOORS/2,cz);ghost.add(gh);
+  return{groups,ghost};
+}
+
+function bvBuildBridge(){
+  const L=50,BW=8,H=5,cx=L/2,cz=BW/2;const groups=[];
+  const g0=new THREE.Group();
+  [[10,0],[10,BW],[40,0],[40,BW]].forEach(([x,z])=>{const f=bvMesh(BB(4,1.2,4),BVM.foundation);f.position.set(x,-0.6,z);g0.add(f);});
+  [[0,cz],[L,cz]].forEach(([x,z])=>{const a=bvMesh(BB(2,3,BW+2),BVM.pier);a.position.set(x,1.5,z);g0.add(a);});groups.push(g0);
+  const g1=new THREE.Group();
+  [[10,0],[10,BW],[40,0],[40,BW]].forEach(([x,z])=>{
+    const pier=bvMesh(BB(1.5,H,1.5),BVM.pier);pier.position.set(x,H/2,z);g1.add(pier);
+    for(let i=1;i<4;i++){const b=bvMesh(BB(1.6,0.08,1.6),BVM.column_dark);b.position.set(x,i*(H/4),z);g1.add(b);}
+  });
+  [[10,cz],[40,cz]].forEach(([x,z])=>{const c=bvMesh(BB(2,1,BW+2),BVM.pier);c.position.set(x,H+0.5,z);g1.add(c);});groups.push(g1);
+  const g2=new THREE.Group();
+  [BW/6,BW/2,BW*5/6].forEach(z=>{
+    const web=bvMesh(BB(L,1.2,0.3),BVM.beam);web.position.set(cx,H+1.6,z);g2.add(web);
+    const tf=bvMesh(BB(L,0.25,0.8),BVM.beam);tf.position.set(cx,H+2.3,z);g2.add(tf);
+    const bf=bvMesh(BB(L,0.25,0.8),BVM.beam);bf.position.set(cx,H+1,z);g2.add(bf);
+  });
+  [[10,cz],[L/2,cz],[40,cz]].forEach(([x,z])=>{const d=bvMesh(BB(0.3,1.4,BW),BVM.beam);d.position.set(x,H+1.6,z);g2.add(d);});groups.push(g2);
+  const g3=new THREE.Group();
+  const deck=bvMesh(BB(L,0.22,BW+0.5),BVM.deck);deck.position.set(cx,H+2.55,cz);g3.add(deck);
+  const asp=bvMesh(BB(L-2,0.08,BW-1),BVM.asphalt);asp.position.set(cx,H+2.77,cz);g3.add(asp);
+  const line=bvMesh(BB(L-4,0.02,0.1),BVM.wall);line.position.set(cx,H+2.86,cz);g3.add(line);groups.push(g3);
+  const g4=new THREE.Group();
+  [[cx,-0.5],[cx,BW+0.5]].forEach(([x,z])=>{
+    const bar=bvMesh(BB(L,0.9,0.4),BVM.wall_dark);bar.position.set(x,H+3,z);g4.add(bar);
+    const top=bvMesh(BB(L,0.25,0.3),BVM.wall);top.position.set(x,H+3.55,z);g4.add(top);
+  });
+  [[cx,-0.1],[cx,BW+0.1]].forEach(([x,z])=>{const r=bvMakeRailing(L,1.1);r.position.set(x,H+3.45,z);g4.add(r);});
+  groups.push(g4);
+  const ghost=new THREE.Group();const gh=bvMesh(BB(L,H+4,BW+1),BVM.ghost,false);gh.position.set(cx,(H+4)/2,cz);ghost.add(gh);
+  return{groups,ghost};
+}
+
+const BV_DATA=[
+  {name:'단층 창고',specs:{'크기':'20×15×8m','용도':'물류 창고','층수':'1층'},lift:{'크레인':'25t 이동식','걸이방식':'2줄 수직','각도':'60° 이내'},phases:[{name:'기초',desc:'기초 슬라브 타설'},{name:'기둥·보',desc:'기둥 6개 + 보'},{name:'외벽·창문',desc:'외벽 + 창문 설치'},{name:'지붕·마감',desc:'지붕 + 셔터도어'}],cam:{theta:40,phi:28,r:58,tx:10,ty:5,tz:7},build:bvBuildWarehouse},
+  {name:'2층 사무소',specs:{'크기':'15×10×14m','용도':'사무소','층수':'2층'},lift:{'크레인':'50t 이동식','걸이방식':'4줄 바스켓','각도':'45° 이내'},phases:[{name:'기초',desc:'기초 타설'},{name:'1층 골조',desc:'기둥 + 1층 슬라브'},{name:'1층 외벽',desc:'외벽 + 창문 + 출입문'},{name:'2층 골조',desc:'기둥 + 2층 슬라브'},{name:'2층 외벽·마감',desc:'외벽 + 창문 + 난간'}],cam:{theta:38,phi:28,r:48,tx:7,ty:7,tz:5},build:bvBuildOffice},
+  {name:'공장 건물',specs:{'크기':'30×20×12m','용도':'제조 공장','층수':'1층'},lift:{'크레인':'100t 이동식','걸이방식':'4줄 바스켓','각도':'30° 이내'},phases:[{name:'기초',desc:'기초 타설'},{name:'기둥',desc:'H형강 기둥 12개'},{name:'트러스 보',desc:'30m 트러스 거치'},{name:'외벽·지붕',desc:'샌드위치 패널'},{name:'셔터·마감',desc:'대형 셔터도어 4개'}],cam:{theta:38,phi:22,r:75,tx:15,ty:7,tz:10},build:bvBuildFactory},
+  {name:'아파트 골조',specs:{'크기':'20×15×15m','용도':'공동주택','층수':'5층'},lift:{'크레인':'타워크레인','걸이방식':'4줄 바스켓','각도':'20° 이내'},phases:[{name:'기초',desc:'기초 타설'},{name:'1층 골조',desc:'기둥+슬라브'},{name:'2층 골조',desc:'기둥+슬라브'},{name:'3층 골조',desc:'기둥+슬라브'},{name:'4~5층 골조',desc:'기둥+슬라브'},{name:'발코니·난간',desc:'발코니+난간'}],cam:{theta:42,phi:32,r:68,tx:10,ty:8,tz:8},build:bvBuildApartment},
+  {name:'교량',specs:{'크기':'50×6×5m','용도':'도로교','형식':'거더교'},lift:{'크레인':'200t 크롤러','걸이방식':'4줄 바스켓','각도':'15° 이내'},phases:[{name:'기초',desc:'교각 기초'},{name:'교각',desc:'교각 4개+교대'},{name:'주형 거치',desc:'PSC 거더'},{name:'바닥판',desc:'바닥판 타설'},{name:'방호벽·난간',desc:'방호벽+난간'}],cam:{theta:20,phi:20,r:85,tx:25,ty:5,tz:3},build:bvBuildBridge},
+];
+
+let bvGroups=[],bvGhostGroup=null,bvCurrentPhase=-1,bvCurrentBP=0,bvAutoTimer=null;
+let bvTheta=40,bvPhi=28,bvRadius=58,bvTarget=new THREE.Vector3(10,5,7);
+
+function bvClearScene(){
+  bvGroups.forEach(g=>bvScene.remove(g));bvGroups=[];
+  if(bvGhostGroup){bvScene.remove(bvGhostGroup);bvGhostGroup=null;}
+}
+
+function bvSelectBP(idx){
+  bvCurrentBP=idx;bvCurrentPhase=-1;
+  if(bvAutoTimer){clearInterval(bvAutoTimer);bvAutoTimer=null;}
+  bvClearScene();
+  document.querySelectorAll('.bv-bp-btn').forEach((b,i)=>b.classList.toggle('on',i===idx));
+  const bp=BV_DATA[idx];
+  document.getElementById('bv-name').textContent=bp.name;
+  document.getElementById('bv-phase-txt').textContent='마우스 드래그 · 회전 / 스크롤 · 줌';
+  document.getElementById('bv-prog-fill').style.width='0%';
+  document.getElementById('bv-prog-txt').textContent='시공 시작 전';
+  const fmt=obj=>Object.entries(obj).map(([k,v])=>`<div class="bv-ic-row"><span class="bv-ic-k">${k}</span><span class="bv-ic-v">${v}</span></div>`).join('');
+  document.getElementById('bv-info-specs').innerHTML=fmt(bp.specs);
+  document.getElementById('bv-info-lift').innerHTML=fmt(bp.lift);
+  document.getElementById('bv-phase-list').innerHTML=bp.phases.map((p,i)=>
+    `<div class="bv-phase-item" id="bvph-${i}" onclick="bvGoToPhase(${i})"><div class="bv-ph-num">${i+1}</div><div class="bv-ph-nm">${p.name}</div><div class="bv-ph-desc">${p.desc}</div></div>`).join('');
+  const result=bp.build();
+  bvGroups=result.groups;bvGhostGroup=result.ghost;
+  bvGroups.forEach(g=>{bvScene.add(g);g.visible=false;});
+  bvScene.add(bvGhostGroup);
+  const c=bp.cam;bvTheta=c.theta;bvPhi=c.phi;bvRadius=c.r;bvTarget.set(c.tx,c.ty,c.tz);
+}
+
+function bvGoToPhase(idx){
+  const bp=BV_DATA[bvCurrentBP];bvCurrentPhase=idx;
+  bvGroups.forEach((g,i)=>g.visible=i<=idx);
+  document.querySelectorAll('.bv-phase-item').forEach((el,i)=>{el.classList.toggle('active',i===idx);el.classList.toggle('done',i<idx);});
+  const pct=Math.round((idx+1)/bp.phases.length*100);
+  document.getElementById('bv-prog-fill').style.width=pct+'%';
+  document.getElementById('bv-phase-txt').textContent=`공정 ${idx+1}/${bp.phases.length} — ${bp.phases[idx].name}`;
+  if(bvGhostGroup)bvGhostGroup.visible=idx<bp.phases.length-1;
+  if(idx===bp.phases.length-1){document.getElementById('bv-prog-txt').textContent=`🎉 ${bp.name} 시공 완료!`;}
+  else{document.getElementById('bv-prog-txt').textContent=`${bp.phases[idx].name} 완료 (${pct}%)`;}
+}
+function bvNext(){const bp=BV_DATA[bvCurrentBP];if(bvCurrentPhase<bp.phases.length-1)bvGoToPhase(bvCurrentPhase+1);}
+function bvPrev(){
+  if(bvCurrentPhase>0){bvGoToPhase(bvCurrentPhase-1);}
+  else{bvCurrentPhase=-1;bvGroups.forEach(g=>g.visible=false);if(bvGhostGroup)bvGhostGroup.visible=true;
+    document.querySelectorAll('.bv-phase-item').forEach(el=>el.classList.remove('active','done'));
+    document.getElementById('bv-prog-fill').style.width='0%';document.getElementById('bv-prog-txt').textContent='시공 시작 전';
+    document.getElementById('bv-phase-txt').textContent='마우스 드래그 · 회전 / 스크롤 · 줌';}
+}
+function bvReset(){if(bvAutoTimer){clearInterval(bvAutoTimer);bvAutoTimer=null;}bvSelectBP(bvCurrentBP);}
+function bvAuto(){
+  if(bvAutoTimer){clearInterval(bvAutoTimer);bvAutoTimer=null;return;}
+  const bp=BV_DATA[bvCurrentBP];bvReset();
+  setTimeout(()=>{let ph=0;bvAutoTimer=setInterval(()=>{if(ph>=bp.phases.length){clearInterval(bvAutoTimer);bvAutoTimer=null;return;}bvGoToPhase(ph++);},1400);},600);
+}
+
+// 마우스/터치
+let bvDrag=false,bvRight=false,bvPX=0,bvPY=0;
+bvCanvas.addEventListener('mousedown',e=>{bvDrag=true;bvRight=e.button===2;bvPX=e.clientX;bvPY=e.clientY;});
+bvCanvas.addEventListener('contextmenu',e=>e.preventDefault());
+window.addEventListener('mouseup',()=>bvDrag=false);
+window.addEventListener('mousemove',e=>{
+  if(!bvDrag)return;const dx=e.clientX-bvPX,dy=e.clientY-bvPY;
+  if(bvRight){const r=new THREE.Vector3();r.crossVectors(bvCamera.getWorldDirection(new THREE.Vector3()),bvCamera.up).normalize();bvTarget.addScaledVector(r,-dx*0.05);bvTarget.y+=dy*0.05;}
+  else{bvTheta-=dx*0.35;bvPhi=Math.max(4,Math.min(82,bvPhi-dy*0.25));}
+  bvPX=e.clientX;bvPY=e.clientY;
+});
+bvCanvas.addEventListener('wheel',e=>{bvRadius=Math.max(8,Math.min(130,bvRadius+e.deltaY*0.07));});
+let bvLT=null;
+bvCanvas.addEventListener('touchstart',e=>{bvLT=e.touches[0];},{passive:true});
+bvCanvas.addEventListener('touchmove',e=>{
+  if(!bvLT)return;const t=e.touches[0];
+  bvTheta-=(t.clientX-bvLT.clientX)*0.5;bvPhi=Math.max(4,Math.min(82,bvPhi-(t.clientY-bvLT.clientY)*0.4));
+  bvLT=t;e.preventDefault();},{passive:false});
+
+// 리사이즈
+function bvResize(){
+  const vp=document.getElementById('bv-viewport');
+  if(!vp)return;const w=vp.clientWidth,h=vp.clientHeight;
+  if(w===0||h===0)return;
+  bvRenderer.setSize(w,h);bvCamera.aspect=w/h;bvCamera.updateProjectionMatrix();
+}
+window.addEventListener('resize',bvResize);
+
+// 전체화면
+function toggleFullscreen(){
+  const fs=document.getElementById('bv-fullscreen');
+  const panel=document.getElementById('bv-panel');
+  const vp=document.getElementById('bv-viewport');
+  const body=document.getElementById('bvf-body');
+  if(!fs.classList.contains('on')){
+    fs.classList.add('on');
+    body.appendChild(panel);body.appendChild(vp);
+    setTimeout(bvResize,50);
+  } else {
+    fs.classList.remove('on');
+    const orig=document.querySelector('.bp-viewer-body');
+    orig.appendChild(panel);orig.appendChild(vp);
+    setTimeout(bvResize,50);
+  }
+}
+
+// 렌더 루프
+function bvAnimate(){
+  requestAnimationFrame(bvAnimate);
+  const tr=bvTheta*Math.PI/180,pr=bvPhi*Math.PI/180;
+  bvCamera.position.x=bvTarget.x+bvRadius*Math.sin(tr)*Math.cos(pr);
+  bvCamera.position.y=bvTarget.y+bvRadius*Math.sin(pr);
+  bvCamera.position.z=bvTarget.z+bvRadius*Math.cos(tr)*Math.cos(pr);
+  bvCamera.lookAt(bvTarget);
+  bvRenderer.render(bvScene,bvCamera);
+}
+
+// 초기화
+bvSelectBP(0);
+setTimeout(bvResize,200);
+bvAnimate();
+
+// ══ 사무실 기능 ══
+function updateOfficeClock(){
+  const now=new Date();
+  const t=now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const el=document.getElementById('hdr-time');
+  if(el)el.textContent=t;
+  const td=document.getElementById('today-d');
+  if(td)td.textContent=now.toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+}
+setInterval(updateOfficeClock,1000);
+updateOfficeClock();
+
+let _pmP=67,_qaP=45;
+setInterval(()=>{
+  _pmP=Math.min(100,_pmP+Math.random()*1.5);
+  _qaP=Math.min(100,_qaP+Math.random()*1);
+  const pf=document.getElementById('pm-prog');
+  const qf=document.getElementById('qa-prog');
+  if(pf)pf.style.width=_pmP+'%';
+  if(qf)qf.style.width=_qaP+'%';
+  if(_pmP>=100)_pmP=0;
+  if(_qaP>=100)_qaP=0;
+},3000);
+
+function quickSend(text){
+  navigator.clipboard.writeText(text).then(()=>{
+    const ll=document.getElementById('log-list');
+    if(ll){
+      const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+      const r=document.createElement('div');
+      r.className='log-row';
+      r.innerHTML='<div class="log-t">'+t+'</div><div class="log-ic">\u{1F4CB}</div><div class="log-body"><span class="ok">\uD074\uB9BD\uBCF4\uB4DC \uBCF5\uC0AC</span> \u2014 Codespaces \uBD99\uC5EC\uB123\uAE30</div>';
+      ll.insertBefore(r,ll.firstChild);
+    }
+  });
+}
+function sendCmd(){
+  const inp=document.getElementById('cmd-input');
+  if(!inp||!inp.value.trim())return;
+  quickSend(inp.value.trim());
+  inp.value='';
+}
+function setTarget(el){
+  document.querySelectorAll('.t-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+function clearQueue(){
+  const l=document.getElementById('queue-list');
+  if(l)l.querySelectorAll('.q-item.done').forEach(e=>e.remove());
+}
+function setCmd(text){
+  const inp=document.getElementById('cmd-input');
+  if(inp){inp.value=text;go('cmd');}
+}
+function clearLog(){
+  const l=document.getElementById('log-list');
+  if(l)l.innerHTML='';
+}
+</script>
+</body>
+</html>
