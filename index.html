@@ -3551,30 +3551,55 @@ function _pxUpdateFromStatus(data){
     _pxSpeech(idx,l.message);
   });
 
-  // 새 명령 결과 → 결과 카드
+  // 명령 상태 → 실시간 카드
   cmds.forEach(c=>{
     if(!_pxCmdIds.has(c.id)){
-      _pxCmdIds.set(c.id,{status:null,stEl:null});
+      _pxCmdIds.set(c.id,{status:null,stEl:null,lastResult:null});
     }
     const entry=_pxCmdIds.get(c.id);
+    const idx=_pxAssignIdx(c.agent);
+    const ch=_PX_CHARS[idx];
+
+    // running: 카드 생성 or 진행상황 텍스트 갱신
+    if(c.status==='running'){
+      if(!entry.stEl){
+        entry.stEl=_pxAddMsg(ch.emoji,c.agent||ch.name,'⏳ 작업 시작...',false,'log');
+        entry.status='running';
+      }
+      const newResult=c.result||'⏳ 작업 중...';
+      if(newResult!==entry.lastResult){
+        const bb=entry.stEl?.querySelector('.px-bb');
+        if(bb){bb.textContent=newResult;const w=document.getElementById('px-msgs');if(w)w.scrollTop=w.scrollHeight;}
+        entry.lastResult=newResult;
+      }
+      _pxSpeech(idx,'작업 중...');
+      return;
+    }
+
+    // done/failed: 기존 running 카드를 결과 카드로 교체
     if(entry.status===c.status)return;
     entry.status=c.status;
-    if((c.status==='done'||c.status==='failed')&&c.result&&!entry.stEl){
-      const idx=_pxAssignIdx(c.agent);
-      const ch=_PX_CHARS[idx];
+    if((c.status==='done'||c.status==='failed')&&c.result){
       const badge={
         cls:'px-status-badge '+(c.status==='done'?'px-st-done':'px-st-failed'),
         text:c.status==='done'?'✓ 완료':'✗ 실패'
       };
-      const el=_pxAddMsg(ch.emoji,c.agent||ch.name,c.result,false,'result',badge);
-      entry.stEl=el;
+      if(entry.stEl){
+        // 기존 카드 업데이트
+        const bb=entry.stEl.querySelector('.px-bb');
+        if(bb){bb.style.whiteSpace='pre-wrap';bb.style.wordBreak='break-word';bb.textContent=c.result;}
+        const bd=document.createElement('div');
+        bd.className=badge.cls;bd.textContent=badge.text;
+        entry.stEl.querySelector('.px-bbody')?.appendChild(bd);
+        entry.stEl.dataset.type='result';
+        const w=document.getElementById('px-msgs');if(w)w.scrollTop=w.scrollHeight;
+        _pxSaveToLocal({emoji:ch.emoji,name:c.agent||ch.name,text:c.result,isMe:false,msgType:'result',badge,t:new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})});
+      } else {
+        const el=_pxAddMsg(ch.emoji,c.agent||ch.name,c.result,false,'result',badge);
+        entry.stEl=el;
+      }
       _pxSpeech(idx,c.status==='done'?'완료! ✓':'실패 ✗');
     }
-  });
-
-  // 작업중인 에이전트 말풍선
-  cmds.filter(c=>c.status==='running'&&c.agent).forEach(c=>{
-    _pxSpeech(_pxAssignIdx(c.agent),'작업중...');
   });
 }
 
